@@ -1,4 +1,4 @@
-Additional (free) resources on MongoDB
+Good (and free) resources on MongoDB
 
 Free introductory course on MongoDB:
 https://www.udemy.com/introduction-to-the-mongodb/?couponCode=AGSGSDFREE24251
