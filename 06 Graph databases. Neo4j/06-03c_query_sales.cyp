@@ -251,21 +251,30 @@ RETURN *
 
 
 //###################################################################################
-//    Get, for each sales day, the invoices with highest and the lowest amount 
+//      Which is the invoice with the greatest amount to be received 
+//							(to be paid by the customer)?
+	
+// next solution extract both invoices that have the same amount to be received
+MATCH  (i:Invoice) -[rel1:InvoiceDetails]-> (p:Product)
+WITH i, round(SUM(rel1.quantity * rel1.unit_price * 
+        	(1 + p.current_vat_percent/ 100))) AS amount_with_VAT
+WITH i, amount_with_VAT             
+OPTIONAL MATCH (i)  <-[rel2:ReceiptPaysInvoice]- (r:Receipt)
+WITH i, amount_with_VAT -  sum(rel2.amount) AS to_be_received
+WITH  MAX(to_be_received) AS max_to_be_received
+MATCH  (i:Invoice) -[rel1:InvoiceDetails]-> (p:Product)
+WITH max_to_be_received, i, round(SUM(rel1.quantity * rel1.unit_price * 
+        	(1 + p.current_vat_percent/ 100))) AS amount_with_VAT
+WITH max_to_be_received, i, amount_with_VAT             
+OPTIONAL MATCH (i)  <-[rel2:ReceiptPaysInvoice]- (r:Receipt)
+WITH max_to_be_received, i, amount_with_VAT -  sum(rel2.amount) AS to_be_received
+WHERE max_to_be_received = to_be_received
+RETURN *
+
 
 
 //###################################################################################
 //                     Get the most frequently sold three products
-
-    	
-//###################################################################################
-//      Which is the invoice with the greatest amount to be received 
-//							(to be paid by the customer)?
-	
-
-
-
-
 
 
 
