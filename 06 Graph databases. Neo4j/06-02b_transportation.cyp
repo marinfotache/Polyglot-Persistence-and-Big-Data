@@ -565,9 +565,7 @@ ORDER BY total_distance
 //# 	Display the counties with more than one city in the database
 //   (GROUP BY and HAVING)
 MATCH 
-	(city:City) 
-		-[relCounty:IS_IN_COUNTY]->
-	(county:County) 
+	(city:City) -[relCounty:IS_IN_COUNTY]-> (county:County) 
 WITH county.countyName AS countyName, count(*) AS n_of_cities
 WHERE n_of_cities > 1
 RETURN *
@@ -576,10 +574,7 @@ RETURN *
 //# 	Display the county with the greatest number of cities
 
 // this works fine where there is only one county with the greatest number of cities
-MATCH 
-	(city:City) 
-		-[relCounty:IS_IN_COUNTY]->
-	(county:County) 
+MATCH  (city:City) -[relCounty:IS_IN_COUNTY]-> (county:County) 
 RETURN county.countyName, count(*) 
 ORDER BY count(*) DESC LIMIT 1
 
