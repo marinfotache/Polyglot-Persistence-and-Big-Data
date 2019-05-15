@@ -205,9 +205,27 @@ ORDER BY i.invoice_id
 //          Get the amount received (paid by the client) for each invoice  
 //               (result will include fully unpaid invoices)	
 
-// OPTIONAL is needed for including in the result all the invoices 
+// `OPTIONAL` is needed for including in the result all the invoices 
+MATCH  (i:Invoice)
+OPTIONAL MATCH (i)  <-[rel:ReceiptPaysInvoice]- (r:Receipt)
+RETURN i, sum(rel.amount) AS total_received
+ORDER BY i.invoice_id
 
-???
+
+
+//###################################################################################
+//          Get the total amount and the paid amount for each invoice 
+
+//
+MATCH  (i:Invoice) -[rel1:InvoiceDetails]-> (p:Product)
+WITH i, round(SUM(rel1.quantity * rel1.unit_price * 
+        	(1 + p.current_vat_percent/ 100))) AS amount_with_VAT
+WITH i, amount_with_VAT             
+OPTIONAL MATCH (i)  <-[rel2:ReceiptPaysInvoice]- (r:Receipt)
+RETURN i, amount_with_VAT,
+		sum(rel2.amount) AS total_received
+ORDER BY i.invoice_id
+
 
 
 //###################################################################################
@@ -232,8 +250,6 @@ RETURN *
 
 
 
-
-
 //###################################################################################
 //    Get, for each sales day, the invoices with highest and the lowest amount 
 
@@ -241,10 +257,6 @@ RETURN *
 //###################################################################################
 //                     Get the most frequently sold three products
 
-
-//###################################################################################
-//          Get the total amount and the paid amount for each invoice 
-//
     	
 //###################################################################################
 //      Which is the invoice with the greatest amount to be received 
