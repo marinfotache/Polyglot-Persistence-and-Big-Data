@@ -1,0 +1,43 @@
+/* ---------------------------------------------------------------*/
+/* Create the `movies` collection in a MongoDB database with the
+    same name, based of the file  `movies_2011-2018.json`
+The file is available at:
+https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/blob/master/02%20Document%20Databases.%20MongoDB/movies_2011-2018.json
+/* ---------------------------------------------------------------*/
+
+
+
+/* ---------------------------------------------------------------*/
+/* Task 1: Provide to following information using `find` command */
+/* ---------------------------------------------------------------*/
+
+/* extract all documents */
+
+/* extract movies released in 2018 */
+
+/* extract movies released between 2015 and 2018 */
+
+/* extract movies released after 2015 */
+
+/* extract all movies whose genre is `Comedy` */
+
+/* extract all movies whose genre is `Comedy` or `Romance` */
+
+/* extract all movies whose genre is (at least) both `Comedy` and `Romance` */
+
+/* extract all movies  with exactly five main actors in the cast */
+
+/* extract first three main actors for each movie*/
+
+
+
+/* ---------------------------------------------------------------*/
+/* Task 2:
+    Add two properties in each document of collection `movies`
+    - n_of_genres
+    - n_of_main_actors                                            */    
+/* ---------------------------------------------------------------*/
+    
+
+
+
