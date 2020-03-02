@@ -32,7 +32,7 @@ db.books.insert({
         { user : "Marin Fotache", text : "Good!",
              votes : 4}       ],
    tags : [ "databases", "cloud computing", "virtualization", "vmware", "hyper-v" ]              
-    })
+    }) ;
 
 /* second book */
 db.books.insert({
@@ -117,8 +117,6 @@ db.books.find() ;
 
 // Basic solution based on "find"...
 db.books.find({"authors" : "Valerica Greavu-Serban" }) ;
-// ... the first AF solution...
-db.runCommand({ aggregate : "books", pipeline : [ { $match : { authors : "Valerica Greavu-Serban" } } ]}); 
 // ...and another one based on another AF syntax:
 db.books.aggregate( [
 	{ $match: { authors : "Valerica Greavu-Serban" }},            
@@ -128,9 +126,6 @@ db.books.aggregate( [
 //-- For displaying only the title for the books (co)written by "Valerica Greavu-Serban"... 
 db.books.find({"authors" : "Valerica Greavu-Serban" }, { "title" : 1, "_id" : 0 } ) ;
 // ...we can use an AF query
-db.runCommand({ aggregate : "books", pipeline : [ { $match : { authors : "Valerica Greavu-Serban" } }, 
-	{ $project : { _id : 0, title : 1 }} ]}); 
-//...or
 db.books.aggregate( [
     { $match: { authors : "Valerica Greavu-Serban" }}, 
 	{ $project : { _id : 0, title : 1 }} ,
@@ -155,6 +150,17 @@ db.books.aggregate( [
 	{ $sort : { _id : 1 } } ] ) ;
 
 
+?????
+db.books.aggregate( [
+	{ $group : { _id: {"publisher" :  $toUpper:"$publisher"} } },
+	{ $project : { _id:1 } },
+	{ $sort : { _id : 1 } } ] ) ;
+
+db.books.aggregate( 
+    { $match: { authors : "Valerica Greavu-Serban" }}, 
+    { $group: { _id: {"author: Valerica Greavu-Serban" : null},
+               n_of_books: { $sum: 1 } }} ) ;
+  
         
 //===============================================================================
 //--	                        Basic agggregation
@@ -167,7 +173,14 @@ db.books.aggregate( [
 db.books.aggregate( [
    { $group: { _id: null,
                n_of_books: { $sum : 1 } } }
+     ])
+
+
+//-- A simpler solution, based on $count
+db.books.aggregate( [
+   { $count: "title"}
 		] ) ;
+   
 // ...or
 db.runCommand({ aggregate : "books", 
 	pipeline : [  
@@ -204,7 +217,7 @@ db.books.aggregate(
      {$project : { n_of_books:1,  _id: 0} }          
      ) ;
                 
-                
+          
 //-- How many books have an associated URL?
 db.books.find( { url : {$exists : 1 } }) ;
 
@@ -227,12 +240,32 @@ db.books.aggregate(
    	{ $group: { _id: {n_of_books_with_associated_url: null},
                n_of_books: { $sum: 1 } }} ) ;          
 
-               
-               
+
+
+//==========================================================
+//--                    COUNT DISTINCT         
+
+//-- How many publishers are there in the database/collection?
+
+// -- 1st solution
+db.books.aggregate( [
+    { $group : { _id : "$publisher"}},
+    { $count: "n_of_publishers"}
+    ])   
+         
+
+// -- 2nd solution
+db.books.aggregate( [
+    { $group : { _id : "$publisher"}},
+    { $group: { _id: null, n_of_publishers : { $sum : 1} } },
+    { $project : {_id : 0}}
+    ])   
+
+
                
 //==========================================================
 //--            Using $group for "proper" aggregation   
-//--					(as GROUP BY in SQL)      
+//--		     (like GROUP BY in SQL)      
 
 //--    Display number of books for each publisher
 db.books.aggregate( 
@@ -254,9 +287,9 @@ db.books.aggregate(
                n_of_books: { $sum: 1 } }} ) ; 
 
 //... or, for a better look...
-db.books.aggregate(
+db.books.aggregate([
    { $group: { _id: { "Cost <= 30 RON (0=Yes, 1=No) " : {$cond: [ { $lte: [ "$price", 30 ] }, 0, 1 ]}}, 
-               n_of_books: { $sum: 1 } }} ) ; 
+               n_of_books: { $sum: 1 } }} ]) ; 
 
                
 //--    Display how many books have an associated URL and how many haven't an URL 
@@ -450,5 +483,5 @@ db.books.find()
 /* for additional examples of using Aggregation Framework ( "$out" and 
   "$lookup" operators, different functions for dealing with numbers, strings ans dates), and also
 	examples that deal with  "normalized" collections -
-	see script "04-06_MongoDB - Case study - Sales.js"       */
+	see script "02-05_MongoDB - Case study - Sales.js"       */
 
