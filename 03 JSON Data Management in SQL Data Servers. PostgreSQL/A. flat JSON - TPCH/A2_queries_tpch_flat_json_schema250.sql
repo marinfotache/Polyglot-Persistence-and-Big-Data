@@ -5,27 +5,48 @@
 -- population
 
 
-
 ----------------------------------------------------------
--- extract all content of a table containing only a JSON attribute
+-- Extract all content of a table containing only a JSON attribute
+--
 SELECT *
 FROM sf_0_01__schema_250__flat_JSON.nation ;
 
+SELECT *
+FROM sf_0_01__schema_250__flat_JSON.region ;
+
+SELECT *
+FROM sf_0_01__schema_250__flat_JSON.part ;
+
+SELECT *
+FROM sf_0_01__schema_250__flat_JSON.partsupp ;
+
+SELECT *
+FROM sf_0_01__schema_250__flat_JSON.lineitem ;
+
+SELECT *
+FROM sf_0_01__schema_250__flat_JSON.lineitem_orders_customer ;
+
+SELECT *
+FROM sf_0_01__schema_250__flat_JSON.partsupp_supplier_nation ;
+
+
 
 ----------------------------------------------------------
--- check the table structure in the original (normalized) TPC-H schema
+-- Check the table structure in the original (normalized) TPC-H schema
 select * from nation
 
+-- ...
+
 
 ----------------------------------------------------------
--- extract JSON (sub)attributes as text
+-- Extract JSON (sub)attributes as text
 SELECT *,
 	nation ->> 'n_nationkey' AS n_nationkey,  -- the data type is text here!
 	nation ->> 'n_name' AS n_name
 FROM sf_0_01__schema_250__flat_JSON.nation ;
 
 ----------------------------------------------------------
--- cast needed for preserving the data type
+-- ...Cast is needed for preserving the original data type
 SELECT *,
 	cast (nation ->> 'n_nationkey' as integer) AS n_nationkey,  -- the data type is ok now
 	nation ->> 'n_name' AS n_name
@@ -33,11 +54,35 @@ FROM sf_0_01__schema_250__flat_JSON.nation ;
 
 
 ----------------------------------------------------------
--- get, as a tabular result, the nations whose names starts with `R`
+-- Get, in a tabular format, the nations whose names starts with `R`
 SELECT  cast (nation ->> 'n_nationkey' as integer) AS n_nationkey,
 	nation ->> 'n_name' AS n_name
 FROM sf_0_01__schema_250__flat_JSON.nation
 WHERE (nation ->> 'n_name') LIKE 'R%' ;
+
+
+
+----------------------------------------------------------
+-- Display each supplier's nation
+
+-- sol. 1 - DISTINCT
+SELECT DISTINCT
+	partsupp_supplier_nation ->> 's_name' AS s_name,
+	partsupp_supplier_nation ->> 'n_name' AS n_name
+FROM sf_0_01__schema_250__flat_JSON.partsupp_supplier_nation
+ORDER BY 1
+
+
+-- sol. 2 - GROUP BY
+SELECT
+	partsupp_supplier_nation ->> 's_name' AS s_name,
+	partsupp_supplier_nation ->> 'n_name' AS n_name
+FROM sf_0_01__schema_250__flat_JSON.partsupp_supplier_nation
+GROUP BY 1, 2
+ORDER BY 1
+
+
+
 
 
 ----------------------------------------------------------
