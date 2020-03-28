@@ -5,10 +5,25 @@
 -- table (normalized or denormalized) containts a single
 -- JSON attribute
 ----------------------------------------------------------
+-- for details about TPC-H benchmark - see the pdf file:
+https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/blob/master/03%20JSON%20Data%20Management%20in%20SQL%20Data%20Servers.%20PostgreSQL/A.%20flat%20JSON%20-%20TPCH/tpc-h_v2.18.0.pdf
 
--- 
+
+----------------------------------------------------------
+
+-- Step. 1: download the backup file for TPC-H schema (sf 0.01):
+https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/blob/master/03%20JSON%20Data%20Management%20in%20SQL%20Data%20Servers.%20PostgreSQL/A.%20flat%20JSON%20-%20TPCH/tpch0_01.backup
 
 
+-- Step. 2: on your laptop, create a PostgreSQL database called `tpch0_01`
+
+
+-- Step. 3: Get the db content from the backup file (downloaded in step 1) using
+--    `Restore` option in PgAdmin 4
+
+
+-- Step 4. Set `tpch0_01` as the current database; open the `Query tool...`
+-- Copy the commands below into the pgAdmin Query Tool anl lauch them:
 
  DROP SCHEMA IF EXISTS sf_0_01__schema_250__flat_JSON CASCADE ;
  CREATE SCHEMA sf_0_01__schema_250__flat_JSON;
@@ -58,59 +73,3 @@ CREATE INDEX idx__region__json ON sf_0_01__schema_250__flat_JSON.region USING GI
 
 -- ALTER TABLE ... ADD CONSTRAINT ... FOREIGN KEY ... REFERENCES ... (...)
 -- NO FOREIGN KEYS AMONG JSON attributes!
-
-
-__________________________________________________________________
--- extract all content of a table containing only a JSON attribute
-SELECT *
-FROM sf_0_01__schema_250__flat_JSON.nation ;
-
-
-__________________________________________________________________
--- check the table structure in the original (normalized) TPC-H schema
-select * from nation
-
-
-__________________________________________________________________
--- extract JSON (sub)attributes as text
-SELECT *,
-	nation ->> 'n_nationkey' AS n_nationkey,  -- the data type is text here!
-	nation ->> 'n_name' AS n_name
-FROM sf_0_01__schema_250__flat_JSON.nation ;
-
-__________________________________________________________________
--- cast needed for preserving the data type
-SELECT *,
-	cast (nation ->> 'n_nationkey' as integer) AS n_nationkey,  -- the data type is ok now
-	nation ->> 'n_name' AS n_name
-FROM sf_0_01__schema_250__flat_JSON.nation ;
-
-
-__________________________________________________________________
--- get, as a tabular result, the nations whose names starts with `R`
-SELECT  cast (nation ->> 'n_nationkey' as integer) AS n_nationkey,
-	nation ->> 'n_name' AS n_name
-FROM sf_0_01__schema_250__flat_JSON.nation
-WHERE (nation ->> 'n_name') LIKE 'R%' ;
-
-
-__________________________________________________________________
--- table join by JSON (sub)attributes
---
--- get the name of its region for each country - sol. 1
-SELECT  cast (nation ->> 'n_nationkey' as integer) AS n_nationkey,
-	nation ->> 'n_name' AS n_name,
-	region ->> 'r_name' AS r_name
-FROM sf_0_01__schema_250__flat_JSON.nation
-	INNER JOIN sf_0_01__schema_250__flat_JSON.region
-		ON (nation ->> 'n_regionkey') = (region ->> 'r_regionkey') ;
-
---
--- get the name of its region for each country - sol. 2
-SELECT  cast (nation ->> 'n_nationkey' as integer) AS n_nationkey,
-	nation ->> 'n_name' AS n_name,
-	region ->> 'r_name' AS r_name
-FROM sf_0_01__schema_250__flat_JSON.nation
-	INNER JOIN sf_0_01__schema_250__flat_JSON.region
-		ON cast(nation ->> 'n_regionkey' as integer) =
-			cast (region ->> 'r_regionkey' as integer) ;
