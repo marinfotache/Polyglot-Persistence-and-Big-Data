@@ -32,6 +32,16 @@ https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/blob/master/03
 -- path3: lineitem-partsupp_supplier_nation-region
 
 
+
+--      Schema tables are:
+--     lineitem_orders_customer
+--     nation
+--     region
+--     lineitem
+--     partsupp
+--     part
+--     partsupp_supplier_nation
+
 CREATE TABLE sf_0_01__schema_250__flat_JSON.lineitem_orders_customer AS
 SELECT to_jsonb(x) AS  lineitem_orders_customer  FROM ( SELECT * FROM  lineitem INNER JOIN orders ON lineitem.l_orderkey = orders.o_orderkey INNER JOIN customer ON orders.o_custkey = customer.c_custkey ) x ;
 
