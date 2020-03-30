@@ -107,45 +107,45 @@ FROM sf_0_01__schema_250__flat_JSON.nation
 			cast (region ->> 'r_regionkey' as integer) ;
 
 
-			SELECT count(*) FROM sf_0_01__schema_250__flat_JSON.lineitem_orders_customer
+--
 
-			SELECT count(*) FROM sf_0_01__schema_250__flat_JSON.partsupp_supplier_nation
+SELECT count(*) FROM sf_0_01__schema_250__flat_JSON.lineitem_orders_customer
 
-			------------------------------------------------------
-			-- 		get the geografical region of each supplier
-			------------------------------------------------------
+SELECT count(*) FROM sf_0_01__schema_250__flat_JSON.partsupp_supplier_nation
+
+------------------------------------------------------
+-- 		get the geografical region of each supplier
+------------------------------------------------------
 
 
-			-- 1. in the original fully normalized TPCH schema the solution was:
-			select * from region
-			select * from nation
-			select * from supplier
+-- 1. in the original fully normalized TPCH schema the solution was:
+select * from region
+select * from nation
+select * from supplier
 
-			select s_name, n_name, r_name
-			from supplier
+select s_name, n_name, r_name
+from supplier
 				inner join nation on supplier.s_nationkey = nation.n_nationkey
 				inner join region on nation.n_regionkey = region.r_regionkey
-			order by 1
+order by 1
 
 
 
-			-- 2 in our schema, the tables are different, so:
-			select * from sf_0_01__schema_250__flat_JSON.partsupp_supplier_nation ;
-			select * from sf_0_01__schema_250__flat_JSON.region ;
+-- 2 in our schema, the tables are different, so:
+select * from sf_0_01__schema_250__flat_JSON.partsupp_supplier_nation ;
+select * from sf_0_01__schema_250__flat_JSON.region ;
 
-
-
-			select distinct
+select distinct
 				partsupp_supplier_nation ->> 's_name' as supplier_name,
 				partsupp_supplier_nation ->> 'n_name' as country_name,
 				region ->> 'r_name' as region_name
-			from sf_0_01__schema_250__flat_JSON.partsupp_supplier_nation
+from sf_0_01__schema_250__flat_JSON.partsupp_supplier_nation
 				inner join sf_0_01__schema_250__flat_JSON.region
 				on partsupp_supplier_nation ->> 'n_regionkey' = region ->> 'r_regionkey'
-			order by 1
+order by 1
 
 
 
-			------------------------------------------------------
-			-- 		get the geografical region of each customer
-			------------------------------------------------------
+------------------------------------------------------
+-- 		get the geografical region of each customer
+------------------------------------------------------
