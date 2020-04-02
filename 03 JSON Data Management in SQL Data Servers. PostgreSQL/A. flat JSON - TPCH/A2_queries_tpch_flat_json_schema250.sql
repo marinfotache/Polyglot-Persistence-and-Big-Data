@@ -149,3 +149,14 @@ order by 1
 ------------------------------------------------------
 -- 		get the geografical region of each customer
 ------------------------------------------------------
+
+-- to do during lab
+
+
+
+--------------------------------------------------------------
+-- 		display for each part, in how many geografical regions
+--    it was sold
+--------------------------------------------------------------
+
+-- to do during lab
