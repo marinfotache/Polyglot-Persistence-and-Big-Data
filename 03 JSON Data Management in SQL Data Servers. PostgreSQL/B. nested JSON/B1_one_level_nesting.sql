@@ -78,7 +78,8 @@ SELECT cast (info ->> 'orderid' as integer) AS orderid,
 FROM orders;
 
 
--- display all the orders of customer 'Josh William'
+------------------------------------------------------------------
+--      display all the orders of customer 'Josh William'
 SELECT info ->> 'orderid' AS orderid,
 	info ->> 'orderdate' AS orderdate,
 	info ->> 'customer' AS customer,
@@ -87,6 +88,8 @@ FROM orders
 WHERE info ->> 'customer' = 'Josh William';
 
 
+
+------------------------------------------------------------------
 -- display all the orders issued on April 01, 2018
 SELECT cast (info ->> 'orderid' as integer) AS orderid,
 	cast (info ->> 'orderdate' as date) AS orderdate,
@@ -114,7 +117,7 @@ SELECT info ->> 'items' AS items
 FROM orders;
 
 
---
+------------------------------------------------------------------
 -- display only the first element in array `items`
 -- for each table row
 SELECT cast (info ->> 'orderid' as integer) AS orderid,
@@ -125,7 +128,7 @@ SELECT cast (info ->> 'orderid' as integer) AS orderid,
 FROM orders;
 
 
---
+-------------------------------------------------------------------------
 -- extract (the scalar) attribute `product` of the first element in array
 --  `items` for each table row (along with other table attributes (for a
 -- better display))
@@ -175,9 +178,10 @@ SELECT cast (info ->> 'orderid' as integer) AS orderid,
 FROM orders;
 
 
---
--- display as a recordset all order lines; for each line, product name (`product`)
+------------------------------------------------------------------
+-- display as a recordset all order lines; for each line, extract product name (`product`)
 -- and sold quantity
+
 SELECT id, info,
 	cast (info ->> 'orderid' as integer) AS orderid,
 	cast (info ->> 'orderdate' as date) AS orderdate,
@@ -188,7 +192,7 @@ SELECT id, info,
 FROM orders;
 
 
---
+------------------------------------------------------------------
 -- extract all products bought by customer 'Lily Bush'
 
 -- ... the simplest solution
@@ -209,7 +213,7 @@ FROM flattened
 ORDER BY 1
 
 
---
+-------------------------------------------------------------------------------------------
 -- Extract all customers and orders when more than 31 units of product `Toy Car` were sold
 
 -- ... next solution DOES NOT WORK! (error message: `set-returning functions are not allowed in WHERE`)
@@ -237,9 +241,9 @@ FROM flattened
 WHERE product_name = 'Toy Car' AND quantity > 31
 
 
---
+----------------------------------------------------------------------------
 -- display the product(s) with the largest number of units sold
--- ... solution based on a Common Table Expression
+-- ... solution based on a Common Table Expression and `jsonb_array_elements`
 WITH
 flattened AS (
 	SELECT
@@ -287,17 +291,127 @@ FROM orders,
 
 
 
--------------------------------------------------------------------------------------
---                  some more advanced stuff
--------------------------------------------------------------------------------------
+------------------------------------------------------------------
+-- Extract all products bought by customer 'Lily Bush'
 
--- adapted from a solution presented on:
--- https://stackoverflow.com/questions/51045754/unnesting-a-list-of-json-objects-in-postgresql
-SELECT id, info, info -> 'customer' as customer, y.key, y.value, x.record_number
+--
+-- solution with `jsonb_to_recordset`
+
+SELECT DISTINCT product AS product_name
+FROM
+  	(SELECT *
+  	 FROM orders
+  	 WHERE info ->> 'customer' = 'Lily Bush') lily,
+    	jsonb_to_recordset(info -> 'items') as (product varchar, qty numeric )
+ORDER BY 1
+
+
+-------------------------------------------------------------------------------------------
+-- Extract all customers and orders when more than 31 units of product `Toy Car` were sold
+
+-- ... solution based on `jsonb_to_recordset` and CTE
+
+WITH flattened AS (
+	SELECT orderid, orderdate, customer, product, qty
+	FROM
+		(SELECT
+			cast (info ->> 'orderid' as integer) AS orderid,
+			cast (info ->> 'orderdate' as date) AS orderdate,
+			info ->> 'customer' AS customer,
+	 		info -> 'items' AS items
+	 	FROM orders) x,
+  		jsonb_to_recordset(items) as (product varchar, qty numeric )
+				)
+SELECT *
+FROM flattened
+WHERE product = 'Toy Car' AND qty > 31
+
+ORDER BY 1
+
+
+----------------------------------------------------------------------------
+-- display the product(s) with the largest number of units sold
+-- ... solution based on  `jsonb_to_recordset`
+
+-- to do!!!
+
+
+
+
+------------------------------------------------------------------
+--      optiunile LATERAL (JOIN) ... WITH ORDINALITY
+------------------------------------------------------------------
+
+SELECT id, info,
+	cast (info ->> 'orderid' as integer) AS orderid,
+	cast (info ->> 'orderdate' as date) AS orderdate,
+	info ->> 'customer' AS customer,
+	*
 FROM orders
    , lateral jsonb_array_elements(info -> 'items') WITH ORDINALITY AS x (val, record_number)
-   , lateral jsonb_each_text(x.val) y
 
+
+-- optiunile LATERAL (JOIN) ... WITH ORDINALITY si `jsonb_each_text`
+-- adapted from a solution presented on:
+-- https://stackoverflow.com/questions/51045754/unnesting-a-list-of-json-objects-in-postgresql
+
+SELECT id, info,
+	cast (info ->> 'orderid' as integer) AS orderid,
+	cast (info ->> 'orderdate' as date) AS orderdate,
+	info ->> 'customer' AS customer,
+	*
+FROM orders
+   	  , lateral jsonb_array_elements(info -> 'items') WITH ORDINALITY AS x (val, record_number)
+	   , lateral jsonb_each_text(x.val) y
+
+
+
+-------------------------------------------------------------------------------------------
+-- Extract all customers and orders when more than 31 units of product `Toy Car` were sold
+--
+-- solution with `lateral.... with ordinality...`
+
+SELECT
+	cast (info ->> 'orderid' as integer) AS orderid,
+	cast (info ->> 'orderdate' as date) AS orderdate,
+	info ->> 'customer' AS customer,
+	*
+FROM orders
+   	, lateral jsonb_array_elements(info -> 'items') WITH ORDINALITY AS x (val, record_number)
+WHERE val ->> 'product' = 'Toy Car' AND
+	 cast (val ->> 'qty' as numeric) > 31
+
+
+
+-- solution using `LATERAL (JOIN) ... WITH ORDINALITY` si `jsonb_each_text`
+WITH temp AS (
+   	SELECT
+   		cast (info ->> 'orderid' as integer) AS orderid,
+   		cast (info ->> 'orderdate' as date) AS orderdate,
+   		info ->> 'customer' AS customer,
+   		*
+   	FROM orders
+      		, lateral jsonb_array_elements(info -> 'items') WITH ORDINALITY AS x (val, record_number)
+   		, lateral jsonb_each_text(x.val) y
+   		)
+SELECT *
+FROM temp
+WHERE orderid || '-'|| record_number IN (
+   	SELECT orderid || '-' ||record_number
+       FROM temp
+   	WHERE key = 'product' AND value = 'Toy Car'
+   	INTERSECT
+   	SELECT orderid || '-' || record_number
+       FROM temp
+   	WHERE key = 'qty' AND cast (value as numeric) > 31
+   	)
+
+
+
+
+-------------------------------------------------------------------------------------
+--                  combine `jsonb_array_elements` with `jsonb_each`
+-------------------------------------------------------------------------------------
 
 -- adapted from a solution presented on:
 -- https://stackoverflow.com/questions/45807712/postgresql-aggregate-json-recordset-keys-by-row
@@ -308,3 +422,19 @@ FROM (
        (jsonb_each(jsonb_array_elements(info ->'items'))).value::text as v
  			FROM orders
 	) AS json_data
+
+
+
+-------------------------------------------------------------------------------------
+--                    Exercises (to do as lab activities):
+-------------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------------
+--                    Display the number of items bought by each customer
+
+-------------------------------------------------------------------------------------
+--      Display the common of items bought by customers `Lily Bush` and `Mary Clark`
+
+
+-------------------------------------------------------------------------------------
+--         Display the customer who bought the largest number of product units
