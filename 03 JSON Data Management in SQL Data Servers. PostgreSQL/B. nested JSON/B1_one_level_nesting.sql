@@ -365,6 +365,18 @@ FROM orders
 	   , lateral jsonb_each_text(x.val) y
 
 
+--
+-- `LEFT JOIN LATERAL...` notation
+SELECT id, info,
+	cast (info ->> 'orderid' as integer) AS orderid,
+	cast (info ->> 'orderdate' as date) AS orderdate,
+	info ->> 'customer' AS customer,
+	*
+FROM orders
+   LEFT JOIN LATERAL jsonb_array_elements(info -> 'items')
+   		WITH ORDINALITY AS x (val, record_number) ON true
+
+
 
 -------------------------------------------------------------------------------------------
 -- Extract all customers and orders when more than 31 units of product `Toy Car` were sold
