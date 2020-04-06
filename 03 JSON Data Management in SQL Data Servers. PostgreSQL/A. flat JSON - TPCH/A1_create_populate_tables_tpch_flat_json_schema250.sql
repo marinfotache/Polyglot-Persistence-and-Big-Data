@@ -43,7 +43,10 @@ https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/blob/master/03
 --     partsupp_supplier_nation
 
 CREATE TABLE sf_0_01__schema_250__flat_JSON.lineitem_orders_customer AS
-SELECT to_jsonb(x) AS  lineitem_orders_customer  FROM ( SELECT * FROM  lineitem INNER JOIN orders ON lineitem.l_orderkey = orders.o_orderkey INNER JOIN customer ON orders.o_custkey = customer.c_custkey ) x ;
+SELECT jsonb_strip_nulls(to_jsonb(x)) AS  lineitem_orders_customer  
+FROM ( SELECT * FROM  lineitem
+  INNER JOIN orders ON lineitem.l_orderkey = orders.o_orderkey
+  INNER JOIN customer ON orders.o_custkey = customer.c_custkey ) x ;
 
 CREATE TABLE sf_0_01__schema_250__flat_JSON.nation AS
 SELECT to_jsonb(x) AS  nation  FROM ( SELECT * FROM  nation ) x ;
