@@ -364,8 +364,6 @@ FROM units_sold
 
 
 -- solution with LATERAL JOIN
-
--- solution with LATERAL JOIN
 SELECT
 		items ->> 'product'  AS product_name,
 		SUM (cast (items ->> 'qty' as numeric)) AS prod_units_sold

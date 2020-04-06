@@ -443,9 +443,24 @@ FROM (
 
 -------------------------------------------------------------------------------------
 --                    Display the number of items bought by each customer
+-------------------------------------------------------------------------------------
+--               Display the number of items bought by each customer
+WITH temp AS (
+	SELECT DISTINCT
+		info ->> 'customer' as customer_name,
+		item ->> 'product' as product_name
+	FROM orders
+   	LEFT JOIN LATERAL jsonb_array_elements(info -> 'items')
+   			WITH ORDINALITY AS x (item, record_number) ON true
+	)
+SELECT customer_name, COUNT(*) AS n_of_products
+FROM temp
+GROUP BY customer_name
+
 
 -------------------------------------------------------------------------------------
---      Display the common of items bought by customers `Lily Bush` and `Mary Clark`
+--    Display the common items bought by both customers `Lily Bush` and `Mary Clark`
+
 
 
 -------------------------------------------------------------------------------------
