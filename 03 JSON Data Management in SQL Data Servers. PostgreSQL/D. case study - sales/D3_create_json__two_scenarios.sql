@@ -199,7 +199,7 @@ DROP TABLE IF EXISTS new_contacts ;
 -- `products__JSON_NESTED` is similar to `products__JSON_FLAT`
 DROP TABLE IF EXISTS products__JSON_NESTED ;
 CREATE TABLE products__JSON_NESTED AS
-	SELECT row_number() over () AS id, to_jsonb(x) AS json_data
+	SELECT row_number() over () AS id, jsonb_strip_nulls(to_jsonb(x)) AS json_data
 	FROM products x ;
 ALTER TABLE products__JSON_NESTED ADD PRIMARY KEY (id) ;
 
@@ -214,7 +214,7 @@ ALTER TABLE products__JSON_NESTED ADD PRIMARY KEY (id) ;
 DROP TABLE IF EXISTS new_invoice_details ;
 CREATE TABLE new_invoice_details AS
 	SELECT invoiceno, invoicerownumber,
-		to_jsonb(products) AS product,
+		jsonb_strip_nulls(to_jsonb(products)) AS product,
 		quantity, unitprice
 	FROM invoice_details NATURAL JOIN products ;
 
@@ -225,10 +225,10 @@ SELECT * FROM new_invoice_details ;
 -- now, we'll nest all lines of each invoice
 DROP TABLE IF EXISTS invoices__JSON_NESTED ;
 CREATE TABLE invoices__JSON_NESTED AS
-	SELECT row_number() OVER () AS id, to_jsonb(x) AS json_data
+	SELECT row_number() OVER () AS id, jsonb_strip_nulls(to_jsonb(x)) AS json_data
 	FROM (
 		SELECT invoices.*,
-			(SELECT to_jsonb(array_agg(to_jsonb(y)))     -- notice `to_jsonb(array_agg(to_jsonb(y)))`
+			(SELECT jsonb_strip_nulls(to_jsonb(array_agg(to_jsonb(y))))     -- notice `to_jsonb(array_agg(to_jsonb(y)))`
 			FROM (
 				SELECT invoicerownumber, product, quantity, unitprice
 				FROM new_invoice_details
@@ -253,10 +253,10 @@ SELECT * FROM receipt_details ;
 
 DROP TABLE IF EXISTS receipts__JSON_NESTED ;
 CREATE TABLE receipts__JSON_NESTED AS
-	SELECT row_number() OVER () AS id, to_jsonb(x) AS json_data
+	SELECT row_number() OVER () AS id, jsonb_strip_nulls(to_jsonb(x)) AS json_data
 	FROM (
 		SELECT receipts.*,
-			(SELECT to_jsonb(array_agg(to_jsonb(y)))     -- notice `to_jsonb(array_agg(to_jsonb(y)))`
+			(SELECT jsonb_strip_nulls(to_jsonb(array_agg(to_jsonb(y))))     -- notice `to_jsonb(array_agg(to_jsonb(y)))`
 			FROM (
 				SELECT invoiceno, amount
 				FROM receipt_details
