@@ -193,16 +193,21 @@ FROM receipts__JSON_NESTED
 -- 						Display sales on each product
 
 -- solution with `LATERAL JOIN`
-SELECT
-	invoice_line -> 'product' ->> 'productname' AS product_name,
-	CAST (invoice_line ->> 'quantity' AS numeric) AS quantity,
-	CAST (invoice_line ->> 'unitprice' AS numeric) AS unit_price,
-	CAST (invoice_line ->> 'quantity' AS numeric) *
-		CAST (invoice_line ->> 'unitprice' AS numeric) AS sales_without_vat,
-	CAST (invoice_line -> 'product' ->> 'vatpercent' AS numeric) AS vat_percent,
-	CAST (invoice_line ->> 'quantity' AS numeric) *
-		CAST (invoice_line ->> 'unitprice' AS numeric) *
-		CAST (invoice_line -> 'product' ->> 'vatpercent' AS numeric) AS sales
-FROM invoices__JSON_NESTED
-   LEFT JOIN LATERAL jsonb_array_elements(json_data -> 'invoice_details')
+with temp as (
+	select
+		invoice_line -> 'product' ->> 'productname' as product_name,
+		cast (invoice_line ->> 'quantity' as numeric) as quantity,
+		cast (invoice_line ->> 'unitprice' as numeric) as unit_price,
+		cast (invoice_line -> 'product' ->> 'vatpercent'  as numeric) as vat_percent
+	from invoices__JSON_NESTED
+   	LEFT JOIN LATERAL jsonb_array_elements(json_data -> 'invoice_details')
    		WITH ORDINALITY AS x (invoice_line, record_number) ON true
+		)
+select product_name, sum(quantity * unit_price * (1 + vat_percent)) as prod_sales
+from temp
+group by product_name
+order by 1
+
+
+-------------------------------------------------------------------------
+-- 						Display top 3 counties for the sales amount
