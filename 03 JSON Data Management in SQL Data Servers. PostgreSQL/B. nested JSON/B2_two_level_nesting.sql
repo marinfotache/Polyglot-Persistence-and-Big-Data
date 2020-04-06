@@ -178,7 +178,7 @@ SELECT
 	cast (jsonb_array_elements(info -> 'orders')->> 'orderid' as integer) as orderid,
 	cast(jsonb_array_elements(info -> 'orders')->> 'orderdate' as date) as orderdate,
 	jsonb_array_elements(info -> 'orders')->> 'items' as order_items,
-    json_array_length((info -> 'orders')::JSON) n_of_customer_orders
+  json_array_length((info -> 'orders')::JSON) n_of_customer_orders
 FROM orders2;
 
 -- with LATERAL JOIN
@@ -207,7 +207,7 @@ SELECT
 	cast (jsonb_array_elements(info -> 'orders')->> 'orderid' as integer) as orderid,
 	cast(jsonb_array_elements(info -> 'orders')->> 'orderdate' as date) as orderdate,
 	jsonb_array_elements(info -> 'orders')->> 'items' as order_items,
-  	json_array_length((jsonb_array_elements(info -> 'orders')->> 'items')::JSON) n_of_order_items
+  json_array_length((jsonb_array_elements(info -> 'orders')->> 'items')::JSON) n_of_order_items
 FROM orders2;
 
 
@@ -375,4 +375,12 @@ FROM orders2
    LEFT JOIN LATERAL jsonb_array_elements(x.customer_order -> 'items')
    		WITH ORDINALITY AS y (items, record_number) ON true
 GROUP BY items ->> 'product'
-		
+
+
+
+
+-------------------------------------------------------------------------------------
+--      Display the top of the customers by the total number of units of
+--                              purchased products
+
+-- to do (by students) during the classes
