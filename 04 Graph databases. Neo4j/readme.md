@@ -6,12 +6,23 @@ https://www.youtube.com/watch?v=GM9bB4ytGao
 Introduction to Neo4j (2018; 36:01)
 https://www.youtube.com/watch?v=w64Z419MDIk&t=1413s
 
-Introduction to Neo4j and Graph Databases (2019 (2016), 1:56:54)
+Introduction to Neo4j and Graph Databases (2019 (2016); 1:56:54)
 https://www.youtube.com/watch?v=oRtVdXvtD3o&t=3226s
+
 
 
 II. Neoj4 installation and basic operations with Neo4j Desktop
 
-Getting Started with Neo4j Desktop 1.2.7 on Windows (2020, 10:45)
+Getting Started with Neo4j Desktop 1.2.7 on Windows (2020; 10:45)
 https://www.youtube.com/watch?v=RSbhmVF_ccs&t=30s
+
+Getting Started with Neo4j Desktop 1.2.6 on OS X (2020; 9:14)
+https://www.youtube.com/watch?v=cTZ_Z3KfLyE&t=198s
+
+GettingStartedBrowser4.0 (2020; 15:26)
+https://www.youtube.com/watch?v=oHo-lQ79zf0&list=RDCMUCvze3hU6OZBkB1vkhH2lH9Q&index=11
+
+
+
+III.
 
