@@ -54,7 +54,6 @@ https://www.youtube.com/watch?v=-YPXFMjGtDc&feature=emb_logo
 IV.2 [Webinar] RBDMS to Graph (2017; 57:28)
 https://www.youtube.com/watch?v=zRYxJvjB0jQ&t=595s
 
-
-
-
+IV.3 Graph Data Modeling Tips & Tricks (2019; 41:53)
+https://www.youtube.com/watch?v=eAbPgyouAE4&t=2167s
 
