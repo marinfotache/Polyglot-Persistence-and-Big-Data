@@ -46,4 +46,13 @@ https://www.youtube.com/watch?v=3sgNbgRjZSU&t=238s
 
 
 
+IV. Graph database modeling. Converting relational database schemas to graph databases
+
+IV.1 Tips and Tricks for Graph Data Modeling (2016; 53:04)
+https://www.youtube.com/watch?v=-YPXFMjGtDc&feature=emb_logo
+
+
+
+
+
 
