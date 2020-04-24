@@ -51,6 +51,8 @@ IV. Graph database modeling. Converting relational database schemas to graph dat
 IV.1 Tips and Tricks for Graph Data Modeling (2016; 53:04)
 https://www.youtube.com/watch?v=-YPXFMjGtDc&feature=emb_logo
 
+IV.2 [Webinar] RBDMS to Graph (2017; 57:28)
+https://www.youtube.com/watch?v=zRYxJvjB0jQ&t=595s
 
 
 
