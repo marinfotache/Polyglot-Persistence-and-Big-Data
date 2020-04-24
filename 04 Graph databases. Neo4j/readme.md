@@ -19,7 +19,10 @@ https://www.youtube.com/watch?v=RSbhmVF_ccs&t=30s
 II.1b Getting Started with Neo4j Desktop 1.2.6 on OS X (2020; 9:14)
 https://www.youtube.com/watch?v=cTZ_Z3KfLyE&t=198s
 
-II.2 GettingStartedBrowser4.0 (2020; 15:26)
+II.2 Improving your Developer Experience with Neo4j Graph Apps (2020; 11:14)
+https://www.youtube.com/watch?v=LcIP86vjNps
+
+II.3 GettingStartedBrowser4.0 (2020; 15:26)
 https://www.youtube.com/watch?v=oHo-lQ79zf0&list=RDCMUCvze3hU6OZBkB1vkhH2lH9Q&index=11
 
 
