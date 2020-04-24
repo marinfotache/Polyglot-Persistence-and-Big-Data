@@ -24,5 +24,18 @@ https://www.youtube.com/watch?v=oHo-lQ79zf0&list=RDCMUCvze3hU6OZBkB1vkhH2lH9Q&in
 
 
 
-III.
+III. Database queries with Cypher
+
+III.1 Intro to Cypher (2017; 57:15)
+https://www.youtube.com/watch?v=pMjwgKqMzi8&list=RDCMUCvze3hU6OZBkB1vkhH2lH9Q&index=33
+
+III.2 Quickly create example graph data for Neo4j using form fields in a Browser Guide (2019; 11:13)
+https://www.youtube.com/watch?v=9ejX6JWky6o&t=495s
+
+
+
+
+
+
+
 
