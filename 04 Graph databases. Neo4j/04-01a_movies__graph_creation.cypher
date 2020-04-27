@@ -529,4 +529,4 @@ MATCH (a)-[:ACTED_IN]->(m)<-[:DIRECTED]-(d) RETURN a,m,d LIMIT 10;
 ////////////////////////     end of the script         //////////////////////////////
 
 // Next scripts  (04-01b_..., ...) contain examples of simple and (gradually) more
-// advanced Cypher queries on this graph database
+// advanced Cypher queries on this graph database.
