@@ -7,7 +7,7 @@
 //###								       Aggregate queries without grouping
 
 
-//# 	How many people are in the database ?
+//# 	How many people are in the database?
 MATCH (p:Person)
 RETURN COUNT(*) AS n_of_people
 
@@ -30,6 +30,13 @@ RETURN MIN(p.born)
 
 //# 	Display the oldest people in the database?
 
+// solution without aggregation (correct, but incomplete)
+MATCH (p:Person)
+RETURN p.name, p.born
+ORDER BY p.born
+LIMIT 1
+
+
 // first solution
 MATCH (p:Person)
 WITH MIN(p.born) AS first_year
@@ -42,6 +49,26 @@ WITH MIN(p.born) AS first_year
 MATCH (p2:Person)
 WHERE p2.born IN first_year
 RETURN p2
+
+
+
+//# 	Display the oldest and the youngest people in the database?
+
+// first solution
+MATCH (p:Person)
+WITH MIN(p.born) AS first_year, MAX(p.born) AS last_year
+MATCH (p2:Person)
+WHERE p2.born IN first_year OR p2.born IN last_year
+RETURN p2.name, p2.born
+
+// second solution
+MATCH (p:Person)
+WITH MIN(p.born) AS first_year, MAX(p.born) AS last_year
+WITH first_year, last_year
+MATCH (p:Person)
+WHERE p.born IN [first_year, last_year]
+RETURN p.name, p.born
+
 
 
 //# 	Display the people born in the first two years (of the years of

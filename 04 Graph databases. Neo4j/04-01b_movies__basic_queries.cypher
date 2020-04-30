@@ -59,6 +59,7 @@ LIMIT 7
 MATCH (x:Movie)
 WHERE x.released = 1986
 RETURN *
+
 //... another solution:
 MATCH (x:Movie {released : 1986})
 RETURN *
@@ -152,16 +153,22 @@ WHERE p.name =~ 'Lilly Wachowski'
 RETURN p.name, type(r), m.title
 
 
+//## Display the movie titles on which Tom Hanks was casted
+MATCH (p:Person {name : 'Tom Hanks'}) -[r:ACTED_IN]-> (m:Movie)
+RETURN m.title
+ORDER BY m.title
+
+
 //## 	Display all the movies in which 'Lilly Wachowski' contributed
 //  (no matter how - director, producer...)
 MATCH (p:Person) -[r]-> (m:Movie)
-WHERE p.name =~ 'Lilly Wachowski'
+WHERE p.name = 'Lilly Wachowski'
 RETURN p.name, type(r), m.title
 
 
 //## 	Display all types of contribution to the movies for 'Lilly Wachowski'
 MATCH (p:Person) -[r]-> (m:Movie)
-WHERE p.name =~ 'Lilly Wachowski'
+WHERE p.name = 'Lilly Wachowski'
 RETURN DISTINCT type(r)
 ORDER BY type(r)
 
@@ -261,7 +268,7 @@ RETURN keanu.name, movie_keanu.title
 
 //##              yet other solutions to intersection in Cypher
 
-//## Task: find movies Keanu Reevers played with Carrie-Anne Moss:
+//## Task: find movies Keanu Reeves played with Carrie-Anne Moss:
 MATCH (keanu:Person) -[r1:ACTED_IN]-> (m:Movie)
 WHERE keanu.name = 'Keanu Reeves'
 WITH m

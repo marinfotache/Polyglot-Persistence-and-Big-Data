@@ -25,7 +25,7 @@ CREATE (LillyW:Person {name:'Lilly Wachowski', born:1967})
 CREATE (LanaW:Person {name:'Lana Wachowski', born:1965})
 CREATE (JoelS:Person {name:'Joel Silver', born:1952})
 CREATE
-(Keanu)-[:ACTED_IN {roles:['Neo']}]->(TheMatrix),
+(Keanu) -[:ACTED_IN {roles:['Neo']}]-> (TheMatrix),
 (Carrie)-[:ACTED_IN {roles:['Trinity']}]->(TheMatrix),
 (Laurence)-[:ACTED_IN {roles:['Morpheus']}]->(TheMatrix),
 (Hugo)-[:ACTED_IN {roles:['Agent Smith']}]->(TheMatrix),
