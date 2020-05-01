@@ -12,14 +12,12 @@
 // 3. Create a database (Local Graph) called `transportation` (pay attention to the password)
 // 5. Start (make active) the database `transportation`
 // 6. Open the Neo4j Browser
-// 7. (in Neo4j Browser window) launch `:play movie-graph` command
-
 
 
 //##############################################################################
 // In order to create the nodes, relationships and constraints, please
 //  copy the entire content of this script and paste it into the
-//  Neo4j Browser window, and run it.
+//  Neo4j Browser window, then and run it.
 //##############################################################################
 
 
