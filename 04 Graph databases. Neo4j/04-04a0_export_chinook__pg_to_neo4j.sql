@@ -181,7 +181,7 @@ SELECT text FROM (
 
 	-- 14. Link `:Customer` nodes to `:Employee` nodes
 	SELECT 14 AS order_in_result,
-		'MATCH (c:Customer), (e:Employee) WHERE c.supportrepid = ' || customerid ||
+		'MATCH (c:Customer), (e:Employee) WHERE c.customerid = ' || customerid ||
 		' AND e.employeeid = ' || supportrepid || ' MERGE (c) -[:addressedForSupportTo]-> (e) ;'
 			AS text
 	FROM customer
@@ -212,9 +212,19 @@ SELECT text FROM (
 
 	UNION
 
-	-- 16. Link `:Invoice` nodes to `:Track` nodes through ':Contains' relationships
-	-- these relationships contain attributes taken from table `invoiceline`
+	-- 16. Link `:Invoice` nodes to `:Customer` nodes through ':wasBought' relationships
 	SELECT DISTINCT 16 AS order_in_result,
+		'MATCH (i:Invoice), (c:Customer) WHERE i.invoiceid = ' || invoiceid ||
+		' AND c.customerid = ' || customerid || ' MERGE (i) -[:wasBought]-> (c) ;'
+			AS text
+	FROM invoice
+	WHERE customerid IS NOT NULL
+
+	UNION
+
+	-- 17. Link `:Invoice` nodes to `:Track` nodes through ':Contains' relationships
+	-- these relationships contain attributes taken from table `invoiceline`
+	SELECT DISTINCT 17 AS order_in_result,
 		'MATCH (i:Invoice), (t:Track) WHERE i.invoiceid = ' || invoiceid ||
 		' AND t.trackid = ' || trackid || ' MERGE (i) -[:Contains {' ||
 		'invoicelineid:' || invoicelineid ||
