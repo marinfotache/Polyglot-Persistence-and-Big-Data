@@ -57,3 +57,14 @@ https://www.youtube.com/watch?v=zRYxJvjB0jQ&t=595s
 IV.3 Graph Data Modeling Tips & Tricks (2019; 41:53)
 https://www.youtube.com/watch?v=eAbPgyouAE4&t=2167s
 
+
+V. Lecture recordings (in Romanian)
+
+V.1 Neo4j Cypher Basic Queries (on `movie` dataset)
+https://transcripts.gotomeeting.com/#/s/88e0376251f18a93af1a88aa8e4de787f418b874e00bdf1b16745724140882c8
+
+V.2 Two case-studies of database migration from PostgreSQL to Neo4j (`sales` and `chinook`)
+https://transcripts.gotomeeting.com/#/s/68a3710903ea13a0a8b334f45286d4fc335b2edddae381ce416ec982346814cc
+
+
+
