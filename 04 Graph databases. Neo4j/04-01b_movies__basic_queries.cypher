@@ -2,6 +2,7 @@
 //### 													     Movies
 //###                This is a Neo4j Desktop built-in dataset
 //###################################################################################
+//### last update: 2020-05-04
 
 
 //#######################  		DB administration stuff		##################
@@ -225,10 +226,8 @@ RETURN *
 //## 	Display the actors who played in movies along with actors who, at their turn,
 // played in movies with Keanu Reeves
 
-MATCH (keanu:Person) -[r1:ACTED_IN]->
-  (m:Movie) <-[r2:ACTED_IN]- (keanu_colleague:Person)
-   -[r3:ACTED_IN]-> (m2:Movie)
-   <- [r4:ACTED_IN]- (colleague_of_keanu_colleagues:Person)
+MATCH (keanu:Person) -[r1:ACTED_IN]-> (m:Movie) <-[r2:ACTED_IN]- (keanu_colleague:Person)
+  -[r3:ACTED_IN]-> (m2:Movie) <- [r4:ACTED_IN]- (colleague_of_keanu_colleagues:Person)
 WHERE keanu.name = 'Keanu Reeves'
 RETURN keanu.name, m.title, keanu_colleague.name, m2.title, colleague_of_keanu_colleagues.name
 ORDER BY keanu.name, m.title, keanu_colleague.name, m2.title, colleague_of_keanu_colleagues.name

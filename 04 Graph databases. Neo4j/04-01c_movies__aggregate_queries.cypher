@@ -2,6 +2,7 @@
 //### 													     Movies
 //###                This is a Neo4j Desktop built-in dataset
 //###################################################################################
+//### last update: 2020-05-07
 
 //###################################################################################
 //###								       Aggregate queries without grouping
@@ -63,6 +64,14 @@ WHERE p2.born IN first_year OR p2.born IN last_year
 RETURN p2.name, p2.born
 
 // second solution
+MATCH (p:Person)
+WITH MIN(p.born) AS first_year, MAX(p.born) AS last_year
+MATCH (p2:Person)
+WHERE p2.born IN [first_year, last_year]
+RETURN p2.name, p2.born
+
+
+// third solution
 MATCH (p:Person)
 WITH MIN(p.born) AS first_year, MAX(p.born) AS last_year
 WITH first_year, last_year
@@ -142,7 +151,7 @@ ORDER BY n_of_movies DESC
 //###################################################################################
 
 
-//# 	Display all people and the the number of movies she/he directed
+//# 	Display all people and the number of movies she/he directed
 // (the report will include people with no directed movies)
 
 // first (raw) solution
