@@ -25,7 +25,8 @@ https://www.youtube.com/watch?v=LcIP86vjNps
 II.3 GettingStartedBrowser4.0 (2020; 15:26)
 https://www.youtube.com/watch?v=oHo-lQ79zf0&list=RDCMUCvze3hU6OZBkB1vkhH2lH9Q&index=11
 
-
+II.4 Online Meetup - Neo4j Desktop, Browser Demo June 3, 2020
+https://www.youtube.com/watch?v=Q-TX5Dk7fNM
 
 III. Database queries with Cypher
 
