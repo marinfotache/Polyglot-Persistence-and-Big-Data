@@ -1,5 +1,7 @@
 # Polyglot-Persistence-and-Big-Data
-Resources for PPBD Course on SBBIS and SIA Master Programmes at UAIC.
+Shared resources for the following courses:
+* Polyglot Persistence and Big Data (`SBBIS` master program at FEBA-UAIC).
+* Big Data (`Data Mining` master program at FEBA-UAIC).
 
 
 
