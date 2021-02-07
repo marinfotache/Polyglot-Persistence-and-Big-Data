@@ -1,11 +1,11 @@
 //===============================================================================
-//                              Basics of working with MongoDB  
+//                              Basics of working with MongoDB
 //===============================================================================
 //--   An excellent MongoDB client (we'll use it)
 // http://robomongo.org/
 
 //--   In order to launch a commad or group of commands in Robomongo
-// select commang/gruoup (by mouse/keyboard) and then press Ctrl + Enter keys 
+// select commang/gruoup (by mouse/keyboard) and then press Ctrl + Enter keys
 // (on Mac systems the key combination is cmd + Enter)
 
 //--    Display all available command for working with databases
@@ -20,21 +20,21 @@ show databases
 db
 
 //--    show some information/stistics about current db
-db.stats() 
+db.stats()
 
-//--    change/set the current db 
+//--    change/set the current db
 use sales
 
-//--    set "ppbd2020" as current bd 
-use ppbd2020
+//--    set "ppbd2021" as current bd
+use ppbd2021
 
-//--    display existing collections (of documents) in the current db 
+//--    display existing collections (of documents) in the current db
 show collections
 
-use sales2020
+use sales2021
 
 
-//--    count the number of documents in a collection 
+//--    count the number of documents in a collection
 db.first_collection.count()
 
 //--    retrieve one document (record) in a collection
@@ -44,29 +44,29 @@ db.first_collection.findOne()
 //===============================================================================
 //              Basics of working with documents and collections
 //===============================================================================
-//--  some of the Examples are taken/inspired from the book 
+//--  some of the Examples are taken/inspired from the book
 //--    "MongoDB in action" by Banker et al., Manning Publication, 2016
-//--   other examples are taken/inspired from the MongoDB online documentation 
+//--   other examples are taken/inspired from the MongoDB online documentation
 //===============================================================================
 
-//-- we want to create a database named "ppbd2020"
+//-- we want to create a database named "ppbd2021"
 //--    there is no such a commad "create database"
-//--    instead we will just set "ppbd2020" as current database (even it is not created!)
-use ppbd2020
+//--    instead we will just set "ppbd2021" as current database (even it is not created!)
+use ppbd2021
 
 
-//--    Display available commands 
-db.ppbd2020.help() 
+//--    Display available commands
+db.ppbd2021.help()
 
 //--    Remove collection "first_collection" from current db ("bda")
-db.first_collection.drop() 
+db.first_collection.drop()
 
 
 
 
 //--    Create collection "first_collection" (in current db).
-// Notice that there is no CREATE COLLECTION command; instead the collection is created 
-//  at the moment of the first "insert" 
+// Notice that there is no CREATE COLLECTION command; instead the collection is created
+//  at the moment of the first "insert"
 db.first_collection.insert({ title: 'I Hate Databases',
 	url: 'http://first_collection-unreal-example.com/ihatedatabases.html',
 	author: 'gigel',
@@ -77,15 +77,15 @@ db.first_collection.insert({ title: 'I Hate Databases',
                         type: 'jpg',
                         size: 75381,
                         data: "Binary"     },
-	comments: [     
+	comments: [
     	{ user: 'wolfram_vasile', text: 'Interesting article!' },
         { user: 'xenon_iolanda', text: 'A similar article can be found at http://save-sia-from-databases.com/nervous-breakdown.html' }
                    ]
                 }
         ) ;
 
-//--    Since the is only one document in the collection, commands findOne() and find() 
-// will have the same result 
+//--    Since the is only one document in the collection, commands findOne() and find()
+// will have the same result
 db.first_collection.findOne() ;
 //
 db.first_collection.find() ;
@@ -126,12 +126,12 @@ db.first_collection.find({title: "SQL la munte si la mare"}) ;
 db.first_collection.findOne({title: "SQL la munte si la mare"}) ;
 
 
-//--    Retrieve all the books where tag "databases" occurs 
+//--    Retrieve all the books where tag "databases" occurs
 db.first_collection.find({'tags': 'databases'});
 
 //--    Retrieve all the books where tag "databases" occurs AND
 // image size is greater than 1000.
-//  Imagine size is stored by property "image.size" and operator 
+//  Imagine size is stored by property "image.size" and operator
 // "greater than" is "$gt"
 db.first_collection.find({'tags': 'databases', 'image.size': {'$gt': 1000}});
 
@@ -139,7 +139,7 @@ db.first_collection.find({'tags': 'databases', 'image.size': {'$gt': 1000}});
 db.first_collection.find({'tags': 'databases', 'image.size': {'$gt': 100000000}});
 
 //--    Similar to operator "Project" in relational algebra and SQL,
-//        we want to display, from all the documents within the collection, 
+//        we want to display, from all the documents within the collection,
 //        only property/attribute/field "title";
 //  by default, object id is dispayed
 db.first_collection.find ({}, {title : true })  ;
@@ -159,5 +159,3 @@ db.first_collection.remove({}) ;
 
 //--    Now that we have nothing left, take a break !
 db.first_collection.find()
-
-
