@@ -1,3 +1,12 @@
+
+/* ---------------------------------------------------------------*/
+/* Create (if not already created) the `movies` collection in a
+  MongoDB database with the same name, based of the file
+  `movies_2011-2018.json`
+The file is available at:
+https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/blob/master/01%20Document%20Databases.%20MongoDB/movies_2011-2018.json
+/* ---------------------------------------------------------------*/
+
 /* ---------------------------------------------------------------*/
 /* Extract from the `movies` collection the following information
     using Aggregation Framework
@@ -21,11 +30,3 @@
 /* extract first three main actors for each movie*/
 
 /* extract all actors playing in the movies, in alphabetical order */
-
-
-
-
-
-
-
-
