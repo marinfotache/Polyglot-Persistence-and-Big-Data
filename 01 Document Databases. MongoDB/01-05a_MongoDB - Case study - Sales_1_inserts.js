@@ -668,5 +668,5 @@ db.receipts.find().pretty() ;
 /*  add a set on invoices, based on existing invoices:
     * changind invoice number (increment by 1000)
     * changing invoice dates (increment by 365)
-    * removing a line from two or three incoices
+    * removing a line from two or three invoices
 */
