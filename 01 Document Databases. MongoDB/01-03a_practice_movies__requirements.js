@@ -2,7 +2,7 @@
 /* Create the `movies` collection in a MongoDB database with the
     same name, based of the file  `movies_2011-2018.json`
 The file is available at:
-https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/blob/master/02%20Document%20Databases.%20MongoDB/movies_2011-2018.json
+https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/blob/master/01%20Document%20Databases.%20MongoDB/movies_2011-2018.json
 /* ---------------------------------------------------------------*/
 
 
@@ -35,9 +35,5 @@ https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/blob/master/02
 /* Task 2:
     Add two properties in each document of collection `movies`
     - n_of_genres
-    - n_of_main_actors                                            */    
+    - n_of_main_actors                                            */
 /* ---------------------------------------------------------------*/
-    
-
-
-
