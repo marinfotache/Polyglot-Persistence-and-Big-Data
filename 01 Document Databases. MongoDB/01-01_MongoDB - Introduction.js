@@ -1,5 +1,5 @@
 //===============================================================================
-//                              Basics of working with MongoDB
+//                            (Very) Basics operations with MongoDB
 //===============================================================================
 //--   An excellent MongoDB client (we'll use it)
 // http://robomongo.org/
@@ -42,7 +42,7 @@ db.first_collection.findOne()
 
 
 //===============================================================================
-//              Basics of working with documents and collections
+//                 Basics operations with documents and collections
 //===============================================================================
 //--  some of the Examples are taken/inspired from the book
 //--    "MongoDB in action" by Banker et al., Manning Publication, 2016

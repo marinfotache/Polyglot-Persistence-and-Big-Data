@@ -1,1 +1,1 @@
-Resources and scripts for managing document databases with MongoDB.
+Resources and scripts for managing document databases with `MongoDB`.

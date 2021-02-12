@@ -1,5 +1,6 @@
 //===============================================================================
-//                           Aggregation Framework
+//   Aggregation Framework (The High-Level Query Language for MongoDB databases)
+//===============================================================================
 
 //===============================================================================
 //--  some of the Examples are taken/inspired from the book
@@ -91,7 +92,9 @@ db.books.insert({
     }) ;
 
 
+
 //===============================================================================
+//--
 //--		                Aggregation Framework
 //--
 //===============================================================================
@@ -106,7 +109,7 @@ db.books.insert({
 
 
 //===============================================================================
-//--	Using Aggregation Framework (AF) for non-aggregate information :)
+//--	  Using Aggregation Framework (AF) for non-aggregate information :-)
 //===============================================================================
 
 //
@@ -333,10 +336,10 @@ db.books.aggregate(
 
 
 //=================================================================
-//--   Something with no equivalence in SQL: retrieve collections
-//        for each group
+//--   Something with no equivalence in standard SQL:
+// retrieve collections for each group
 
-//      Display all the books published by each publisher
+//      Display all the book titles published by each publisher
 db.books.aggregate(
    { $group: { _id: "$publisher",
         "books: ": { $addToSet: "$title" } } },
@@ -449,6 +452,7 @@ db.books.aggregate(
    { $limit: 3} ) ;
 
 
+
 //===============================================================================
 //              		Advanced Pipelines in Aggregation Framework
 //    Wel'll pass the result of an "unwind" operator to another "unwind"
@@ -474,7 +478,7 @@ db.books.find()
 
 
 
-/* for additional examples of using Aggregation Framework ( "$out" and
+/* for additional (and more advanced) examples of using Aggregation Framework ( "$out" and
   "$lookup" operators, different functions for dealing with numbers, strings ans dates), and also
 	examples that deal with  "normalized" collections -
-	see script "02-05_MongoDB - Case study - Sales.js"       */
+	see script "01-05b_MongoDB - Case study - Sales_2_queries.js"       */

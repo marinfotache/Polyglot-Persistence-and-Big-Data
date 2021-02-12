@@ -28,13 +28,15 @@ db.receipts.find().pretty() ;
 //
 //==================================================================================
 
-//==================================================================================
-//                         Basic queries (data retrieval, aggregation)
 
-//======== Queries
+//==================================================================================
+//                   I.  Basic queries (data retrieval, aggregation)
 //      Some previously discussed solutions (script 04-03...)
-//
+//==================================================================================
+
+//----------------------------------------------------------------------------------
 //--    Display information about the county to which postal code '700505' belongs to
+//----------------------------------------------------------------------------------
 
 
 // one of the the simplest...
@@ -140,8 +142,9 @@ db.postalCodes.aggregate([
 
 
 
-//----------------------------------------------------------------------
-//--     Show the county name and the region for city of Pascani
+//----------------------------------------------------------------------------------
+//--     		     Show the county name and the region for city of Pascani
+//----------------------------------------------------------------------------------
 
 // Store the results of "find" into year_ array variable ("myArray")
 myArray = db.postalCodes.find ({_id : '701150'}).toArray() ;
@@ -162,9 +165,9 @@ db.postalCodes.aggregate([
 ])
 
 
-//----------------------------------------------------------------------
-
-// Problem: get all the postal codes for region of Moldova ?
+//----------------------------------------------------------------------------------
+//             Get all the postal codes for region of Moldova
+//----------------------------------------------------------------------------------
 
 //  a solution using regular expressions
 var myCursor = db.counties.find ({countyRegion  : 'Moldova'}) ;
@@ -218,14 +221,19 @@ db.counties.aggregate([
 ])
 
 
+//----------------------------------------------------------------------------------
+//--                 Display number of counties for each region
+//----------------------------------------------------------------------------------
 
-//--    Display number of counties for each region
 db.counties.aggregate(
     { $group: { _id: {region: "$countyRegion"}, n_of_counties: { $sum: 1} } },
      { $sort: {_id: 1}} );
 
 
-//--    Display all the counties of each region
+//----------------------------------------------------------------------------------
+//--                   Display all the counties of each region
+//----------------------------------------------------------------------------------
+
 db.counties.aggregate(
     { $group: { _id: {region: "$countyRegion"},
        n_of_counties: { $sum: 1},
@@ -233,13 +241,19 @@ db.counties.aggregate(
      { $sort: {_id: 1}} );
 
 
-//-- get the overall number of invoices
+//----------------------------------------------------------------------------------
+//-- 												Get the overall number of invoices
+//----------------------------------------------------------------------------------
+
 db.invoices.aggregate(
 	{ $group: { _id: null, n_of_invoices : { $sum : 1 } }
 	}  ) ;
 
 
-//-- number of daily invoices
+//----------------------------------------------------------------------------------
+//-- 													Get the number of daily invoices
+//----------------------------------------------------------------------------------
+
 db.invoices.aggregate  ([
 	{ $group: { _id: "$invDate", n_of_invoices : { $sum : 1 } } }
 	] ) ;
@@ -252,7 +266,9 @@ db.invoices.aggregate  ([
 	] ) ;
 
 
-//-- invoice amount without VAT
+//----------------------------------------------------------------------------------
+//-- 						        Get invoice amount without VAT
+//----------------------------------------------------------------------------------
 db.invoices.aggregate( [
 	{ $unwind : "$items" },
 	{ $group : { _id : "$_id", amount_without_VAT :
@@ -260,8 +276,9 @@ db.invoices.aggregate( [
 	{ $sort : {_id : 1} }
 	] ) ;
 
-
-// invoice amount with VAT
+//----------------------------------------------------------------------------------
+// 												Get invoice amount with VAT
+//----------------------------------------------------------------------------------
 db.invoices.aggregate( [
 	{ $unwind : "$items" },
 	{ $group : { _id : "$_id", invoice_amount : { $sum : { $add : [
@@ -273,8 +290,10 @@ db.invoices.aggregate( [
 
 
 
+//----------------------------------------------------------------------------------
+// 									   	    Extract daily sales
+//----------------------------------------------------------------------------------
 
-// daily sales
 db.invoices.aggregate( [
 	{ $unwind : "$items" },
 	{ $group : { _id : "$invDate", daily_amount : { $sum : { $add : [
@@ -285,7 +304,10 @@ db.invoices.aggregate( [
 	] ) ;
 
 
-//	something different from traditional SQL: daily (sold) products
+//----------------------------------------------------------------------------------
+//				Something different from "traditional" SQL: daily (sold) products
+//----------------------------------------------------------------------------------
+
 db.invoices.aggregate( [
 	{ $unwind : "$items" },
 	{ $group : { _id : "$invDate", sold_products : { $addToSet : "$items.product.prodName" } }},
@@ -293,7 +315,10 @@ db.invoices.aggregate( [
 	] ) ;
 
 
-// Average invoice value (amount)
+//----------------------------------------------------------------------------------
+// 										      Get average invoice value (amount)
+//----------------------------------------------------------------------------------
+
 db.invoices.aggregate( [
 	{ $unwind : "$items" },
 	{ $group : { _id : "$_id", invoice_amount : { $sum : { $add : [
@@ -303,7 +328,10 @@ db.invoices.aggregate( [
 	{ $group : { _id: null, avg_invoice_amount : { $avg : "$invoice_amount"	} } } 	] )  ;
 
 
-// Average invoice amount for each day (with sales)
+//----------------------------------------------------------------------------------
+// 						Get average invoice amount for each day (with sales)
+//----------------------------------------------------------------------------------
+
 db.invoices.aggregate( [
 	{ $unwind : "$items" },
 	{ $group : { _id : { _id : "$_id", invDate : "$invDate"},  invoice_amount : { $sum : { $add : [
@@ -316,12 +344,105 @@ db.invoices.aggregate( [
 
 
 //==================================================================================
-//                    Aggregations, comparisons, computed attributes...
+//                       II. Implementing subqueries-like solutions
+//==================================================================================
 
 
-//      Which is the region with the highest number of counties ?
+//----------------------------------------------------------------------------------
+// 		  Display all invoices issued to the same customer as for invoice 1111
+//----------------------------------------------------------------------------------
+// the subquery result is scalar (it contains a single value of `invoices.custID`)
 
-// Get, for each day of sales, the invoices with highest and the lowest amount
+// we will use a `findOne` command as a subquery
+db.getCollection("invoices").aggregate([
+		{$match : { custID : db.invoices.findOne({ _id :1111}).custID }}  // this extracts the customerid for invoice 1111
+])
+
+
+//----------------------------------------------------------------------------------
+// 	Display all invoices issued to customers located at the same postal code
+//      as the zip code of the customer for invoice 1111
+//----------------------------------------------------------------------------------
+db.getCollection("invoices").aggregate([
+		{$match : { custID : { $in :
+
+    		db.customers.find({ postCode : 						// here we extract all the customers located
+																								  //   at the same zipcode as the customer for invoice 1111
+					db.customers.findOne(	{ _id: 										// here we extract the zipcode of
+				                                              //       the customer for invoice 1111
+							db.invoices.findOne({ _id :1111}).custID      // this line extracts the `custID` for invoice 1111
+							}).postCode
+						}, {_id: 1}).map( function(x) { return x._id; } )   // `map` will return the customer ids as an array of values
+
+					}
+			}}
+])
+
+
+
+//----------------------------------------------------------------------------------
+// 								Display invoices issued in the first sales date
+//----------------------------------------------------------------------------------
+// the subquery result is scalar (it contains min(invDate))
+
+
+// sol.1: extract a scalar subquery result with `find` combined with `sort`, `limit` and `toArray`
+db.invoices.aggregate([
+	{ $match :{ invDate :
+			(db.invoices.find().sort({ invDate : 1 }).limit(1).toArray())[0].invDate  // this is the scalar subquery
+		} }
+
+])
+
+
+// sol.2: extract a non-scalar subquery result with `find` combined with `sort`, `limit` and `map` (and `$in`)
+db.invoices.aggregate([
+	{ $match :{ invDate : { $in :
+			db.invoices.find().sort({ invDate : 1 }).limit(1).map( function(x) { return x.invDate; } )   // this is the non-scalar subquery
+		} } }
+])
+
+
+// sol. 3: save the intermediary (subquery) results as a separate collection, then use it for filtering
+
+// 3.1 this is the subquery result
+db.invoices.aggregate([
+	{ $group : { _id : null, invDate : { $min : "$invDate" }}},
+        { $out : "first_day"}
+]) ;
+
+// 3.2 now, use it for filtering the 'invoice' collection
+db.invoices.aggregate( [
+		{$match : {invDate:   db.first_day.findOne().invDate  }}
+	] )
+
+
+//!!!
+// unfortunately, we cannot join collections `invoices` and `first_day` by attribute `invDate`
+// next query DOES NOT WORK!!! (it returns wrong results)
+db.invoices.aggregate( [
+    { $lookup: {
+          from: "first_day",
+          localField: "invDate",
+          foreignField: "invDate",
+          as: "first_date_invoices" } }
+	] )
+//!!!
+
+
+
+
+
+//==================================================================================
+//                    III. Aggregations, comparisons, computed attributes...
+//==================================================================================
+
+
+//----------------------------------------------------------------------------------
+//   Get, for each day of sales, the invoices with highest and the lowest amount
+//----------------------------------------------------------------------------------
+
+// sol. 1
 db.invoices.aggregate([
 	{ $unwind : "$items" },
 	{ $group : { _id : { _id : "$_id", invDate : "$invDate"},  invoice_amount : { $sum : { $add : [
@@ -335,9 +456,7 @@ db.invoices.aggregate([
 		smallestInvoice : { $first : "$_id._id" },
 		smallestValue : { $first : "$invoice_amount" } } } ]) ;
 
-
-// Get, for each day of sales, the invoices with highest and the lowest amount
-// second solution - using "project"
+// sol. 2 - using "project"
 db.invoices.aggregate([
 	{ $unwind : "$items" },
 	{ $group : { _id : { _id : "$_id", invDate : "$invDate"},  invoice_amount : { $sum : { $add : [
@@ -356,27 +475,37 @@ db.invoices.aggregate([
 		smallestInvoice : { number : "$smallestInvoice", amount : "$smallestValue"  }   }	} ]) ;
 
 
-// invoice list, with two properties, invoice number and date, and a "computed" one - month
+//----------------------------------------------------------------------------------
+// 			Get the invoice list, with two properties, invoice number and date,
+//         			and a "computed" one - month
+//----------------------------------------------------------------------------------
 db.invoices.aggregate ( [
 	{ $project : { month : { $month : "$invDate" }, invNo : "$_id", invDate : "$invDate", _id : 0 } },
 	{ $sort : { month : 1, invNo : 1 } }  ] ) ;
 
 
-// 	yearly number of invoices (well, the aren't too many years, but this is it)
+//----------------------------------------------------------------------------------
+// 	Get the yearly number of invoices (well, the aren't too many years, but this is it)
+//----------------------------------------------------------------------------------
 db.invoices.aggregate ( [
 	{ $project : { year_ : { $year : "$invDate" } } } ,
 	{ $group : { _id : { year_ : "$year_" }, n_of_invoices : { $sum : 1 } } },
 	{ $sort : { year_ : 1 } }  ] ) ;
 
 
-// 	number of invoices for each pair (year, month)
+
+//----------------------------------------------------------------------------------
+// 					Get the number of invoices for each pair (year, month)
+//----------------------------------------------------------------------------------
 db.invoices.aggregate ( [
 	{ $project : { year_ : { $year : "$invDate" }, month : { $month : "$invDate" } } } ,
 	{ $group : { _id : { year_ : "$year_", month : "$month" }, n_of_invoices : { $sum : 1 } } },
 	{ $sort : { year_ : 1, month : 1 } }  ] ) ;
 
 
-// 	number of invoices for each combination (year, month, day)
+//----------------------------------------------------------------------------------
+// 					Get number of invoices for each combination (year, month, day)
+//----------------------------------------------------------------------------------
 db.invoices.aggregate ( [
 	{ $project : { year_ : { $year : "$invDate" }, month_ : { $month : "$invDate" },
 		day_ : { $dayOfMonth : "$invDate" }  } } ,
@@ -391,10 +520,12 @@ db.invoices.aggregate ( [
 	{ $group : { _id : { year_ : "$year_", month_ : "$month_", day_ : "$day_" },
 		n_of_invoices : { $sum : 1 } } },
 	{ $sort : { "_id.year_" : 1, "_id.month_" : 1, "_id.day_" : 1 } }  ] ) ;
-// not it is ok
+// now it is ok
 
 
-// the most frequently sold three products
+//----------------------------------------------------------------------------------
+// 					        Get the most frequently sold three products
+//----------------------------------------------------------------------------------
 db.invoices.aggregate ( [
 	{ $unwind : "$items"  },
 	{ $group : { _id : "$items.product.prodName", n_of_occurences : { $sum : 1 } }},
@@ -402,8 +533,11 @@ db.invoices.aggregate ( [
 	{ $limit : 3 } ] ) ;
 
 
-////
-// get, for each invoice, three amounts: without VAT, VAT, amount with VAT - sol. 1
+//----------------------------------------------------------------------------------
+// 			Get, for each invoice, three amounts: without VAT, VAT, amount with VAT
+//----------------------------------------------------------------------------------
+
+// sol. 1
 db.invoices.aggregate([
 	{ $unwind : "$items" },
 	{ $group : { _id : { _id : "$_id"},
@@ -420,7 +554,8 @@ db.invoices.aggregate([
 		VAT : "$amountVAT", withVAT : "$amountWithVAT"  } } }
 	]) ;
 
-// get, for each invoice, three amounts: without VAT, VAT, amount with VAT - sol. 2
+
+// sol. 2
 db.invoices.aggregate([
 	{ $unwind : "$items" },
 	{ $group : { _id : { _id : "$_id"},
@@ -434,7 +569,8 @@ db.invoices.aggregate([
 		withVAT : { $add : ["$amountWithoutVAT", "$amountVAT"]  } } } }
 	]) ;
 
-// get, for each invoice, three amounts: without VAT, VAT, amount with VAT - sol. 3
+
+// sol. 3
 db.invoices.aggregate([
 	{ $unwind : "$items" },
 	{ $group : { _id : { _id : "$_id"},
@@ -448,7 +584,12 @@ db.invoices.aggregate([
 		]) ;
 
 
-// get, for each invoice in September 2012, three amounts: without VAT, VAT, amount with VAT - sol. 1
+//----------------------------------------------------------------------------------
+// 						Get, for each invoice in September 2012, three amounts:
+//									without VAT, VAT, amount with VAT
+//----------------------------------------------------------------------------------
+
+// sol. 1
 db.invoices.aggregate([
 	{ $match : {  invDate : { $gte : new ISODate("2019-09-01T00:00:00Z"),
 		$lte : new ISODate("2019-10-01T00:00:00Z") }}},
@@ -467,7 +608,7 @@ db.invoices.aggregate([
 	]) ;
 
 
-// get, for each invoice in September 2012, three amounts: without VAT, VAT, amount with VAT - sol. 2
+// sol. 2
 db.invoices.aggregate([
 	{ $match : {  invDate : { $gte : new ISODate("2019-09-01T00:00:00Z"),
 		$lte : new ISODate("2019-10-01T00:00:00Z") }}},
@@ -502,7 +643,9 @@ db.invoices.aggregate([
 	{ $match : { "invoice.month_" : { $gte : 9, $lte : 9 } }  } 	]) ;
 
 
-// get the amount received (paid by the client) for each invoice
+//----------------------------------------------------------------------------------
+// 						Get the amount received (paid by the client) for each invoice
+//----------------------------------------------------------------------------------
 db.receipts.aggregate  ( [
 	{ $unwind : "$invoicesCollected" },
 	{ $group : { _id : "$invoicesCollected.invNo", paid : { $sum : "$invoicesCollected.amount"}}},
@@ -510,13 +653,23 @@ db.receipts.aggregate  ( [
 	]) ;
 
 
+//----------------------------------------------------------------------------------
+//      Which is the region with the highest number of counties ?
+//----------------------------------------------------------------------------------
+
+//...
+
 
 
 //==================================================================================
-//                         Queries involving two or more collections
+//                     IV. Other queries involving two or more collections
+//==================================================================================
 
-//-------------------------------------------------------------------------------
-//  getting the total amount and the paid amount for each invoice
+
+//----------------------------------------------------------------------------------
+//         Getting the total amount and the paid amount for each invoice
+//----------------------------------------------------------------------------------
+
 //
 // we'll create a collection as a result of a query (aggregation) - sort of CREATE TABLE tab AS SELECT...)
 db.inv.remove({}) ;
@@ -548,8 +701,9 @@ cursor.forEach(function(x) {
 db.inv.find().pretty() ;
 
 
-// solution based on join
-
+//
+// 						a multi-step solution based on join
+//
 // agggregate payments into a new collection
 db.receipts.aggregate  ( [
 	{ $unwind : "$invoicesCollected" },
@@ -577,9 +731,9 @@ db.invoices.aggregate( [
 
 
 
-
-//-----------------------------
-// Which is the invoice with the greatest amount to be received (paid by the customer)
+//----------------------------------------------------------------------------------
+//        Which is the invoice with the greatest amount to be received ?
+//----------------------------------------------------------------------------------
 db.inv.aggregate([
 	{ $group : { _id :  "_id" ,
 		amountWithVAT : { $sum : "$amountWithVAT" },
@@ -588,46 +742,3 @@ db.inv.aggregate([
 	{ $sort : { toBeReceived : -1 } },
 	{ $limit : 1 }
 ]) ;
-
-
-
-//==================================================================================
-//                        Implementing subqueries
-
-
-//------------------------------------------------------------
-// 			Display invoices issues in the first sales date
-//------------------------------------------------------------
-
-// sol. 1: save the intermediary (subquery) results as a collection and then join it with another collection
-
-// 1.1 this is the subquery result
-db.invoices.aggregate([
-	{ $group : { _id : null, invDate : { $min : "$invDate" }}},
-        { $out : "first_day"}
-
-]) ;
-
-// 1.2 now, join it with the 'invoice' collection
-db.invoices.aggregate( [
-    { $lookup: {
-          from: "first_day",
-          localField: "invDate",
-          foreignField: "invDate",
-          as: "first_date_invoices" } }
-	] )
-
-
-
-
-	{ $project : { publisher : {$toUpper:"$publisher"} , _id:0 } },
-] ) ;
-
-
-db.books.aggregate( [
-	{ $project : { publisher : {$toUpper:"$publisher"} , _id:0 } },
-	{ $sort : { publisher : 1 } } ] ) ;
-
-
-
-db.counties.find({'_id' : db.postalCodes.findOne ({cityTownVillage : 'Pascani'}).countyCode }) ;
