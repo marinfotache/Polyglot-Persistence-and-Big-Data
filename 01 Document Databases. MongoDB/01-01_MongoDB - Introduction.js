@@ -83,7 +83,7 @@ db.first_collection.insert({ title: 'I Hate Databases',
                         data: "Binary"     },
 	comments: [
     	{ user: 'wolfram_vasile', text: 'Interesting article!' },
-        { user: 'xenon_iolanda', text: 'A similar article can be found at http://save-sia-from-databases.com/nervous-breakdown.html' }
+        { user: 'xenon_iolanda', text: 'A similar article can be found at http://save-sdbis-from-databases.com/nervous-breakdown.html' }
                    ]
                 }
         ) ;

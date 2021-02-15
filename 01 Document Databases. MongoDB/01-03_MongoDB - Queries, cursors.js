@@ -13,7 +13,7 @@
 use ppbd2021
 
 //===============================================================================
-//          Queries - recap from previous scripts and some new basic features
+//         Queries - recap from previous scripts and some new basic features
 //===============================================================================
 
 
@@ -454,6 +454,17 @@ myArray = db.postalCodes.find ({_id : '701150'}).toArray() ;
 db.counties.find({'_id' : myArray[0].countyCode }) ;
 
 
+//===============================================================
+//--                    `map` function
+//--   Among other features, `map` allows the queries to returns
+//     parts of the documents as arrays of values (not arrays of documents)
+// -- This will be useful (see script `01-05b`) for some types of "subqueries"
+
+// Get an array with all county names
+db.counties.find().map( function(x) { return x.countyName; } );
+
+
+
 //===============================================================================
 //                              Counts and distincts
 //===============================================================================
@@ -487,6 +498,11 @@ db.first_collection.distinct( "comments.user");
 
 // Retrieve all the commenters of the books covering subject/tag "SQL"
 db.first_collection.distinct( 'comments.user', { tags: "SQL" } )
+
+
+// Get an array with all region names
+db.counties.distinct("countyRegion")
+
 
 
 

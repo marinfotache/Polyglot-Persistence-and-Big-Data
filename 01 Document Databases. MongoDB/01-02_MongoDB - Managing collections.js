@@ -49,7 +49,7 @@ array1 = [
     { titlel: "Fatigue Syndrome at SIA and SDBIS students",
 		text_comments: ['Good', 'Finally, somebody understands us!']},
     // second document
-    { title: "An Essay (and 100 Reasons) on Why SIA Students Do Not Attend the Master Courses" },
+    { title: "An Essay (and 100 Reasons) on Why SDBIS Students Do Not Attend the Master Courses" },
     // third document
     { title: "Being Optimistic (Almost) Every Day",
 		comments: [
@@ -64,7 +64,6 @@ array1 = [
 db.first_collection.insertMany(array1) ;
 // Note: the array could be inserted also with `insert` command, but no ObjectId will be provided
 //  as a results of inserts (of course, ObjectId 's exist in the collecttion)
-
 
 
 //--  Retrieve all the documents (check the inserts)
@@ -528,6 +527,7 @@ db.first_collection.update ( {"title" : "NoSQL Databases"},
 db.first_collection.findOne( { "title" : "NoSQL Databases"} ) ;
 // ...or viewing only attribute "comments" (and the ObjectId)
 db.first_collection.find( { "title" : "NoSQL Databases"}, {"comments" : 1} ) ;
+
 
 
 //=======================================================
