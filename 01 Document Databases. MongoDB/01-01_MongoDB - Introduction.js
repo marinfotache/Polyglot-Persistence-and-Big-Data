@@ -1,10 +1,14 @@
 //===============================================================================
 //                            (Very) Basics operations with MongoDB
 //===============================================================================
-//--   An excellent MongoDB client (we'll use it)
+// For installation of MongoDB Community Server and Robo 3T, select presentation:
+// https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/blob/master/01%20Document%20Databases.%20MongoDB/01%20Document_DB__MongoDB.pptx
+
+
+//--   An excellent MongoDB client (we'll use it this semester): Robo 3T (free)
 // http://robomongo.org/
 
-//--   In order to launch a commad or group of commands in Robomongo
+//--   In order to launch a commad or group of commands in Robomongo/Robo 3T
 // select commang/gruoup (by mouse/keyboard) and then press Ctrl + Enter keys
 // (on Mac systems the key combination is cmd + Enter)
 
