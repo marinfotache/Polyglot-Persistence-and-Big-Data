@@ -71,7 +71,9 @@ db.first_collection.drop()
 //--    Create collection "first_collection" (in current db).
 // Notice that there is no CREATE COLLECTION command; instead the collection is created
 //  at the moment of the first "insert"
-db.first_collection.insert({ title: 'I Hate Databases',
+db.first_collection.insert(
+	{
+	title: 'I Hate Databases',
 	url: 'http://first_collection-unreal-example.com/ihatedatabases.html',
 	author: 'gigel',
 	vote_count: 20,
@@ -85,7 +87,7 @@ db.first_collection.insert({ title: 'I Hate Databases',
     	{ user: 'wolfram_vasile', text: 'Interesting article!' },
         { user: 'xenon_iolanda', text: 'A similar article can be found at http://save-sdbis-from-databases.com/nervous-breakdown.html' }
                    ]
-                }
+    }
         ) ;
 
 //--    Since the is only one document in the collection, commands findOne() and find()
@@ -98,7 +100,9 @@ db.first_collection.find() ;
 
 //--    Insert the second document (record) into collection "first_collection"
 //-- insertOne will return the ObjectId
-db.first_collection.insertOne({title: 'SQL la munte si la mare',
+db.first_collection.insertOne(
+	{
+	title: 'SQL la munte si la mare',
 	url: 'http://portal.feaa.uaic.ro/sqlmm.txt',
 	author: 'mfotache',
 	vote_count: 5,
@@ -130,10 +134,10 @@ db.first_collection.find({title: "SQL la munte si la mare"}) ;
 db.first_collection.findOne({title: "SQL la munte si la mare"}) ;
 
 
-//--    Retrieve all the books where tag "databases" occurs
+//--    Retrieve all the blog entries where tag "databases" occurs
 db.first_collection.find({'tags': 'databases'});
 
-//--    Retrieve all the books where tag "databases" occurs AND
+//--    Retrieve all the blog entries where tag "databases" occurs AND
 // image size is greater than 1000.
 //  Imagine size is stored by property "image.size" and operator
 // "greater than" is "$gt"

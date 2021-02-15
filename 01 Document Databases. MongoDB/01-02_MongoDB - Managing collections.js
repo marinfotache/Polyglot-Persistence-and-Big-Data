@@ -321,7 +321,7 @@ db.first_collection.findOne({title : "SQL la munte si la mare"}) ;
 //--    Updating a document through variables (as seen above) is awkward.
 // "$set" makes update operation more "SQL-ish"
 
-// Task: in the document describing the book "I Like Databases"
+// Task: in the document describing the blog entry "I Like Databases"
 //   add an attribute - "url"
 db.first_collection.update ( {title: "I Like Databases"},
 	{"$set" : {url: "http://example.com/databases.txt"} } ) ;
@@ -336,7 +336,7 @@ db.first_collection.update ( {title: "I Like Databases"},
 // check
 db.first_collection.find({title: "I Like Databases"})
 
-// Update author of the same book
+// Update author of the same  blog entry
 db.first_collection.update({title: "I Like Databases"},
 	{"$set" : {author : "Valerica Greavu-Serban"}}) ;
 // check the update
@@ -351,13 +351,13 @@ db.first_collection.update( {title : "I Like Databases"},
 // check
 db.first_collection.find({title: "I Like Databases"})
 
-// remove old comments ("text_comments") of this book with operator "$unset"
+// remove old comments ("text_comments") of this  blog entry with operator "$unset"
 db.first_collection.update({title : "I Like Databases"},  {"$unset" : {text_comments: 1 }})
 // check
 db.first_collection.find({"title": "I Like Databases"})
 
 //--    Next, change the author of the second comment in the document representing
-// the book "I Like Databases"
+// the  blog entry "I Like Databases"
 
 // Using...
 db.first_collection.findOne({title: "I Like Databases"}) ;
@@ -504,7 +504,7 @@ db.first_collection.findOne ( { "title": "SQL la munte si la mare"} ) ;
 //             Operator "arrayAttribute.index.property"
 //  (changing element of an array when knowing the element index)
 
-// Take another document (book)
+// Take another document (blog entry)
 db.first_collection.findOne( { "title" : "NoSQL Databases"} ) ;
 
 //--   Add some comments for which there is a third attribute storing the number of votes ("votes")
@@ -547,10 +547,10 @@ db.first_collection.findOne( { "title" : "Virtualization and databases"} ) ;
 db.first_collection.update ( {"title" : "Virtualization and databases", "comments.user" : "dragsos" },
 	{ "$set" : {"comments.$.user" : "dragos" } } ) ;
 
-// check by retrieving the document describing the book "Virtualization and databases"
+// check by retrieving the document describing the  blog entry "Virtualization and databases"
 db.first_collection.findOne( { "title" : "Virtualization and databases"} ) ;
 
-//... or by retrieving all the books for which there is a comment
+//... or by retrieving all the  blog entries for which there is a comment
 // written by ("comments.user) "dragos"
 db.first_collection.find ( {"comments.user" : "dragos" }) ;
 
