@@ -199,11 +199,15 @@ db.first_collection.find( {title: "I Like Databases"}) ;
 //              Variables, a function and a loop
 
 //--   Next, we want to change the structure for document whose title is "SQL la munte si la mare"
+
 // As you might noticed, instead of "title" we typed "titlel" which could be "nightmarish" when
 // querying the collection (many books and papers on schema-lessness keep mum about this).
+
 // Consequently, we must change the attribute name, from "titlel" to "title".
+
 // Additionally, we want to split, for all of the documents, the attribute "text_comments"
 //    into two properties, "comments.user" and "comments.text".
+
 //      Well, there is no DDL in Mongo, so we'll write an simple program in JavaScript.
 
 // first store the document into composite variable "d1"
@@ -323,27 +327,32 @@ db.first_collection.findOne({title : "SQL la munte si la mare"}) ;
 
 // Task: in the document describing the blog entry "I Like Databases"
 //   add an attribute - "url"
-db.first_collection.update ( {title: "I Like Databases"},
+db.first_collection.update (
+	{title: "I Like Databases"},
 	{"$set" : {url: "http://example.com/databases.txt"} } ) ;
 // check
 db.first_collection.findOne({"title" : "I Like Databases"}) ;
 
 // Add two more attributes - ("vote_count" and "author") - in the same document
-db.first_collection.update ( {title: "I Like Databases"},
+db.first_collection.update (
+	{title: "I Like Databases"},
 	{"$set" : {vote_count : "20" }    } ) ;
-db.first_collection.update ( {title: "I Like Databases"},
+db.first_collection.update (
+	{title: "I Like Databases"},
 	{"$set" : {author : "Valy Greavu"}  } ) ;
 // check
 db.first_collection.find({title: "I Like Databases"})
 
 // Update author of the same  blog entry
-db.first_collection.update({title: "I Like Databases"},
+db.first_collection.update(
+	{title: "I Like Databases"},
 	{"$set" : {author : "Valerica Greavu-Serban"}}) ;
 // check the update
 db.first_collection.find({"title": "I Like Databases"})
 
 // Now we'll add an array attribute ("comments") in the same document
-db.first_collection.update( {title : "I Like Databases"},
+db.first_collection.update(
+	{title : "I Like Databases"},
 	{"$set" : {comments :  [
 		{ user: "bjones",  text: "Interesting article!"  },
 		{ user: "blogger", text: "Another related article is at http://example.com/db/db.txt" }
@@ -352,7 +361,9 @@ db.first_collection.update( {title : "I Like Databases"},
 db.first_collection.find({title: "I Like Databases"})
 
 // remove old comments ("text_comments") of this  blog entry with operator "$unset"
-db.first_collection.update({title : "I Like Databases"},  {"$unset" : {text_comments: 1 }})
+db.first_collection.update(
+	{title : "I Like Databases"},
+	{"$unset" : {text_comments: 1 }})
 // check
 db.first_collection.find({"title": "I Like Databases"})
 
@@ -376,11 +387,13 @@ db.first_collection.update ( {title: "I Like Databases", "comments.user": "blogg
 //   Operator "arrayAttribute.$.property"
 
 
+
 //===============================================================================
 //                              Operations with arrays
 //===============================================================================
-
 db.first_collection.find({"title" : "I Like Databases"})
+
+
 //=======================================================
 //                    Operator "$push"
 
@@ -389,47 +402,69 @@ db.first_collection.find({"title" : "I Like Databases"})
 
 // Add a comment in document "I Like Databases"
 //  operator "$push" does the trick
-db.first_collection.update ( {title: "I Like Databases"},  {$push : { comments:
-	{user: "dragos", text: "well, not bad at all!"} } }) ;
+db.first_collection.update (
+	{title: "I Like Databases"},
+	{$push : { comments:
+		{user: "dragos", text: "well, not bad at all!"} } }) ;
 // check
 db.first_collection.findOne({"title" : "I Like Databases"} ) ;
 
-db.first_collection.update ( {title: "I Like Databases"},  {$push : { comments:
-	{user: "vasile", text: "so boring!"} } }) ;
+db.first_collection.update (
+	{title: "I Like Databases"},
+	{$push : { comments:
+		{user: "vasile", text: "so boring!"} } }) ;
 // check
 db.first_collection.findOne({"title" : "I Like Databases"} ) ;
 
 
 // Now, in the same document, add an array attribute ("tags") with one element ("NoSQL")
-db.first_collection.update( {"title" : "I Like Databases"},
+db.first_collection.update(
+	{"title" : "I Like Databases"},
 	{"$set" : {"tags" :  ["NoSQL"] } } ) ;
 //... then add another tag
-db.first_collection.update ( {"title" : "I Like Databases"}, {$push : { "tags" : "replication" }})
+db.first_collection.update (
+	{"title" : "I Like Databases"},
+	{$push : { "tags" : "replication" }})
 // check
 db.first_collection.findOne({"title" : "I Like Databases"} ) ;
 
 // In the same document add (in just one move) two tags
-db.first_collection.update ( {"title" : "I Like Databases"}, {$push : { "tags" : ["sharding", "partitioning"] }}) ;
+db.first_collection.update (
+	{"title" : "I Like Databases"},
+	{$push : { "tags" : ["sharding", "partitioning"] }}) ;
 // check
 db.first_collection.findOne({"title" : "I Like Databases"} ) ;
 // Oops! We did it wrong, since instead of two new tags, just one (of an array type) was added;
 // consequently, we have to delete all of the tags and then re-add them properly
-db.first_collection.update({"title" : "I Like Databases"},  {"$unset" : {"tags" : 1}}) ;
-db.first_collection.update ( {"title" : "I Like Databases"}, {$push : { "tags" : "NoSQL" }}) ;
-db.first_collection.update ( {"title" : "I Like Databases"}, {$push : { "tags" : "replication" }}) ;
-db.first_collection.update ( {"title" : "I Like Databases"}, {$push : { "tags" : "sharding" }}) ;
-db.first_collection.update ( {"title" : "I Like Databases"}, {$push : { "tags" : "partitioning" }}) ;
+db.first_collection.update(
+	{"title" : "I Like Databases"},
+	{"$unset" : {"tags" : 1}}) ;
+db.first_collection.update (
+	{"title" : "I Like Databases"},
+	{$push : { "tags" : "NoSQL" }}) ;
+db.first_collection.update (
+	{"title" : "I Like Databases"},
+	{$push : { "tags" : "replication" }}) ;
+db.first_collection.update (
+	{"title" : "I Like Databases"},
+	{$push : { "tags" : "sharding" }}) ;
+db.first_collection.update (
+	{"title" : "I Like Databases"},
+	{$push : { "tags" : "partitioning" }}) ;
 // check
 db.first_collection.findOne({"title" : "I Like Databases"} ) ;
 
 //--    But there is a more elegant solution - by using "$push" with option "each"
 // delete the tags
-db.first_collection.update({"title" : "I Like Databases"},  {"$unset" : {"tags" : 1}}) ;
+db.first_collection.update(
+	{"title" : "I Like Databases"},
+	{"$unset" : {"tags" : 1}}) ;
 // check the deletion
 db.first_collection.findOne({"title" : "I Like Databases"} ) ;
 // now the recommended solution:
-db.first_collection.update ( {"title" : "I Like Databases"}, {$push :
-	{ "tags" : { $each : ["NoSQL" , "replication", "sharding", "partitioning", "NoSQL", "NoSQL" ]}}}) ;
+db.first_collection.update (
+	{"title" : "I Like Databases"},
+	{$push : { "tags" : { $each : ["NoSQL" , "replication", "sharding", "partitioning", "NoSQL", "NoSQL" ]}}}) ;
 // check
 db.first_collection.findOne({"title" : "I Like Databases"} ) ;
 // notice that tag "NoSQL" is duplicated (as specified in update)
@@ -442,17 +477,24 @@ db.first_collection.findOne({"title" : "I Like Databases"} ) ;
 //--   Unlike "$push", operator "$addToSet" checks for duplicates
 //   before adding elements in an array
 // Remove all of the document tags
-db.first_collection.update({"title" : "I Like Databases"},  {"$unset" : {"tags" : 1}}) ;
+db.first_collection.update(
+	{"title" : "I Like Databases"},
+	{"$unset" : {"tags" : 1}}) ;
 // Add successively the tags in the document
-db.first_collection.update ( {"title" : "I Like Databases"},
+db.first_collection.update (
+	{"title" : "I Like Databases"},
 	{$addToSet : { "tags" : "partitioning" }}) ;
-db.first_collection.update ( {"title" : "I Like Databases"},
+db.first_collection.update (
+	{"title" : "I Like Databases"},
 	{$addToSet : { "tags" : "CAP" }}) ;
-db.first_collection.update ( {"title" : "I Like Databases"},
+db.first_collection.update (
+	{"title" : "I Like Databases"},
 	{$addToSet : { "tags" : "NoSQL" }}) ;
-db.first_collection.update ( {"title" : "I Like Databases"},
+db.first_collection.update (
+	{"title" : "I Like Databases"},
 	{$addToSet : { "tags" : "NoSQL" }}) ;
-db.first_collection.update ( {"title" : "I Like Databases"},
+db.first_collection.update (
+	{"title" : "I Like Databases"},
 	{$addToSet : { "tags" : "NoSQL" }}) ;
 // check
 db.first_collection.findOne({"title" : "I Like Databases"} ) ;
@@ -465,16 +507,20 @@ db.first_collection.findOne({"title" : "I Like Databases"} ) ;
 // Take a document...
 db.first_collection.findOne ( { "title": "SQL la munte si la mare"} ) ;
 // ... and try to add three tags using "$addToSet"
-db.first_collection.update ( { "title": "SQL la munte si la mare"},
+db.first_collection.update (
+	{ "title": "SQL la munte si la mare"},
 	{ $addToSet : {"tags" : ["SQL", "NoSQL", "query language"]} } ) ;
 // check
 db.first_collection.findOne ( { "title": "SQL la munte si la mare"} ) ;
 // As expected, after the last update, attribute "tags" is an array of arrays
 
 // ... so we remove all the tags...
-db.first_collection.update({"title" : "SQL la munte si la mare"},  {"$unset" : {"tags" : 1}}) ;
+db.first_collection.update(
+	{"title" : "SQL la munte si la mare"},
+	{"$unset" : {"tags" : 1}}) ;
 // ... and add them but this time using "each"
-db.first_collection.update ( { "title": "SQL la munte si la mare"},
+db.first_collection.update (
+	{ "title": "SQL la munte si la mare"},
 	{ $addToSet : {"tags" : {"$each" : ["SQL", "NoSQL", "query languages"] }  } } ) ;
 // Now, it's better.
 db.first_collection.findOne ( { "title": "SQL la munte si la mare"} ) ;
@@ -484,18 +530,21 @@ db.first_collection.findOne ( { "title": "SQL la munte si la mare"} ) ;
 //                    Operator "$pull"
 
 //--  First we add some more tags (for subsequent deletions)
-db.first_collection.update ( { "title": "SQL la munte si la mare"},
+db.first_collection.update (
+	{ "title": "SQL la munte si la mare"},
 	{ $addToSet : {"tags" : {"$each" : ["relational algebra", "OQL", "C-SQL"] }  } } ) ;
-db.first_collection.update ( { "title": "SQL la munte si la mare"},
+db.first_collection.update (
+	{ "title": "SQL la munte si la mare"},
 	{ $addToSet : {"tags" : {"$each" : ["relational algebra", "OQL", "Hive"] }  } } ) ;
 // check
 db.first_collection.findOne ( { "title": "SQL la munte si la mare"} ) ;
 
 
 //--   Deleting individual elements in an array is possible using "$pull"
-// Ex: for book "SQL la munte si la mare" we want to delete only the tag "relational algebra"
-db.first_collection.update ( {"title" : "SQL la munte si la mare"},
-			{"$pull" : {"tags" : "relational algebra"} } ) ;
+// Ex: for the blog entry "SQL la munte si la mare" we want to delete only the tag "relational algebra"
+db.first_collection.update (
+	{"title" : "SQL la munte si la mare"},
+	{"$pull" : {"tags" : "relational algebra"} } ) ;
 // check
 db.first_collection.findOne ( { "title": "SQL la munte si la mare"} ) ;
 
@@ -508,20 +557,24 @@ db.first_collection.findOne ( { "title": "SQL la munte si la mare"} ) ;
 db.first_collection.findOne( { "title" : "NoSQL Databases"} ) ;
 
 //--   Add some comments for which there is a third attribute storing the number of votes ("votes")
-db.first_collection.update ( {"title" : "NoSQL Databases"},
+db.first_collection.update (
+	{"title" : "NoSQL Databases"},
 	{ "$set" : {"comments" : [
 		{"user" : "dragos", "text" : "Good!", "votes" : 3 },
 		{"user" : "bjones", "text" : "Mediocre", "votes" : 1 } ]  } }  ) ;
 // check
 db.first_collection.findOne( { "title" : "NoSQL Databases"} ) ;
 // remove old comments attribute ("text_comments")
-db.first_collection.update ( {"title" : "NoSQL Databases"}, { "$unset" : { "text_comments"  :1 } } ) ;
+db.first_collection.update (
+	{"title" : "NoSQL Databases"},
+	{ "$unset" : { "text_comments"  :1 } } ) ;
 // check
 db.first_collection.findOne( { "title" : "NoSQL Databases"} ) ;
 
 //--   Increment by 1 the number of votes for the second comment.
 // Note that the second element (comment) has index 1 (array indexes start with 0)
-db.first_collection.update ( {"title" : "NoSQL Databases"},
+db.first_collection.update (
+	{"title" : "NoSQL Databases"},
 	{ "$inc" : {"comments.1.votes" : 1 } } ) ;
 // check with...
 db.first_collection.findOne( { "title" : "NoSQL Databases"} ) ;
@@ -544,7 +597,8 @@ db.first_collection.findOne( { "title" : "Virtualization and databases"} ) ;
 
 // For doing that, when qualifying, between the attribute name ("comments") and its (sub)property
 //   ("user") a "$" is inserted
-db.first_collection.update ( {"title" : "Virtualization and databases", "comments.user" : "dragsos" },
+db.first_collection.update (
+	{"title" : "Virtualization and databases", "comments.user" : "dragsos" },
 	{ "$set" : {"comments.$.user" : "dragos" } } ) ;
 
 // check by retrieving the document describing the  blog entry "Virtualization and databases"
@@ -569,12 +623,18 @@ db.first_collection.find ( {"comments.user" : "dragos" }) ;
 // )
 
 //--    Add attribute "votes" in  ALL of the documents of collection "first_collection"
-db.first_collection.update ({ }, {$set : {"votes" : 0}}, false, true) ;
+db.first_collection.update (
+	{ },
+	{$set : {"votes" : 0}},
+	false,
+	true) ;
 // check
 db.first_collection.find ( ) ;
 
 
 //--    Something more interesting:
 //      For all the document with tag "NoSQL" we add also tag "databases"
-db.first_collection.update ({ "tags" : "NoSQL" }, {$addToSet : {"tags" : "databases"}}, false, true) ;
+db.first_collection.update (
+	{ "tags" : "NoSQL" },
+	{$addToSet : {"tags" : "databases"}}, false, true) ;
 db.first_collection.find ( ) ;
