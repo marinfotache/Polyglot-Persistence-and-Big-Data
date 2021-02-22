@@ -79,22 +79,27 @@ db.first_collection.insert(
 	vote_count: 20,
 	tags: ['databases', 'mongodb', 'indexing'],
 	image: {        url: 'http://first_collection-unreal-example.com/photo1.jpg',
-                        caption: '',
-                        type: 'jpg',
-                        size: 75381,
-                        data: "Binary"     },
+                  caption: '',
+                  type: 'jpg',
+                  size: 75381,
+                  data: "Binary"     },
 	comments: [
     	{ user: 'wolfram_vasile', text: 'Interesting article!' },
-        { user: 'xenon_iolanda', text: 'A similar article can be found at http://save-sdbis-from-databases.com/nervous-breakdown.html' }
-                   ]
+      { user: 'xenon_iolanda', text: 'A similar article can be found at http://save-sdbis-from-databases.com/nervous-breakdown.html' }             ]
     }
         ) ;
 
 //--    Since the is only one document in the collection, commands findOne() and find()
 // will have the same result
-db.first_collection.findOne() ;
+
 //
 db.first_collection.find() ;
+//  SQL equivalent:
+// SELECT * FROM first_collection
+
+db.first_collection.findOne() ;
+//  SQL equivalent:
+// SELECT * FROM first_collection LIMIT 1
 
 
 
@@ -122,10 +127,19 @@ db.first_collection.insertOne(
         ) ;
 
 //--    Retrieve the most recent (second) inserted document
-db.first_collection.find({title: "SQL la munte si la mare"}) ;
+db.first_collection.find({title : "SQL la munte si la mare"}) ;
+
+//  SQL equivalent:
+// SELECT * FROM first_collection WHERE title = 'SQL la munte si la mare'
+
 
 //--    Update the most recent document; in this document we add property (field) "country_author"
 db.first_collection.update({title: "SQL la munte si la mare"}, {$set: {country_author: "Romania"}}) ;
+
+// SQL pseudo-equivalent:
+// ALTER TABLE first_collection ADD country_author....
+// UPDATE first_collection SET country_author = 'Romania' WHERE title = 'SQL la munte si la mare'
+
 
 //--      Now check if the update worked properly
 // ... with "find"
@@ -146,11 +160,18 @@ db.first_collection.find({'tags': 'databases', 'image.size': {'$gt': 1000}});
 //--    Sometimes none of the documents fulfills the filter condition...
 db.first_collection.find({'tags': 'databases', 'image.size': {'$gt': 100000000}});
 
+
 //--    Similar to operator "Project" in relational algebra and SQL,
 //        we want to display, from all the documents within the collection,
 //        only property/attribute/field "title";
 //  by default, object id is dispayed
-db.first_collection.find ({}, {title : true })  ;
+db.first_collection.find (
+		{},   											// filter (record filtering)
+		{title : true })  ;         // column/attribute selection
+
+//  SQL equivalent:
+// SELECT title FROM first_collection
+
 
 //--    The same query as previous one, but this time without the object id
 db.first_collection.find ({}, {title : true, _id : false } )  ;
@@ -162,8 +183,16 @@ db.first_collection.remove({'comments.user' : 'greavy'}) ;
 // checkProgram(
 db.first_collection.find()
 
+//  SQL equivalent:
+// DELETE FROM first_collection WHERE first_collection.comments.user = 'greavy'
+
+
+
 //--    Remove all the documents of collection "first_collection"
 db.first_collection.remove({}) ;
+
+//  SQL equivalent:
+// DELETE FROM first_collection
 
 //--    Now that we have nothing left, take a break !
 db.first_collection.find()

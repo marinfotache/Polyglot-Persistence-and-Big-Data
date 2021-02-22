@@ -3,6 +3,7 @@
 //===============================================================================
 
 
+
 //===============================================================================
 //-- Disclaimer:
 //--  some of the Examples are taken/inspired from the book
@@ -358,14 +359,14 @@ db.first_collection.update(
 		{ user: "blogger", text: "Another related article is at http://example.com/db/db.txt" }
 			        ] } } ) ;
 // check
-db.first_collection.find({title: "I Like Databases"})
+db.first_collection.find({title: "I Like Databases"}) ;
 
 // remove old comments ("text_comments") of this  blog entry with operator "$unset"
 db.first_collection.update(
 	{title : "I Like Databases"},
 	{"$unset" : {text_comments: 1 }})
 // check
-db.first_collection.find({"title": "I Like Databases"})
+db.first_collection.find({"title": "I Like Databases"}) ;
 
 //--    Next, change the author of the second comment in the document representing
 // the  blog entry "I Like Databases"

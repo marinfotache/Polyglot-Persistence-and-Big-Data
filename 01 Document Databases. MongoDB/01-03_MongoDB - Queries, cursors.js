@@ -12,6 +12,8 @@
 //--    Set (if necessary) "ppbd2021" as current db
 use ppbd2021
 
+use bigdata
+
 //===============================================================================
 //         Queries - recap from previous scripts and some new basic features
 //===============================================================================
@@ -53,28 +55,28 @@ db.first_collection.find( {"title" : "NoSQL Databases" }) ;
 // Retrieve documents with tag "NoSQL"
 db.first_collection.find( {"tags" : "NoSQL" }) ;
 
-// Retrieve documents (books) with comments written by user "dragos"
+// Retrieve documents (blog entries) with comments written by user "dragos"
 db.first_collection.find( {"comments.user" : "dragos" }) ;
 
-// Retrieve documents (books) with the FIRST comment written by user "dragos"
+// Retrieve documents (blog entries) with the FIRST comment written by user "dragos"
 db.first_collection.find( {"comments.0.user" : "dragos" }) ;
 
 // Retrieve documents for which the author is declared (specified)
 db.first_collection.find( { author : {$exists : 1 } }) ;
 
-// Retrieve books which have received at least two votes
-// ... but first we increment by 5 all the books tagged with "NoSQL"
+// Retrieve blog entries which have received at least two votes
+// ... but first we increment by 5 all the blog entries tagged with "NoSQL"
 db.first_collection.update ( {"tags" : "NoSQL" }, {$inc : {"votes" : 5}}, false, true ) ;
 // ... and here is the query
 db.first_collection.find( {"votes" : {"$gte" : 2 } }) ;
 
-// Retrieve books which have received a number of votes which is different than 5
+// Retrieve blog entries which have received a number of votes which is different than 5
 db.first_collection.find( {"votes" : {"$ne" : 5 } }) ;
 
-// Retrieve books with 0 (zero) or 5 votes
+// Retrieve blog entries with 0 (zero) or 5 votes
 db.first_collection.find( {"votes" : {"$in" : [5, 0] } } ) ;
 
-// Retrieve books commented by "bjones" or the commenter is unknown
+// Retrieve blog entries commented by "bjones" or the commenter is unknown
 db.first_collection.find( {"comments.user" : { "$in" : ["bjones", "unknown" ]} } ) ;
 
 
@@ -82,17 +84,17 @@ db.first_collection.find( {"comments.user" : { "$in" : ["bjones", "unknown" ]} }
 //                  (Logical) Operator AND
 //>=
 
-// Retrieve books with the number of votes between 2 and 5
+// Retrieve blog entries with the number of votes between 2 and 5
 db.first_collection.find( {"votes" : {"$gte" : 2, "$lte" : 5 } }) ;
 
-// Retrieve books tagged "NoSQL" AND at least a comment posted by "dragos"
+// Retrieve blog entries tagged "NoSQL" AND at least a comment posted by "dragos"
 db.first_collection.find( {"tags" : "NoSQL" , "comments.user" : "dragos"} ) ;
 
 
 //=======================================================
 //                  (Logical) Operator "$or"
 
-// Retrieve books tagged "NoSQL" OR at least a comment posted by "dragos"
+// Retrieve blog entries tagged "NoSQL" OR at least a comment posted by "dragos"
 db.first_collection.find( { "$or" : [ {"tag" : "NoSQL"}, {"comments.user" : "dragos" } ] } )  ;
 
 
@@ -102,14 +104,14 @@ db.first_collection.find( { "$or" : [ {"tag" : "NoSQL"}, {"comments.user" : "dra
 //--      $ne selects the documents where the value of the field is not equal (i.e. !=)
 // to the specified value. This includes documents that do not contain the field.
 
-// Retrieve all the books excepted those written by "Valerica Greavu-Serban"
+// Retrieve all the blog entries excepted those written by "Valerica Greavu-Serban"
 db.first_collection.find( { author: { $ne : "Valerica Greavu-Serban" } } ) ;
 
-// Retrieve the books for which the author is declared (specified) and the
+// Retrieve the blog entries for which the author is declared (specified) and the
 // author is not "Valerica Greavu-Serban"
 db.first_collection.find( { author : {$exists : 1, $ne : "Valerica Greavu-Serban"  },  }) ;
 
-// Retrieve all the books which are not commented by user "dragos"
+// Retrieve all the blog entries which are not commented by user "dragos"
 db.first_collection.find( {"comments.user": { $ne:  "dragos"} } ) ;
 
 
@@ -118,8 +120,8 @@ db.first_collection.find( {"comments.user": { $ne:  "dragos"} } ) ;
 // So, operator "$not" is used for logical disjunctions and the "$ne" operator
 //    can test the contents of fields directly.
 
-// Retrieve books which have not received between 3 and 6 votes
-//   (including books without attribute "votes")
+// Retrieve blog entries which have not received between 3 and 6 votes
+//   (including blog entries without attribute "votes")
 db.first_collection.find( { votes: {$not: { $gte: 2, $lte: 5 } } } ) ;
 
 
@@ -127,7 +129,7 @@ db.first_collection.find( { votes: {$not: { $gte: 2, $lte: 5 } } } ) ;
 //      * the field value is not in the specified array or
 //      * the field does not exist.
 
-// Retrieve all the books which are not commented by users "dragos" or "unknown"
+// Retrieve all the blog entries which are not commented by users "dragos" or "unknown"
 db.first_collection.find( {"comments.user": { $nin:  ["dragos", "unknown"] } } ) ;
 
 
@@ -139,20 +141,20 @@ db.first_collection.find( {"comments.user": { $nin:  ["dragos", "unknown"] } } )
 // (Note: If the queried index is sparse, however, then the query will only
 //      match null values, not missing fields)
 
-// Retrieve books having tag(s) with "null" value (we don't have any at this moment) and
-//   books with no tags
+// Retrieve blog entries having tag(s) with "null" value (we don't have any at this moment) and
+//   blog entries with no tags
 db.first_collection.find( { tags: null } )  ;
 
-// Retrieve only books having tag(s) with "null" value
+// Retrieve only blog entries having tag(s) with "null" value
 db.first_collection.find({ tags : {"$in" : [null], "$exists" : true}})
 
 
 //=======================================================
 //                     operator "$all"
 
-//--    Which are the books commented by both "valy" and "dragos" ?
+//--    Which are the blog entries commented by both "valy" and "dragos" ?
 
-// Next query retrives books commented by "valy" OR "dragos":
+// Next query retrives blog entries commented by "valy" OR "dragos":
 db.first_collection.find( {"comments.user" : { "$in" : ["valy", "dragos" ]} } ) ;
 
 // ... so does the folllowing query:
@@ -167,14 +169,14 @@ db.first_collection.find( {"comments.user" : { $all : ["valy", "dragos" ] }} ) ;
 
 //--    "$size" returns the number of elements in an array
 
-//--    Retrieve the books having exactly two comments
+//--    Retrieve the blog entries having exactly two comments
 db.first_collection.find({"comments" : {"$size" : 2}}) ;
 
 
 //=======================================================
 //                  sort/order results
 
-// First specify the author for three books:
+// First specify the author for three blog entries:
 db.first_collection.update ( {title : "Virtualization and databases"} ,
 	{"$set" : {author : "dragos"} }) ;
 db.first_collection.update ( {title : "SQL la munte si la mare"} ,
@@ -183,13 +185,13 @@ db.first_collection.update ( {title : "NoSQL Databases"} ,
 	{"$set" : {author : "Valerica Greavu-Serban"} }) ;
 
 
-// Display all the books in order of the authors
+// Display all the blog entries in order of the authors
 db.first_collection.find().sort({author: 1}) ;
 // Notice that first is the boook without author and also that
 //  author "dragos" occurs after "Valerica Greavu-Serban" (because
 //   of lowercase)
 
-// Display all the books in order of the authors; books written by the same
+// Display all the blog entries in order of the authors; blog entries written by the same
 //   author (or authors havibg identical names) will be ordered
 //   by title, descendingly
 db.first_collection.find().sort({author: 1, title: -1}) ;
@@ -227,8 +229,8 @@ db.first_collection.update ( {title : "SQL la munte si la mare"},
 db.first_collection.find( ) ;
 
 
-//--    Retrieve all the books where user "dragos" commented "Strange"
-// The following query extracts the books for which there a comment "Strange"
+//--    Retrieve all the blog entries where user "dragos" commented "Strange"
+// The following query extracts the blog entries for which there a comment "Strange"
 //   and a commenter "dragos"
 db.first_collection.find( {"comments.user": "dragos", "comments.text": "Strange"}) ;
 // The second returned document has "dragos" amont commenters and "Strange"
@@ -280,7 +282,7 @@ cursor.forEach(function(x) {
 
 
 //===============================================================
-//--    Task: Update documents, such as all the books
+//--    Task: Update documents, such as all the blog entries
 //      containing "database" in the their title
 //        to have the tag "databases"
 //
@@ -472,10 +474,10 @@ db.counties.find().map( function(x) { return x.countyName; } );
 // How many documents are there in collection "first_collection"?
 db.first_collection.count() ;
 
-// How many books cover "sql"?
+// How many blog entries cover "sql"?
 db.first_collection.count({"tags" : /sql/i})
 
-// Retrieve all the authors for books "collected" in "first_collection"
+// Retrieve all the authors for blog entries "collected" in "first_collection"
 //  (SQL equivalent: "SELECT DISTINCT author FROM first_collection")
 db.runCommand({"distinct" : "first_collection", "key" : "author"})
 // ...or
@@ -485,7 +487,7 @@ db.first_collection.distinct( "author").sort({"author" : 1}) ;
 // this woould generate an error; solution: use aggregation framework (see next script)
 
 
-// Retrieve all the tags declared for books in "first_collection"
+// Retrieve all the tags declared for blog entries in "first_collection"
 db.runCommand({"distinct" : "first_collection", "key" : "tags"})
 // ... or
 db.first_collection.distinct( "tags");
@@ -496,7 +498,7 @@ db.runCommand({"distinct" : "first_collection", "key" : "comments.user"})
 // ... or
 db.first_collection.distinct( "comments.user");
 
-// Retrieve all the commenters of the books covering subject/tag "SQL"
+// Retrieve all the commenters of the blog entries covering subject/tag "SQL"
 db.first_collection.distinct( 'comments.user', { tags: "SQL" } )
 
 
@@ -512,11 +514,11 @@ db.counties.distinct("countyRegion")
 
 db.first_collection.find();
 
-//--    Display the number of written books for each author?
+//--    Display the number of written blog entries for each author?
 db.first_collection.group ({
 	key : {author : true},
-	initial : {"n_of_books" : 0 } ,
+	initial : {"n_of_blog entries" : 0 } ,
 	reduce : function(doc, aggregator) {
-		aggregator.n_of_books += 1 ;
+		aggregator.n_of_blog entries += 1 ;
 		}
 	} ) ;
