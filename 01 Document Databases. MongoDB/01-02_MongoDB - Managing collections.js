@@ -620,7 +620,8 @@ db.first_collection.find ( {"comments.user" : "dragos" }) ;
 // db.collection.update(
 //   <query>,
 //   <update>,
-//   { upsert: <boolean>, multi: <boolean> }
+//   { upsert: <boolean>,
+//    multi: <boolean> }
 // )
 
 //--    Add attribute "votes" in  ALL of the documents of collection "first_collection"
