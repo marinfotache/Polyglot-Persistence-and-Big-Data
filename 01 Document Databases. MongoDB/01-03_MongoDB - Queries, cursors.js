@@ -22,8 +22,9 @@ use bigdata
 // Retrieve all the documents in collection "first_collection"
 db.first_collection.find() ;
 
-//=======================================================
-//         Projection (selecting attributes)
+//===============================================================================
+//                       Projection (selecting attributes)
+//===============================================================================
 
 // Display values of only atribute "title"
 db.first_collection.find( {}, { "title" : 1}) ;
@@ -40,8 +41,11 @@ db.first_collection.find( {}, { "title" : 1, "votes" : 1 } ) ;
 // Display values for only "title" and "votes" but without ObjectId
 db.first_collection.find( {}, { "title" : 1, "votes" : 1, "_id" :0 } ) ;
 
-//=======================================================
-//              Basic selection/filtering
+
+//===============================================================================
+//                         Basic selection/filtering
+//===============================================================================
+
 
 // Display first three documents in the collection "first_collection" (LIMIT clause)
 db.first_collection.find( {}, { "title" : 1, "_id" : 0 }, 3 ) ;
@@ -80,9 +84,9 @@ db.first_collection.find( {"votes" : {"$in" : [5, 0] } } ) ;
 db.first_collection.find( {"comments.user" : { "$in" : ["bjones", "unknown" ]} } ) ;
 
 
-//=======================================================
+//===============================================================================
 //                  (Logical) Operator AND
-//>=
+//===============================================================================
 
 // Retrieve blog entries with the number of votes between 2 and 5
 db.first_collection.find( {"votes" : {"$gte" : 2, "$lte" : 5 } }) ;
@@ -91,15 +95,17 @@ db.first_collection.find( {"votes" : {"$gte" : 2, "$lte" : 5 } }) ;
 db.first_collection.find( {"tags" : "NoSQL" , "comments.user" : "dragos"} ) ;
 
 
-//=======================================================
+//===============================================================================
 //                  (Logical) Operator "$or"
+//===============================================================================
 
 // Retrieve blog entries tagged "NoSQL" OR at least a comment posted by "dragos"
 db.first_collection.find( { "$or" : [ {"tag" : "NoSQL"}, {"comments.user" : "dragos" } ] } )  ;
 
 
-//=======================================================
+//===============================================================================
 //            Operators "$ne", "$not", "$nin"
+//===============================================================================
 
 //--      $ne selects the documents where the value of the field is not equal (i.e. !=)
 // to the specified value. This includes documents that do not contain the field.
@@ -133,8 +139,10 @@ db.first_collection.find( { votes: {$not: { $gte: 2, $lte: 5 } } } ) ;
 db.first_collection.find( {"comments.user": { $nin:  ["dragos", "unknown"] } } ) ;
 
 
-//=======================================================
-//                      NULLs
+//===============================================================================
+//                                        NULLs
+//===============================================================================
+
 //-- Filter { attribute : null } query matches documents that
 //      * either contain the "atribute" whose value is null
 //      * or that do not contain the cancelDate field.
@@ -149,8 +157,9 @@ db.first_collection.find( { tags: null } )  ;
 db.first_collection.find({ tags : {"$in" : [null], "$exists" : true}})
 
 
-//=======================================================
-//                     operator "$all"
+//===============================================================================
+//                              operator "$all"
+//===============================================================================
 
 //--    Which are the blog entries commented by both "valy" and "dragos" ?
 
@@ -164,8 +173,9 @@ db.first_collection.find( {"comments.user" : "valy", "comments.user" :  "dragos"
 db.first_collection.find( {"comments.user" : { $all : ["valy", "dragos" ] }} ) ;
 
 
-//=======================================================
-//                     operator "$size"
+//===============================================================================
+//                            operator "$size"
+//===============================================================================
 
 //--    "$size" returns the number of elements in an array
 
@@ -173,8 +183,9 @@ db.first_collection.find( {"comments.user" : { $all : ["valy", "dragos" ] }} ) ;
 db.first_collection.find({"comments" : {"$size" : 2}}) ;
 
 
-//=======================================================
-//                  sort/order results
+//===============================================================================
+//                           sort/order results
+//===============================================================================
 
 // First specify the author for three blog entries:
 db.first_collection.update ( {title : "Virtualization and databases"} ,
@@ -197,8 +208,9 @@ db.first_collection.find().sort({author: 1}) ;
 db.first_collection.find().sort({author: 1, title: -1}) ;
 
 
-//=======================================================
+//===============================================================================
 //                     operator "$slice"
+//===============================================================================
 
 // First add a comment for the book "NoSQL Databases"
 db.first_collection.update ( {"title" : "NoSQL Databases"},
@@ -213,8 +225,9 @@ db.first_collection.findOne( {"title" : "NoSQL Databases"}, {"comments" : {"$sli
 db.first_collection.findOne( {"title" : "NoSQL Databases"}, {"comments" : {"$slice" : 2}}) ;
 
 
-//=======================================================
+//===============================================================================
 //                     operator "$elemMatch"
+//===============================================================================
 
 //--    Use "$elemMatch" operator to specify multiple criteria on the elements of an array
 //  such that at least one array element satisfies all the specified criteria.
@@ -246,8 +259,9 @@ db.first_collection.find({"comments" : {"$elemMatch" : {user: "dragos", text: "S
 
 db.first_collection.find() ;
 
-//===============================================================
+//===============================================================================
 //--   Looping through records at which the cursor points to
+//===============================================================================
 
 // 1st version ("hasNext()")
 var cursor = db.first_collection.find( {"title" : /database/i }) ;
@@ -281,11 +295,11 @@ cursor.forEach(function(x) {
 	} ) ;
 
 
-//===============================================================
+//------------------------------------------------------------------------------
 //--    Task: Update documents, such as all the blog entries
 //      containing "database" in the their title
 //        to have the tag "databases"
-//
+//------------------------------------------------------------------------------
 db.first_collection.find() ;
 
 //--    We'll try a solution based on cursors
@@ -299,8 +313,9 @@ db.first_collection.find() ;
 
 
 use sdbis
-//===============================================================
-//-- Working with two or more (logically related) collections
+//===============================================================================
+//--         Working with two or more (logically related) collections
+//===============================================================================
 
 //          first collection - "counties"
 db.counties.drop() ;
@@ -351,11 +366,12 @@ db.postalCodes.find() ;
 //   for chaining the queries in order to retrieve information from multiple
 //   collections
 
-
+//------------------------------------------------------------------------------
 //--    Target: show the county name and the region for city of Pascani
 // Basic idea: retrieve any postal code in Iasi, then store the "countyCode" of
 //   that document (associated to a postal/zip code) in a variable, and then
 //   use the variable for filtering collection "couties"
+//------------------------------------------------------------------------------
 
 // retrieve any postal code for Pascani
 row_postalCode = db.postalCodes.findOne ({cityTownVillage : 'Pascani'}) ;
@@ -377,8 +393,9 @@ vPostalCode = row_postalCode['countyCode'] ;
 db.counties.find({'_id' : vPostalCode }) ;
 
 
-//=======================================================================
+//===============================================================================
 //--    Including result of a "find" as an argument of another "find"
+//===============================================================================
 //
 // The most condensed version of a query for retrivieng the region for the townn of "Pascani"
 //   includes "findOne" result into a "find" functions (so we do not need cursors and variables
@@ -386,14 +403,15 @@ db.counties.find({'_id' : db.postalCodes.findOne ({cityTownVillage : 'Pascani'})
 
 
 
-//=======================================================================
+//------------------------------------------------------------------------------
 //--    We already saw that:
 //      * "find()" returns a cursor (reference) to a set of documents
 //      * similar to SQL DBMS's, we cannont acces directly the cursor records, but we have to
 //        load them sequentially into variables.
-//
+//------------------------------------------------------------------------------
 //      Consequently, for displaying the county name and the region for city of Pascani,
 //  one can write solutions based in cursors.
+//------------------------------------------------------------------------------
 
 //  (hasNext)
 var myCursor = db.postalCodes.find ({_id : '701150'}) ;
@@ -414,8 +432,10 @@ myCursor.forEach(function(x) {
 db.counties.find({'_id' : myCountyCode }) ;
 
 
+//------------------------------------------------------------------------------
 //--    Target: Get all the the postal codes for cities, towns and villages located in "Moldova "region
-//
+//------------------------------------------------------------------------------
+
 //  Here it is a solution based on regular expressions
 // retrieve all the counties in "Moldova" region
 var myCursor = db.counties.find ({countyRegion  : 'Moldova'}) ;
@@ -436,10 +456,11 @@ db.postalCodes.find({'countyCode' : {"$regex" : myRegExp  } }) ;
 
 
 
-//===============================================================
+//===============================================================================
 //--                    cursor.toArray()
 //--     The toArray() method returns an array that contains all the
 // documents from a cursor.
+//===============================================================================
 
 //--    Display all the counties  located in "Moldova "region
 // retrieve counties in "Moldova" region and store documents into an array
@@ -456,11 +477,12 @@ myArray = db.postalCodes.find ({_id : '701150'}).toArray() ;
 db.counties.find({'_id' : myArray[0].countyCode }) ;
 
 
-//===============================================================
+//===============================================================================
 //--                    `map` function
 //--   Among other features, `map` allows the queries to returns
 //     parts of the documents as arrays of values (not arrays of documents)
 // -- This will be useful (see script `01-05b`) for some types of "subqueries"
+//===============================================================================
 
 // Get an array with all county names
 db.counties.find().map( function(x) { return x.countyName; } );
@@ -468,7 +490,7 @@ db.counties.find().map( function(x) { return x.countyName; } );
 
 
 //===============================================================================
-//                              Counts and distincts
+//                          Counts and distincts (optional)
 //===============================================================================
 
 // How many documents are there in collection "first_collection"?
@@ -506,10 +528,8 @@ db.first_collection.distinct( 'comments.user', { tags: "SQL" } )
 db.counties.distinct("countyRegion")
 
 
-
-
 //===============================================================================
-//                            Grouping
+//                            Grouping (optional)
 //===============================================================================
 
 db.first_collection.find();

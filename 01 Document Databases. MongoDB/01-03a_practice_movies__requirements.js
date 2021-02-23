@@ -12,9 +12,8 @@ use movies
 Include the .json file as the argument for:
 
 db.movies.insertMany(
-........................here is the content of `movies_2011-2018.json` file
+........................paste here the content of `movies_2011-2018.json` file
 )
-
 
 
 /* ---------------------------------------------------------------*/
