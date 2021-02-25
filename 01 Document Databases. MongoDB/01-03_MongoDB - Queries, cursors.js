@@ -10,9 +10,9 @@
 //===============================================================================
 
 //--    Set (if necessary) "ppbd2021" as current db
-use ppbd2021
+//use ppbd2021
 
-use bigdata
+//use bigdata
 
 //===============================================================================
 //         Queries - recap from previous scripts and some new basic features
@@ -100,7 +100,7 @@ db.first_collection.find( {"tags" : "NoSQL" , "comments.user" : "dragos"} ) ;
 //===============================================================================
 
 // Retrieve blog entries tagged "NoSQL" OR at least a comment posted by "dragos"
-db.first_collection.find( { "$or" : [ {"tag" : "NoSQL"}, {"comments.user" : "dragos" } ] } )  ;
+db.first_collection.find( { "$or" : [ {"tags" : "NoSQL"}, {"comments.user" : "dragos" } ] } )  ;
 
 
 //===============================================================================
@@ -253,6 +253,7 @@ db.first_collection.find( {"comments.user": "dragos", "comments.text": "Strange"
 db.first_collection.find({"comments" : {"$elemMatch" : {user: "dragos", text: "Strange" } } } ) ;
 
 
+
 //===============================================================================
 //                                        Cursors
 //===============================================================================
@@ -296,7 +297,7 @@ cursor.forEach(function(x) {
 
 
 //------------------------------------------------------------------------------
-//--    Task: Update documents, such as all the blog entries
+//--    Requierement: Update documents, such as all the blog entries
 //      containing "database" in the their title
 //        to have the tag "databases"
 //------------------------------------------------------------------------------
@@ -367,7 +368,7 @@ db.postalCodes.find() ;
 //   collections
 
 //------------------------------------------------------------------------------
-//--    Target: show the county name and the region for city of Pascani
+//--    Requierement: show the county name and the region for city of Pascani
 // Basic idea: retrieve any postal code in Iasi, then store the "countyCode" of
 //   that document (associated to a postal/zip code) in a variable, and then
 //   use the variable for filtering collection "couties"
@@ -433,7 +434,8 @@ db.counties.find({'_id' : myCountyCode }) ;
 
 
 //------------------------------------------------------------------------------
-//--    Target: Get all the the postal codes for cities, towns and villages located in "Moldova "region
+//--    Requierement: Get all the the postal codes for cities,
+//        towns and villages located in "Moldova "region
 //------------------------------------------------------------------------------
 
 //  Here it is a solution based on regular expressions
@@ -453,6 +455,40 @@ myCursor.forEach(function(x) {
 	} ) ;
 // use the regulat expression (stored in variable "myRegExp") in "find"
 db.postalCodes.find({'countyCode' : {"$regex" : myRegExp  } }) ;
+
+
+//------------------------------------------------------------------------------
+//--    Target: For each postal code in `Moldova` get a a results in which
+//                 include the county and region names
+//------------------------------------------------------------------------------
+// Hint: the query must produce somethinh resembling the SQL query:
+// SELECT * FROM postalCodes NATURAL JOIN counties
+
+// we'll get the result as a new collection: `temp`
+db.temp.remove({}) ;
+
+// get the counties in `Moldova` region
+var counties_moldova = db.counties.find ({countyRegion  : 'Moldova'}) ;
+
+// loop through these counties and get all the zip codes, each time ,
+//   we'll inserting a document in `temp`
+counties_moldova.forEach(function(x) {
+	var crt_countyCode = x._id ;
+	//print(myCountyCode) ;
+
+	// the second cursor will get all the zip codes in each of the counties
+	var crt_post_codes = db.postalCodes.find({'countyCode' : crt_countyCode}) ;
+	crt_post_codes.forEach(function(y) {
+	    // add the document containing information about the county into the
+			//  current document (y) which is related to  a postal code
+			y.county = x
+			// insert the document into the resulting collection
+			db.temp.insert(y)
+		})
+	} ) ;
+
+// check the content of the result
+db.temp.find() ;
 
 
 
@@ -490,7 +526,7 @@ db.counties.find().map( function(x) { return x.countyName; } );
 
 
 //===============================================================================
-//                          Counts and distincts (optional)
+//                          Counts and distincts (OPTIONAL)
 //===============================================================================
 
 // How many documents are there in collection "first_collection"?
@@ -529,7 +565,7 @@ db.counties.distinct("countyRegion")
 
 
 //===============================================================================
-//                            Grouping (optional)
+//                            Grouping (OPTIONAL)
 //===============================================================================
 
 db.first_collection.find();

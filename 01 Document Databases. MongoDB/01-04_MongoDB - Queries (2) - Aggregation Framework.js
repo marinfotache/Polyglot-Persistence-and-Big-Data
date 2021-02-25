@@ -331,7 +331,7 @@ db.books.aggregate([
 // remember that in SQL...
 // SELECT DISTINCT col1 FROM tab1
 // ... is equivalent to...
-// SELECT col1 FROM tabl1 GROUP BY col1
+// SELECT col1 FROM tab1 GROUP BY col1
 //
 
 //------------------------------------------------------------------------------
