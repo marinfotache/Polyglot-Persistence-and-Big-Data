@@ -135,6 +135,11 @@ db.books.aggregate( [
 	 { $match: { authors : "Valerica Greavu-Serban" }},
         ] ) ;
 
+// SQL equivalent:
+// SELECT * FROM books WHERE author = 'Valerica Greavu-Serban'
+// or 
+// SELECT * FROM books WHERE authors LIKE '%Valerica Greavu-Serban%'
+
 
 //-- For displaying only the title for the books (co)written by "Valerica Greavu-Serban"...
 db.books.find({"authors" : "Valerica Greavu-Serban" }, { "title" : 1, "_id" : 0 } ) ;
