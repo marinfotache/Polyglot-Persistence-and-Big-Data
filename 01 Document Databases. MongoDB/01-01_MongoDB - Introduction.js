@@ -84,9 +84,9 @@ db.first_collection.insert(
                   size: 75381,
                   data: "Binary"     },
 	comments: [
-    	{ user: 'wolfram_vasile', text: 'Interesting article!' },
-      { user: 'xenon_iolanda', text: 'A similar article can be found at http://save-sdbis-from-databases.com/nervous-breakdown.html' }             ]
-    }
+    		{ user: 'wolfram_vasile', text: 'Interesting article!' },
+      		{ user: 'xenon_iolanda', text: 'A similar article can be found at http://save-sdbis-from-databases.com/nervous-breakdown.html' }             ]
+    	}
         ) ;
 
 //--    Since the is only one document in the collection, commands findOne() and find()
