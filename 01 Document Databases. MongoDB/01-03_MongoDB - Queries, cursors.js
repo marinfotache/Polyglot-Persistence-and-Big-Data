@@ -313,7 +313,10 @@ cursor.forEach(function(x) {
 db.first_collection.find() ;
 
 
-use sdbis
+// use ppbd2021
+// or
+// use bigdata
+
 //===============================================================================
 //--         Working with two or more (logically related) collections
 //===============================================================================
@@ -457,12 +460,15 @@ myCursor.forEach(function(x) {
 db.postalCodes.find({'countyCode' : {"$regex" : myRegExp  } }) ;
 
 
+
 //------------------------------------------------------------------------------
-//--    Target: For each postal code in `Moldova` get a a results in which
-//                 include the county and region names
+//--    Target: For each postal code in `Moldova` get a result which
+//                 includes the county and region names
 //------------------------------------------------------------------------------
-// Hint: the query must produce somethinh resembling the SQL query:
+// Hint: the query must produce something resembling the SQL query:
 // SELECT * FROM postalCodes NATURAL JOIN counties
+
+// solution no.1
 
 // we'll get the result as a new collection: `temp`
 db.temp.remove({}) ;
@@ -489,6 +495,38 @@ counties_moldova.forEach(function(x) {
 
 // check the content of the result
 db.temp.find() ;
+
+
+
+// solution no.2
+
+// we'll get the result as a new collection: `temp`
+db.temp2.remove({}) ;
+
+// get the counties in `Moldova` region
+var counties_moldova = db.counties.find ({countyRegion  : 'Moldova'}) ;
+
+// loop through these counties and get all the zip codes, each time ,
+//   we'll inserting a document in `temp`
+counties_moldova.forEach(function(x) {
+	var crt_countyCode = x._id ;
+	//print(myCountyCode) ;
+
+	// the second cursor will get all the zip codes in each of the counties
+	var crt_post_codes = db.postalCodes.find({'countyCode' : crt_countyCode}) ;
+	crt_post_codes.forEach(function(y) {
+	    // add the document containing information about the county into the
+			//  current document (y) which is related to  a postal code
+			y.countyName = x.countyName
+			y.countyRegion = x.countyRegion
+
+			// insert the document into the resulting collection
+			db.temp2.insert(y)
+		})
+	} ) ;
+
+// check the content of the result
+db.temp2.find() ;
 
 
 
