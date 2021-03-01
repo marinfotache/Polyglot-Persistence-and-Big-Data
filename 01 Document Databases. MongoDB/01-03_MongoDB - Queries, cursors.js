@@ -468,7 +468,10 @@ db.postalCodes.find({'countyCode' : {"$regex" : myRegExp  } }) ;
 // Hint: the query must produce something resembling the SQL query:
 // SELECT * FROM postalCodes NATURAL JOIN counties
 
-// solution no.1
+
+//---------------------------------
+// 		   solution no. 1
+//---------------------------------
 
 // we'll get the result as a new collection: `temp`
 db.temp.remove({}) ;
@@ -497,8 +500,9 @@ counties_moldova.forEach(function(x) {
 db.temp.find() ;
 
 
-
-// solution no.2
+//---------------------------------
+// 		solution no. 2
+//---------------------------------
 
 // we'll get the result as a new collection: `temp`
 db.temp2.remove({}) ;
