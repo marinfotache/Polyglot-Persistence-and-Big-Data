@@ -1,6 +1,7 @@
 //===============================================================================
 //  Aggregation Framework (The High-Level Query Language for MongoDB databases)
 //===============================================================================
+// last update: 2021-03-01
 
 //===============================================================================
 //--  some of the Examples are taken/inspired from the book
@@ -135,11 +136,6 @@ db.books.aggregate( [
 	 { $match: { authors : "Valerica Greavu-Serban" }},
         ] ) ;
 
-// SQL equivalent:
-// SELECT * FROM books WHERE author = 'Valerica Greavu-Serban'
-// or 
-// SELECT * FROM books WHERE authors LIKE '%Valerica Greavu-Serban%'
-
 
 //-- For displaying only the title for the books (co)written by "Valerica Greavu-Serban"...
 db.books.find({"authors" : "Valerica Greavu-Serban" }, { "title" : 1, "_id" : 0 } ) ;
@@ -200,15 +196,159 @@ db.books.aggregate([
     { $match: { release_year : 2014}}
   ])
 
+
+
+//===============================================================================
+//--	     Selection (filter) and projection (extract/display) on arrays
+//===============================================================================
+
 //------------------------------------------------------------------------------
-//--             Display the books written by more than one author
+//--             Display the books written by exacty two authors
 //------------------------------------------------------------------------------
 
-// solution with $addFields based on the size of array `authors`
+// solution with `$addFields` based on the size of array `authors`
+db.books.aggregate([
+    { $addFields : { n_of_authors : { $size : "$authors" }} },
+    { $match: { n_of_authors : 2}}
+  ])
+
+// a shorter solution
+db.books.aggregate([
+    { $match: { authors : { $size : 2 }     }}
+  ])
+
+
+//------------------------------------------------------------------------------
+//--           Display the books written by more than one author
+//------------------------------------------------------------------------------
+
+// next solution DOES NOT WORK ...
+db.books.aggregate([
+    { $match: { authors : { $size : { $gt : 1} }     }}
+  ])
+
+// ... but solution with ``$addFields` based on the size of array `authors` does:
 db.books.aggregate([
     { $addFields : { n_of_authors : { $size : "$authors" }} },
     { $match: { n_of_authors : { $gt : 1}}}
   ])
+
+
+
+//------------------------------------------------------------------------------
+//--  Display the title, author and all topics (tags) for all the books
+//       that cover the "Aggregation Framework" topic
+//------------------------------------------------------------------------------
+
+// a previous solution (adapted)
+db.books.aggregate([
+    { $project: { title : 1, authors: 1, tags : 1 }},
+    { $match: { tags : "Aggregation Framework"}}
+  ])
+
+
+//------------------------------------------------------------------------------
+//--  Display the title, author and ONLY the "Aggregation Framework" topic
+//------------------------------------------------------------------------------
+
+// solution based on `$filter`
+db.books.aggregate([
+    { $match: { tags : "Aggregation Framework"}},
+    { $project: { title : 1, authors: 1,
+        only_tag_af : {
+          $filter: {
+            input: "$tags",
+            as: "tag",
+            cond: { $eq: [ "$$tag", "Aggregation Framework" ] }
+          }}}}
+  ])
+
+
+//------------------------------------------------------------------------------
+//--  Display the title, author and ONLY the "SQL" or "NoSQL" topics
+//------------------------------------------------------------------------------
+
+// we need an `and` predicate in the array filter
+db.books.aggregate([
+    { $match: { tags : { $in : ["SQL", "NoSQL"] } }},
+    { $project: { title : 1, authors: 1,
+        sql_sql__tags : {
+          $filter: {
+            input: "$tags",
+            as: "tag",
+            cond: { $or: [
+                {$eq: [ "$$tag", "SQL" ] },
+                {$eq: [ "$$tag", "NoSQL" ] }]}
+          }}}}
+  ])
+
+
+
+//------------------------------------------------------------------------------
+//--       Display only the comments who  got at least five votes
+//------------------------------------------------------------------------------
+
+// solution with `$filter`
+db.books.aggregate([
+   {
+      $project: { title : 1, authors : 1,
+         comments: {
+            $filter: {
+               input: "$comments",
+               as: "comment",
+               cond: { $gte: [ "$$comment.votes", 5 ] }
+            }
+         }
+      }
+   }
+])
+
+
+//------------------------------------------------------------------------------
+//--  Display the books (title and author) only if one the commenters
+//--  is "Valerica Greavu-Serban" and his comment got exactly five votes
+//------------------------------------------------------------------------------
+
+// solution with ``$filter`
+db.books.aggregate([
+   {
+      $project: { title : 1, authors : 1,
+         comments: {
+            $filter: {
+               input: "$comments",
+               as: "comment",
+               cond: { $and: [
+                 {$eq: [ "$$comment.user", "Valerica Greavu-Serban" ] },
+                 {$eq: [ "$$comment.votes", 5 ] }]}
+            }
+         }
+      }
+   }
+])
+
+
+//------------------------------------------------------------------------------
+//--  Display the books (title and author) only if one the commenters
+//--  is "Valerica Greavu-Serban" and his comment got at least 3 votes
+//------------------------------------------------------------------------------
+
+// solution with ``$filter`
+db.books.aggregate([
+   {
+      $project: { title : 1, authors : 1,
+         comments: {
+            $filter: {
+               input: "$comments",
+               as: "comment",
+               cond: { $and: [
+                 {$eq: [ "$$comment.user", "Valerica Greavu-Serban" ] },
+                 {$gte: [ "$$comment.votes", 3 ] }]}
+            }
+         }
+      }
+   }
+])
+
 
 
 //===============================================================================
@@ -358,7 +498,7 @@ db.books.aggregate( [
 
 
 //===============================================================================
-//--                  Using $group for "common" aggregation
+//--                  Using $group for "regular" aggregation
 //--		                       (like GROUP BY in SQL)
 //===============================================================================
 
@@ -602,8 +742,10 @@ db.books.aggregate(
 //              		   Other Aggregation Framework features
 //===============================================================================
 
+//------------------------------------------------------------------------------
+//        Pass the result of an "unwind" operator to another "unwind"
+//------------------------------------------------------------------------------
 
-//    Wel'll pass the result of an "unwind" operator to another "unwind"
 db.books.aggregate(
    { $unwind: "$authors" },
    { $unwind: "$comments" }
