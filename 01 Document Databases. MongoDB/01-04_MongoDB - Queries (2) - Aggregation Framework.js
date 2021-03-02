@@ -298,7 +298,7 @@ db.books.aggregate([
 
 
 //------------------------------------------------------------------------------
-//--       Display only the comments who got at least five votes
+//--   Display, for all books, only the comments who got at least five votes
 //------------------------------------------------------------------------------
 
 // solution with `$filter`
@@ -317,8 +317,9 @@ db.books.aggregate([
 
 
 //------------------------------------------------------------------------------
-//--  Display the books (title and author) only if one the commenters
-//--  is "Valerica Greavu-Serban" and his comment got exactly five votes
+//--  Display, for all books, the title, the author and the comments,
+//--  only if one the commenters is "Valerica Greavu-Serban" and
+//   his comment got exactly five votes
 //------------------------------------------------------------------------------
 
 // solution with ``$filter`
@@ -381,7 +382,7 @@ db.books.aggregate( [
 
 //-- a simpler solution, based on $count
 db.books.aggregate( [
-   { $count: "title"}
+   { $count: "n_of_records"}
 		] ) ;
 
 
@@ -402,7 +403,15 @@ db.books.aggregate( [
 //--                How many books were published by "Polirom"?
 //------------------------------------------------------------------------------
 
+
 // solution with `$group`
+db.books.aggregate( [
+  { $match: { publisher : "Polirom" }},
+  { $group: { _id: "publisher = Polirom", n_of_books: { $sum: 1 } }}
+  ] ) ;
+
+
+// another solution with `$group`
 db.books.aggregate( [
   { $match: { publisher : "Polirom" }},
   { $group: { _id: "$publisher", n_of_books: { $sum: 1 } }}
@@ -411,7 +420,7 @@ db.books.aggregate( [
 // solution with `$count`
 db.books.aggregate( [
   { $match: { publisher : "Polirom" }},
-  { $count: "title" }
+  { $count: "nr_of_books" }
   ] ) ;
 
 
@@ -533,9 +542,18 @@ db.books.aggregate( [
 //--              Display number of books for each publisher
 //------------------------------------------------------------------------------
 db.books.aggregate([
-   { $group: { _id: {"publisher": "$publisher"},
-            count: { $sum: 1 } } },
+   { $group: { _id: {"publisher": "$publisher"}, count: { $sum: 1 } } },
     { $sort : { _id : 1 } } ]) ;
+
+
+//------------------------------------------------------------------------------
+//--           Get the publisher with the largest number of books
+//------------------------------------------------------------------------------
+db.books.aggregate([
+   { $group: { _id: {"publisher": "$publisher"}, count: { $sum: 1 } } },
+   { $sort : { count : -1 } },
+   { $limit : 1}
+  ]) ;
 
 
 //------------------------------------------------------------------------------
