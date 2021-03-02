@@ -143,7 +143,7 @@ db.books.find({"authors" : "Valerica Greavu-Serban" }, { "title" : 1, "_id" : 0 
 // ...we can use the AF query
 db.books.aggregate( [
     { $match: { authors : "Valerica Greavu-Serban" }},
-	  { $project : { _id : 0, title : 1 }} ,
+	  { $project : { _id : 0, title : 1 }}
         ] ) ;
 
 
@@ -151,7 +151,7 @@ db.books.aggregate( [
 //--  Retrieve, in uppercase and alphabetical order, all the book titles
 //------------------------------------------------------------------------------
 db.books.aggregate( [
-	{ $project : { title : {$toUpper:"$title"} , _id:0 } },
+	{ $project : { title : {$toUpper : "$title"} , _id : 0 } },
 	{ $sort : { title : 1 } } ] ) ;
 
 
@@ -172,6 +172,9 @@ db.books.aggregate( [
 //------------------------------------------------------------------------------
 //--             Display the sales amount for each book
 //------------------------------------------------------------------------------
+
+// SQL ~:  SELECT books.*, quantity_sold * price AS book_sales FROM books
+
 
 // solution with $addFields
 db.books.aggregate([
@@ -198,9 +201,19 @@ db.books.aggregate([
 
 
 
+
 //===============================================================================
 //--	     Selection (filter) and projection (extract/display) on arrays
 //===============================================================================
+
+
+//------------------------------------------------------------------------------
+//--           Display the first three tags of each book
+//------------------------------------------------------------------------------
+db.books.aggregate([
+  {$project : { title : 1, authors: 1, first_three_tags : { $slice : ["$tags", 3 ] }  }}
+  ])
+
 
 //------------------------------------------------------------------------------
 //--             Display the books written by exacty two authors
@@ -214,7 +227,7 @@ db.books.aggregate([
 
 // a shorter solution
 db.books.aggregate([
-    { $match: { authors : { $size : 2 }     }}
+    { $match: { authors : { $size : 2 }  }}
   ])
 
 
@@ -272,7 +285,7 @@ db.books.aggregate([
 db.books.aggregate([
     { $match: { tags : { $in : ["SQL", "NoSQL"] } }},
     { $project: { title : 1, authors: 1,
-        sql_sql__tags : {
+        sql_nosql__tags : {
           $filter: {
             input: "$tags",
             as: "tag",
@@ -285,13 +298,12 @@ db.books.aggregate([
 
 
 //------------------------------------------------------------------------------
-//--       Display only the comments who  got at least five votes
+//--       Display only the comments who got at least five votes
 //------------------------------------------------------------------------------
 
 // solution with `$filter`
 db.books.aggregate([
-   {
-      $project: { title : 1, authors : 1,
+   { $project: { title : 1, authors : 1,
          comments: {
             $filter: {
                input: "$comments",
@@ -374,6 +386,19 @@ db.books.aggregate( [
 
 
 //------------------------------------------------------------------------------
+//--                     Fing the average price of a book
+//------------------------------------------------------------------------------
+
+db.books.aggregate( [
+   { $group: { _id: "all books",
+               avg_price: { $avg : "$price" }
+             }
+    }
+     ])
+
+
+
+//------------------------------------------------------------------------------
 //--                How many books were published by "Polirom"?
 //------------------------------------------------------------------------------
 
@@ -397,7 +422,7 @@ db.books.aggregate( [
 
 db.books.aggregate([
     { $match: { authors : "Valerica Greavu-Serban" }},
-    { $group: { _id: {"author: Valerica Greavu-Serban" : null},
+    { $group: { _id :  "author: Valerica Greavu-Serban" ,
                n_of_books: { $sum: 1 } }} ]) ;
 
 //-- The same requirement, but remove author name from the result
@@ -428,15 +453,16 @@ db.books.aggregate( [
         ] ) ;
 
 // we can name the group "_id", so that the result is more understandable
-db.books.aggregate(
+db.books.aggregate([
 	 { $match: { url : {$exists : 1 } }},
    { $group: { _id: {n_of_books_with_associated_url: null},
-               n_of_books: { $sum: 1 } }} ) ;
+               n_of_books: { $sum: 1 } }} ]) ;
 
 // ... or even simpler
-db.books.aggregate(
+db.books.aggregate([
 	 { $match: { url : {$exists : 1 } }},
-   { $group: { _id: "n_of_books_with_associated_url", n_of_books: { $sum: 1 } } } ) ;
+   { $group: { _id: "n_of_books_with_associated_url", n_of_books: { $sum: 1 } } } ]) ;
+
 
 
 //------------------------------------------------------------------------------
@@ -506,28 +532,30 @@ db.books.aggregate( [
 //------------------------------------------------------------------------------
 //--              Display number of books for each publisher
 //------------------------------------------------------------------------------
-db.books.aggregate(
+db.books.aggregate([
    { $group: { _id: {"publisher": "$publisher"},
             count: { $sum: 1 } } },
-    { $sort : { _id : 1 } } ) ;
+    { $sort : { _id : 1 } } ]) ;
 
 
 //------------------------------------------------------------------------------
 //--             Display average book prices for each publisher
 //------------------------------------------------------------------------------
-db.books.aggregate(
+db.books.aggregate([
    { $group: { _id: {"publisher": "$publisher"},
             averagePrice: { $avg: "$price" } } },
-    { $sort : { _id : 1 } } ) ;
+    { $sort : { _id : 1 } } ]) ;
+
 
 
 //------------------------------------------------------------------------------
 //--  Display how many books cost less than 30 lei and how many more than 30
 //------------------------------------------------------------------------------
 
-db.books.aggregate(
+db.books.aggregate([
    { $group: { _id: {$cond: [ { $lte: [ "$price", 30 ] }, 0, 1 ]},
-               n_of_books: { $sum: 1 } }} ) ;
+               n_of_books: { $sum: 1 } }}
+             ])
 
 //... or, for a better look...
 db.books.aggregate([
@@ -540,24 +568,24 @@ db.books.aggregate([
 //------------------------------------------------------------------------------
 
 /* see: http://stackoverflow.com/questions/25497150/mongodb-aggregate-by-field-exists  */
-db.books.aggregate(
+db.books.aggregate( [
    { $group: { _id: {$gt: ["$url", null]},
-               n_of_books: { $sum: 1 } }} ) ;
+               n_of_books: { $sum: 1 } }} ]) ;
 
 //... enhanced version:
-db.books.aggregate(
+db.books.aggregate( [
    { $group: { _id: {"With URL ": {$gt: ["$url", null]}},
-               n_of_books: { $sum: 1 } }} ) ;
+               n_of_books: { $sum: 1 } }} ]) ;
 
 
 //------------------------------------------------------------------------------
 //--    Display the number of books covering "NoSQL" for each publisher
 //------------------------------------------------------------------------------
-db.books.aggregate(
+db.books.aggregate([
    { $match: { tags : "NoSQL" } },
    { $group: { _id: { "publisher (of NoSQL books)": "$publisher"},
                n_of_books: { $sum: 1 } } },
-    { $sort: { _id : 1 } }     )	;
+    { $sort: { _id : 1 } }    ] )	;
 
 
 
@@ -571,11 +599,11 @@ db.books.aggregate(
     FROM books GROUP BY publisher, EXTRACT(year FROM release_date) )
     */
 //------------------------------------------------------------------------------
-db.books.aggregate(
+db.books.aggregate([
    { $group: { _id: { publisher: "$publisher",
                       year: { "$year": "$release_date" }},
                n_of_books: { $sum: 1 } } },
-    { $sort: { _id : 1 } }   ) ;
+    { $sort: { _id : 1 } }  ] ) ;
 
 
 //===============================================================================
@@ -585,12 +613,12 @@ db.books.aggregate(
 //------------------------------------------------------------------------------
 //--   Display publishers with al least two published books covering "NoSQL"
 //------------------------------------------------------------------------------
-db.books.aggregate(
+db.books.aggregate([
    	{ $match: { tags : "NoSQL" } },
    	{ $group: { _id: {"publisher": "$publisher"},
                n_of_books: { $sum: 1 } } },
     { $match: { n_of_books : { $gte : 2 } } },
-    { $sort: { _id : 1 } }     )	;
+    { $sort: { _id : 1 } }     ])	;
 
 
 //===============================================================================
@@ -601,10 +629,10 @@ db.books.aggregate(
 //------------------------------------------------------------------------------
 //      Display all the book titles published by each publisher
 //------------------------------------------------------------------------------
-db.books.aggregate(
+db.books.aggregate([
    { $group: { _id: "$publisher",
         "books: ": { $addToSet: "$title" } } },
-   { $sort :{ _id: 1}}) ;
+   { $sort :{ _id: 1}}]) ;
 
 
 //===============================================================================
@@ -616,9 +644,9 @@ db.books.aggregate(
 //------------------------------------------------------------------------------
 
 // Next query generates an error, so we need "$unwind"
-db.books.aggregate(
+db.books.aggregate([
 	{ $project : { name : {$toUpper:"$authors"} , _id:0 } },
-	{ $sort : { name : 1 } }  ) ;
+	{ $sort : { name : 1 } }  ]) ;
 
 /* "$unwind" deconstructs (unnest) an array field from the input documents and
     output a document for each array element.
@@ -630,57 +658,58 @@ db.books.aggregate( [ { $unwind : "$authors" } ] )
 
 //--    Now, returning to the required information:
 // Retrieve, in uppercase and alphabetically ordered, all the authors name
-db.books.aggregate(
+db.books.aggregate([
    { $unwind: "$authors" } ,
    { $project : { author: {$toUpper: "$authors"}, _id: 0  }},
-   { $sort: {author: 1 }}) ;
+   { $sort: {author: 1 }}]) ;
 
 // Next solution extracts no duplicates
-db.books.aggregate(
+db.books.aggregate([
     { $unwind: "$authors" } ,
     { $group : { _id: {$toUpper:"$authors"} } },
     { $project : { _id: 1 } },
-    { $sort : { _id: 1 } } ) ;
+    { $sort : { _id: 1 } } ]) ;
+
 
 
 //------------------------------------------------------------------------------
 //--            How many books were written by each author?
 //------------------------------------------------------------------------------
-db.books.aggregate(
+db.books.aggregate([
     { $unwind: "$authors" } ,
     { $group : { _id: {"author": "$authors"},
-               n_of_books: { $sum: 1 } }}) ;
+               n_of_books: { $sum: 1 } }}]) ;
 
 
 //------------------------------------------------------------------------------
 //--                  Display the books written by each author?
 //------------------------------------------------------------------------------
-db.books.aggregate(
+db.books.aggregate([
     { $unwind: "$authors" } ,
     { $group : { _id: {"author": "$authors"},
         "books: ": { $addToSet: "$title" } } },
-    { $sort : { _id: 1 } } ) ;
+    { $sort : { _id: 1 } } ]) ;
 
 
 //------------------------------------------------------------------------------
 //--         Display the number of books in which every tag is declared
 //------------------------------------------------------------------------------
-db.books.aggregate(
+db.books.aggregate([
     { $unwind: "$tags" } ,
     { $group : { _id: {"tag": "$tags"},
                n_of_books: { $sum: 1 } }},
     { $project: {tag: 1, n_of_books: 1 } },
-    { $sort :{ _id: 1}}) ;
+    { $sort :{ _id: 1}}]) ;
 
 
 //------------------------------------------------------------------------------
 //--             Display the books for which each tag is declared
 //------------------------------------------------------------------------------
-db.books.aggregate(
+db.books.aggregate([
     { $unwind: "$tags" } ,
     { $group : { _id: {"tag": "$tags"},
         "books: ": { $addToSet: "$title" } } },
-    { $sort : { _id: 1 } } ) ;
+    { $sort : { _id: 1 } } ]) ;
 
 
 //------------------------------------------------------------------------------
@@ -688,53 +717,54 @@ db.books.aggregate(
 // as "votes" is an attribute of "comments" (which is an array);
 //  "comments" must be unwinded
 //------------------------------------------------------------------------------
-db.books.aggregate(
+db.books.aggregate([
    { $unwind: "$comments" } ,
-   { $group: { _id: null, "votes_overall": { $sum: "$comments.votes" } } } ) ;
+   { $group: { _id: null, "votes_overall": { $sum: "$comments.votes" } } }
+ ] ) ;
 
 
 //------------------------------------------------------------------------------
 //--    Display the number of received votes by the comments of each book
 //------------------------------------------------------------------------------
-db.books.aggregate(
+db.books.aggregate([
    { $unwind: "$comments" } ,
    { $group: { _id: "$title",
         "n_of_votes": { $sum: "$comments.votes" } } },
-   { $sort :{ _id: 1}}) ;
+   { $sort :{ _id: 1}}]) ;
 
 
 //------------------------------------------------------------------------------
 //--               Number of posts written by each commenter (user)
 //------------------------------------------------------------------------------
-db.books.aggregate(
+db.books.aggregate([
    { $unwind: "$comments" },
    { $group: { _id: {"user": "$comments.user"},
          n_of_posts : { $sum: 1 } } },
-    { $sort: {user: 1 } } ) ;
+    { $sort: {user: 1 } } ]) ;
 
 
 //------------------------------------------------------------------------------
 //--              Display commenters with at least three posts
 //------------------------------------------------------------------------------
 
-db.books.aggregate(
+db.books.aggregate([
    { $unwind: "$comments" },
    { $group: { _id: {"user": "$comments.user"},
          n_of_posts : { $sum: 1 } } },
     { $match: {n_of_posts: {$gte :3}}},
-    { $sort: {n_of_posts: -1 } } ) ;
+    { $sort: {n_of_posts: -1 } ] } ) ;
 
 
 //------------------------------------------------------------------------------
 //--    Display top 3 of commenters (in terms of number of posts)
 //------------------------------------------------------------------------------
 
-db.books.aggregate(
+db.books.aggregate([
    { $unwind: "$comments" },
    { $group: { _id: {"user": "$comments.user"},
          n_of_posts : { $sum: 1 } } },
    { $sort: {n_of_posts:  -1} },
-   { $limit: 3} ) ;
+   { $limit: 3}] ) ;
 
 
 
@@ -746,10 +776,10 @@ db.books.aggregate(
 //        Pass the result of an "unwind" operator to another "unwind"
 //------------------------------------------------------------------------------
 
-db.books.aggregate(
+db.books.aggregate([
    { $unwind: "$authors" },
    { $unwind: "$comments" }
-     )
+ ])
 
 
 //------------------------------------------------------------------------------
@@ -757,18 +787,72 @@ db.books.aggregate(
 //  posted for his/her books
 //------------------------------------------------------------------------------
 
-db.books.aggregate(
+db.books.aggregate([
    { $unwind: "$authors" },
    { $unwind: "$comments" },
    { $group: { _id: { author: "$authors"},
         n_of_posts: { $sum: 1 } ,
         sum_of_votes : { $sum: "$comments.votes" } } },
-    { $sort: {_id: 1} }) ;
+    { $sort: {_id: 1} }]) ;
 
 
 
 //------------------------------------------------------------------------------
-/* for additional (and more advanced) examples of using Aggregation Framework
+//--    Display the books for which at least one of the authors appears as
+//--              one of book's commenters
+//------------------------------------------------------------------------------
+
+// next solution DOES NOT WORK! ...
+db.books.aggregate([
+   { $match: { comments : {$exists : 1 } }},
+   { $project : {title : 1, authors : 1, comments : 1} },
+   { $unwind: "$authors" },
+   { $unwind: "$comments" },
+   { $match: { "$authors" : "$comments.user" }}
+])
+
+// but the next one does; notice `$expr` included in `$match`
+db.books.aggregate([
+   { $match: { comments : {$exists : 1 } }},
+   { $project : {title : 1, authors : 1, comments : 1} },
+   { $unwind: "$authors" },
+   { $unwind: "$comments" },
+   { $match: {  $expr : { $eq : [ "$authors", "$comments.user"  ]  } }}
+])
+
+
+// a more optimized solution -  notice `$ROOT`
+db.books.aggregate([
+   { $match: { comments : {$exists : 1 } }},
+   { $project : {title : 1, authors : 1, comments : 1} },
+   { $unwind: "$authors" },
+   { $project: { title : 1, authors: 1,
+        commenter_and_author : {
+          $filter: {
+            input: "$comments",
+            as: "comment",
+            cond: { $eq: [ "$$comment.user", "$$ROOT.authors" ] }
+          }}}},
+    { $addFields : { size_commenter_and_author : { $size : "$commenter_and_author" }} },
+    { $match: { size_commenter_and_author : { $gt : 0}}}
+])
+
+
+// change the structure of the resul with `$replaceRoot`
+db.books.aggregate([
+   { $match: { comments : {$exists : 1 } }},
+   { $project : {title : 1, authors : 1, comments : 1} },
+   { $unwind: "$authors" },
+   { $unwind: "$comments" },
+   { $addFields : { comments_and_authors : {
+        title : "$title", new_author : "$authors", new_user : "$comments.user" }} },
+    { $replaceRoot: { newRoot: "$comments_and_authors" } }
+
+ ])
+
+
+//------------------------------------------------------------------------------
+/* for additional (and some other advanced) examples of using Aggregation Framework
   ( "$out" and "$lookup" operators, different functions for dealing with
   numbers, strings ans dates), and also examples that deal with  "normalized"
   collections - see script `01-05b_MongoDB - Case study - Sales_2_queries.js`

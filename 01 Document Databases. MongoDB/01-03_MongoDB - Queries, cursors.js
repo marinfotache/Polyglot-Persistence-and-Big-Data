@@ -317,6 +317,7 @@ db.first_collection.find() ;
 // or
 // use bigdata
 
+
 //===============================================================================
 //--         Working with two or more (logically related) collections
 //===============================================================================
@@ -462,7 +463,7 @@ db.postalCodes.find({'countyCode' : {"$regex" : myRegExp  } }) ;
 
 
 //------------------------------------------------------------------------------
-//--    Target: For each postal code in `Moldova` get a result which
+//--    Requirement: For each postal code in `Moldova` get a result which
 //                 includes the county and region names
 //------------------------------------------------------------------------------
 // Hint: the query must produce something resembling the SQL query:
