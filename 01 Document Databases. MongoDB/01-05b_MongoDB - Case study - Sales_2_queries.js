@@ -1,6 +1,8 @@
 //===============================================================================
 //                                      Case study:  SALES
 //===============================================================================
+// last update: 2021-03-01
+
 
 //--   show databases on the server
 show dbs
@@ -24,18 +26,18 @@ db.receipts.find().pretty() ;
 
 //==================================================================================
 //
-//                                      Queries on SALES
+//                             Queries for database SALES
 //
 //==================================================================================
 
 
 //==================================================================================
 //                   I.  Basic queries (data retrieval, aggregation)
-//      Some previously discussed solutions (script 04-03...)
+//      Some previously discussed solutions (script 01-04...)
 //==================================================================================
 
 //----------------------------------------------------------------------------------
-//--    Display information about the county to which postal code '700505' belongs to
+//-- Display information about the county to which postal code '700505' belongs to
 //----------------------------------------------------------------------------------
 
 
@@ -98,8 +100,8 @@ db.result.find()
 
 
 //--------------------------------------------------------------------------------
-// New in MongoDB version 3.2: $lookup - which emulates a left outer join on two
-//   collections in the same database
+// Starting with MongoDB version 3.2: $lookup - which emulates a left outer join
+//    of two collections in the same database
 //--------------------------------------------------------------------------------
 
 // first, a left join of `counties` with `postalCodes`
@@ -429,6 +431,26 @@ db.invoices.aggregate( [
 	] )
 //!!!
 
+
+
+//----------------------------------------------------------------------------------
+// 						Display invoices issued in the first 7 days of sales
+//----------------------------------------------------------------------------------
+//
+
+// bad news: next solution does not work...
+db.invoices.aggregate([
+    { $addFields : { min_date :  db.invoices.find().sort({ invDate : 1 }).limit(1).map( function(x) { return x.invDate; } ) [0]  } },
+    { $addFields : { end_first_week : { $add: [ "$min_date", 7*24*60*60000 ]  } } } ,
+    { $match : { invDate : { $lte : "$end_first_week"} } }    // this type of expression is not currently supported in MongoDB
+    ])
+
+// good news: next solution does work (with `$expr` included in "$match")
+db.invoices.aggregate([
+    { $addFields : { min_date :  db.invoices.find().sort({ invDate : 1 }).limit(1).map( function(x) { return x.invDate; } ) [0]  } },
+    { $addFields : { end_first_week : { $add: [ "$min_date", 7*24*60*60000 ]  } } } ,
+    { $match: {  $expr : { $lte : [ "$invDate", "$end_first_week"  ]  } }}
+    ])
 
 
 

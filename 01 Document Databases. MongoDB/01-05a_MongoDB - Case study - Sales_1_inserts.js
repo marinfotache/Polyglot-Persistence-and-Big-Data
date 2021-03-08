@@ -1,6 +1,7 @@
 //===============================================================================
 //                                      Case study:  SALES
 //===============================================================================
+// last update: 2021-03-01
 
 //--   show databases on the server
 show dbs
@@ -34,6 +35,7 @@ db.counties.createIndex({countyRegion : 1}, {unique: false}) ;
 
 db.counties.find() ;
 
+
 //==================================================================================
 //                      second collection - "postalCodes"
 db.postalCodes.remove({}) ;
@@ -45,6 +47,7 @@ db.postalCodes.save ( { _id : '706400', cityName : 'Birlad', countyCode : 'VS' }
 db.postalCodes.save ( { _id : '705800', cityName : 'Suceava', countyCode : 'SV' });
 db.postalCodes.save ( { _id : '705550', cityName : 'Roman', countyCode : 'NT' });
 db.postalCodes.save ( { _id : '701900', cityName : 'Timisoara', countyCode : 'TM' });
+
 // indexes
 db.postalCodes.createIndex({_id : 1}) ;
 db.postalCodes.createIndex({cityName: 1}, {unique: false}) ;
@@ -141,8 +144,8 @@ db.customers.find().pretty() ;
 
 //         		fourth collection - products
 // 	example of upsert  (update combined with insert)
-//db.products.remove({}) ;
 
+db.products.remove({}) ;
 db.products.update ( {_id : 1},
 	{_id: 1, prodName : 'Produs 1', mu : 'buc', prodCateg : 'Cosmetice',  percVAT  : .24 },
 		{upsert : true} ) ;
@@ -169,7 +172,7 @@ db.products.find().pretty() ;
 //==================================================================================
 
 //
-//		fifth collection: invoices
+//											fifth collection: invoices
 //
 db.invoices.remove({}) ;
 
@@ -593,10 +596,11 @@ db.invoices.find().pretty() ;
 
 
 //==================================================================================
+//
+//		                the sixth collection: receipts
+//
+//==================================================================================
 
-//
-//		the sixth collection: receipts
-//
 db.receipts.drop()
 
 // receipt 1234
