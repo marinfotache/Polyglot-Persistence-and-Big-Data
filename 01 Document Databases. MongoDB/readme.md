@@ -1,11 +1,12 @@
-# Scripturi și tutoriale video
+### Scripts, tutorials and lectures/labs recordings - `MongoDB`
 
-Este posibil ca playerul implicit de pe OneDrive să nu funcționeze cum trebuie (pe calculatorul meu NU se aude sunetul la redarea directă pe OneDrive). De aceea, vă recomand să descărcați video-tutoriale și să le vizionați cu `VLC Player` sau ceva similar.
+Most of the references are in English, except for lectures/labs recordings (Romanian) - please watch the tutorials recommended in the [presentation (.pptx)](https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/blob/master/01%20Document%20Databases.%20MongoDB/01%20Document_DB__MongoDB.pptx)
 
-### Video-tutoriale (vor fi actualizate săptămânal în perioada februarie-martie):
+The default OneDrive video player does not  work properly on some systems, so I would suggest downloading the `.mp4` files on your computer and watch them with `VLC Player`.
 
-#### 1. Operațiuni elementare cu bazele de date în MongoDB. Actualizarea înregistrărilor (documente și vectori). `find()` și `findOne()`
-- [Înregistrare curs BigData 2021-02-22 DM1](https://1drv.ms/v/s!AgPvmBEDzTOSitxmKh6pWr0LKMzPlQ?e=Y31jq4)
+#### Recordings (in Romanian):
 
-#### 2. Cursoare. Introducere în Aggregation Framework
-- [Înregistrare laborator BigData 2021-02-22 DM1](https://1drv.ms/v/s!AgPvmBEDzTOSitxo4EricVm3St6B6Q?e=u7KN2n)
+- [Working with collections, `find()`, `findOne()` - Recorded on 2021-02-22](https://1drv.ms/v/s!AgPvmBEDzTOSitxmKh6pWr0LKMzPlQ?e=o5bOe0)
+- [Cursors, Aggregation Framework (1) - Recorded on 2021-02-22](https://1drv.ms/v/s!AgPvmBEDzTOSitxo4EricVm3St6B6Q?e=kUKKLu)
+- [Cursors, Aggregation Framework (2) - Recorded on 2021-03-01](https://1drv.ms/v/s!AgPvmBEDzTOSit1JxW1jxDmH1R_48A?e=ty7rY0)
+- [Data Modeling in MongoDB. Case study: SALES - Recorded on 2021-03-08](https://1drv.ms/u/s!AgPvmBEDzTOSit160Ar4b56XU8YEsA?e=6rwGWZ)
