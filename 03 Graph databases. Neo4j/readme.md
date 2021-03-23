@@ -14,26 +14,12 @@ For a more extensive list of resources, see the [presentation (03 Graph Database
 - [GettingStartedBrowser4.0 (2020-02) 15:26](https://www.youtube.com/watch?v=oHo-lQ79zf0&list=RDCMUCvze3hU6OZBkB1vkhH2lH9Q&index=11)
 - [Online Meetup - Neo4j Desktop, Browser Demo June 3, 2020 (2020-06) 39:56](https://www.youtube.com/watch?v=Q-TX5Dk7fNM)
 
-
-
-III. Database queries with Cypher
-
-III.1 Intro to Cypher (2017; 57:15)
-https://www.youtube.com/watch?v=pMjwgKqMzi8&list=RDCMUCvze3hU6OZBkB1vkhH2lH9Q&index=33
-
-III.2 Quickly create example graph data for Neo4j using form fields in a Browser Guide (2019; 11:13)
-https://www.youtube.com/watch?v=9ejX6JWky6o&t=495s
-
-III.3 How to execute a MATCH statement in Neo4j Browser (2018; 2:33)
-https://www.youtube.com/watch?v=Sz2C618QKN8
-
-III.4 Using MATCH to Return Property Values In Neo4j Browser (2018; 1:45)
-https://www.youtube.com/watch?v=Nb9tSFVrQuc
-
-III.5 Learning Neo4j Graphs and Cypher : Query Aggregations and Functions | packtpub.com (2017; 9:24)
-https://www.youtube.com/watch?v=3sgNbgRjZSU&t=238s
-
-
+#### Database queries with Cypher
+- [Intro to Cypher (2017-08) 57:15](https://www.youtube.com/watch?v=pMjwgKqMzi8&list=RDCMUCvze3hU6OZBkB1vkhH2lH9Q&index=33)
+- [Quickly create example graph data for Neo4j using form fields in a Browser Guide (2019-03) 11:13](https://www.youtube.com/watch?v=9ejX6JWky6o&t=495s)
+- [How to execute a MATCH statement in Neo4j Browser (2018-11) 2:33](https://www.youtube.com/watch?v=Sz2C618QKN8)
+- [Using MATCH to Return Property Values In Neo4j Browser (2018-11) 1:45](https://www.youtube.com/watch?v=Nb9tSFVrQuc)
+- [Learning Neo4j Graphs and Cypher : Query Aggregations and Functions | packtpub.com (2017-07) 9:24](https://www.youtube.com/watch?v=3sgNbgRjZSU&t=238s)
 
 IV. Graph database modeling. Converting relational database schemas to graph databases
 
