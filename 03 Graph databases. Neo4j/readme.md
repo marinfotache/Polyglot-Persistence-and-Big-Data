@@ -21,25 +21,12 @@ For a more extensive list of resources, see the [presentation (03 Graph Database
 - [Using MATCH to Return Property Values In Neo4j Browser (2018-11) 1:45](https://www.youtube.com/watch?v=Nb9tSFVrQuc)
 - [Learning Neo4j Graphs and Cypher : Query Aggregations and Functions | packtpub.com (2017-07) 9:24](https://www.youtube.com/watch?v=3sgNbgRjZSU&t=238s)
 
-IV. Graph database modeling. Converting relational database schemas to graph databases
+#### Graph database modeling. Converting relational database schemas to graph databases
+- [Tips and Tricks for Graph Data Modeling (2016-01) 53:04](https://www.youtube.com/watch?v=-YPXFMjGtDc&feature=emb_logo)
+- [Webinar RBDMS to Graph (2017-08) 57:28](https://www.youtube.com/watch?v=zRYxJvjB0jQ&t=595s)
+- [Graph Data Modeling Tips & Tricks (2019-10) 41:53](https://www.youtube.com/watch?v=eAbPgyouAE4&t=2167s)
 
-IV.1 Tips and Tricks for Graph Data Modeling (2016; 53:04)
-https://www.youtube.com/watch?v=-YPXFMjGtDc&feature=emb_logo
-
-IV.2 [Webinar] RBDMS to Graph (2017; 57:28)
-https://www.youtube.com/watch?v=zRYxJvjB0jQ&t=595s
-
-IV.3 Graph Data Modeling Tips & Tricks (2019; 41:53)
-https://www.youtube.com/watch?v=eAbPgyouAE4&t=2167s
-
-
-V. Lecture recordings (in Romanian)
-
-V.1 Neo4j Cypher Basic Queries (on `movie` dataset)
-https://transcripts.gotomeeting.com/#/s/88e0376251f18a93af1a88aa8e4de787f418b874e00bdf1b16745724140882c8
-
-V.2 Two case-studies of database migration from PostgreSQL to Neo4j (`sales` and `chinook`)
-https://transcripts.gotomeeting.com/#/s/68a3710903ea13a0a8b334f45286d4fc335b2edddae381ce416ec982346814cc
-
-
-
+#### Lecture recordings (in Romanian)
+The default OneDrive video player does not  work properly on some systems, so I would suggest downloading the `.mp4` files on your computer and watch them with `VLC Player`.
+- [Neo4j Cypher Basic Queries (on `movie` dataset)](https://transcripts.gotomeeting.com/#/s/88e0376251f18a93af1a88aa8e4de787f418b874e00bdf1b16745724140882c8)
+- [Two case-studies of database migration from PostgreSQL to Neo4j (`sales` and `chinook`)](https://transcripts.gotomeeting.com/#/s/68a3710903ea13a0a8b334f45286d4fc335b2edddae381ce416ec982346814cc)
