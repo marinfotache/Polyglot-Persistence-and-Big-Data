@@ -33,4 +33,5 @@ For a more extensive list of resources, see the [presentation (03 Graph Database
 #### Lecture recordings (in Romanian)
 The default OneDrive video player does not  work properly on some systems, so I would suggest downloading the `.mp4` files on your computer and watch them with `VLC Player`.
 - [Neo4j Cypher Basic Queries (on `movie` dataset - scripts `03-01a...` - `03-01c...`)](https://1drv.ms/v/s!AgPvmBEDzTOSit8PHOQ4YbQadUWeCg?e=64uBUI)
-- [Two case-studies of database migration from PostgreSQL to Neo4j (`sales` and `chinook`)](https://transcripts.gotomeeting.com/#/s/68a3710903ea13a0a8b334f45286d4fc335b2edddae381ce416ec982346814cc)
+- [Neo4j Cypher Medium and Advanced Queries (on `movie` and `transportation` data sets)](https://1drv.ms/v/s!AgPvmBEDzTOSit8OiV1m2QGrat5Zmw?e=mu3jYz)
+- [Two case-studies of database migration from PostgreSQL to Neo4j (`sales` and `chinook`)](https://1drv.ms/v/s!AgPvmBEDzTOSit8QPQw6kQUsAG5n1A?e=MRJOA7)
