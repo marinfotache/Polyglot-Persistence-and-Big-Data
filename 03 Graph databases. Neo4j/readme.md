@@ -9,7 +9,9 @@ For a more extensive list of resources, see the [presentation (03 Graph Database
 
 #### Neo4j installation and basic operations with Neo4j Desktop
 - [Getting Started with Neo4j Desktop 1.2.7 on Windows (2020-04) 10:45](https://www.youtube.com/watch?v=RSbhmVF_ccs&t=30s)
+- [GettingStartedDesktop 1 4 1 (2021-02) 08:02](https://www.youtube.com/watch?v=uR9-NLxLzg4&list=PL9Hl4pk2FsvV1u8JY_TKTnYddujp8I7dn&index=15)
 - [Getting Started with Neo4j Desktop 1.2.6 on OS X (2020-04) 9:14](https://www.youtube.com/watch?v=cTZ_Z3KfLyE&t=198s)
+- [Creating a Blank Neo4j Sandbox (2019-11) 4:49](https://www.youtube.com/watch?v=OSk1ePl2PUM&list=PL9Hl4pk2FsvV1u8JY_TKTnYddujp8I7dn)
 - [Improving your Developer Experience with Neo4j Graph Apps (2020-04) 11:14](https://www.youtube.com/watch?v=LcIP86vjNps)
 - [GettingStartedBrowser4.0 (2020-02) 15:26](https://www.youtube.com/watch?v=oHo-lQ79zf0&list=RDCMUCvze3hU6OZBkB1vkhH2lH9Q&index=11)
 - [Online Meetup - Neo4j Desktop, Browser Demo June 3, 2020 (2020-06) 39:56](https://www.youtube.com/watch?v=Q-TX5Dk7fNM)
@@ -21,7 +23,9 @@ For a more extensive list of resources, see the [presentation (03 Graph Database
 - [Using MATCH to Return Property Values In Neo4j Browser (2018-11) 1:45](https://www.youtube.com/watch?v=Nb9tSFVrQuc)
 - [Learning Neo4j Graphs and Cypher : Query Aggregations and Functions | packtpub.com (2017-07) 9:24](https://www.youtube.com/watch?v=3sgNbgRjZSU&t=238s)
 
+
 #### Graph database modeling. Converting relational database schemas to graph databases
+- [Tips & Tricks: Data Modeling Best Practices (Neo4j Ninjas Exclusive) (2020-05) 01:07:47](https://www.youtube.com/watch?v=LSKa3as_S7I)
 - [Tips and Tricks for Graph Data Modeling (2016-01) 53:04](https://www.youtube.com/watch?v=-YPXFMjGtDc&feature=emb_logo)
 - [Webinar RBDMS to Graph (2017-08) 57:28](https://www.youtube.com/watch?v=zRYxJvjB0jQ&t=595s)
 - [Graph Data Modeling Tips & Tricks (2019-10) 41:53](https://www.youtube.com/watch?v=eAbPgyouAE4&t=2167s)
