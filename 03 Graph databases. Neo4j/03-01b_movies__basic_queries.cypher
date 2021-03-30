@@ -48,7 +48,7 @@ ORDER BY x.title
 LIMIT 5
 
 
-//# 	Display 7 book titles in alphabetic order, from the 5th to the 12th
+//# 	Display 7 movie titles in alphabetic order, from the 5th to the 12th
 MATCH (x:Movie)
 RETURN x.title
 ORDER BY x.title

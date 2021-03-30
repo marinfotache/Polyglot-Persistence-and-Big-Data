@@ -48,6 +48,13 @@ RETURN p
 // second solution
 MATCH (p:Person)
 WITH MIN(p.born) AS first_year
+MATCH (p:Person )
+WHERE p.born = first_year
+RETURN p
+
+// third solution
+MATCH (p:Person)
+WITH MIN(p.born) AS first_year
 MATCH (p2:Person)
 WHERE p2.born IN first_year
 RETURN p2

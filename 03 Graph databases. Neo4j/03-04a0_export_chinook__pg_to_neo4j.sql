@@ -255,7 +255,7 @@ SELECT * FROM chinook__pg_to_neo4j ;
 	2.c choose `Format` as `text` and save it a accessibile directory
 
 The result must ressemble to the content of the file
-`04-04b_export_chinook_pg_to_neo4j.cypher`
+`03-04b_export_chinook_pg_to_neo4j.cypher`
 
 
 --############################################################################
@@ -269,13 +269,13 @@ The result must ressemble to the content of the file
 --############################################################################
 -- IV.
 -- The problem with `chinook` database is it is too large :-) for executing
---    the script `04-04b_export_chinook_pg_to_neo4j.cypher` (2.5MB) in Neo4j Browser
--- Instead, we'll run `04-04b_export_chinook_pg_to_neo4j.cypher` with a
+--    the script `03-04b_export_chinook_pg_to_neo4j.cypher` (2.5MB) in Neo4j Browser
+-- Instead, we'll run `03-04b_export_chinook_pg_to_neo4j.cypher` with a
 --   special Neo4j utililty - Cypher Shell.
 
 // 4.1. Download Cypher Shell from `https://neo4j.com/download-center/`
 // 4.2. Install (copy) it into local (accesibile) directory (e.g. D:/CypherShell)
-// 4.3. Copy the script `04-04b_export_chinook_pg_to_neo4j.cypher` (from step 2.c)
+// 4.3. Copy the script `03-04b_export_chinook_pg_to_neo4j.cypher` (from step 2.c)
 //    into local CypherShell directory
 // 4.4 Launch Windows/Mac Terminal Mode (Command Prompt)
 // 4.5. Set the CypherShell directory as the current directory (`cd D:/CypherShell`)

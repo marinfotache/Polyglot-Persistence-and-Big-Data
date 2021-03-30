@@ -51,7 +51,7 @@ CREATE
 
 CREATE (TheMatrixRevolutions:Movie {title:'The Matrix Revolutions', released:2003, tagline:'Everything that has a beginning has an end'})
 CREATE
-(Keanu)-[:ACTED_IN {roles:['Neo']}]->(TheMatrixRevolutions),
+(Keanu) -[:ACTED_IN {roles:['Neo']}]-> (TheMatrixRevolutions),
 (Carrie)-[:ACTED_IN {roles:['Trinity']}]->(TheMatrixRevolutions),
 (Laurence)-[:ACTED_IN {roles:['Morpheus']}]->(TheMatrixRevolutions),
 (Hugo)-[:ACTED_IN {roles:['Agent Smith']}]->(TheMatrixRevolutions),
