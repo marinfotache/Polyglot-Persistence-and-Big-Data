@@ -1,5 +1,6 @@
 //===============================================================================
 //                           Queries and cursors in MongoDB
+// last update: 2022-02-21
 
 
 //===============================================================================
@@ -9,8 +10,8 @@
 //--     and most examples are completely uninspiring
 //===============================================================================
 
-//--    Set (if necessary) "ppbd2021" as current db
-//use ppbd2021
+//--    Set (if necessary) "bigdata2022" as current db
+//use bigdata2022
 
 //use bigdata
 
@@ -313,7 +314,7 @@ cursor.forEach(function(x) {
 db.first_collection.find() ;
 
 
-// use ppbd2021
+// use bigdata2022
 // or
 // use bigdata
 

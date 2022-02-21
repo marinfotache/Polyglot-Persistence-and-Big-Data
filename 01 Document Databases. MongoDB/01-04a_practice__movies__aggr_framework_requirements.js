@@ -1,3 +1,4 @@
+// last update: 2022-02-21
 
 /* ---------------------------------------------------------------*/
 /* Create (if not already created) the `movies` collection in a
@@ -6,6 +7,7 @@
 The file is available at:
 https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/blob/master/01%20Document%20Databases.%20MongoDB/movies_2011-2018.json
 /* ---------------------------------------------------------------*/
+
 
 /* ---------------------------------------------------------------*/
 /* Extract from the `movies` collection the following information

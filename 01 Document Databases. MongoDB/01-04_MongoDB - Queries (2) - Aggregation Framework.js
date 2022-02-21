@@ -1,7 +1,7 @@
 //===============================================================================
 //  Aggregation Framework (The High-Level Query Language for MongoDB databases)
 //===============================================================================
-// last update: 2021-03-01
+// last update: 2022-02-21
 
 //===============================================================================
 //--  some of the Examples are taken/inspired from the book
@@ -10,8 +10,8 @@
 //--     and most examples are completely uninspiring
 //===============================================================================
 
-//--    Set (if necessary) "ppbd2021" as current db
-//use ppbd2021
+//--    Set (if necessary) "bigdata2022" as current db
+//use bigdata2022
 // or
 // use bigdata
 

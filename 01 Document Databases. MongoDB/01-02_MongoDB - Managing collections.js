@@ -1,6 +1,7 @@
 //===============================================================================
 //                           Managing collections in MongoDB
 //===============================================================================
+// last update: 2022-02-21
 
 
 
@@ -11,8 +12,8 @@
 //--   other examples are taken/inspired from the MongoDB online documentation
 //===============================================================================
 
-//--    Set (if necessary) "ppbd2021" as current db
-use ppbd2021
+//--    Set (if necessary) "bigdata2022" as current db
+use bigdata2022
 
 //--    Remove (if necessary) all documents in collection "first_collection"
 db.first_collection.remove({}) ;

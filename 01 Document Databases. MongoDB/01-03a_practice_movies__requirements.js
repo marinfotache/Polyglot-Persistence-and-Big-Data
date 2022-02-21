@@ -1,3 +1,4 @@
+// last update: 2022-02-21
 /* ---------------------------------------------------------------*/
 /* Create the `movies` collection in a MongoDB database with the
     same name, based of the file  `movies_2011-2018.json`
@@ -17,6 +18,7 @@ db.movies.insertMany(
 
 
 /* ---------------------------------------------------------------*/
+// last update: 2022-02-21
 
 
 
