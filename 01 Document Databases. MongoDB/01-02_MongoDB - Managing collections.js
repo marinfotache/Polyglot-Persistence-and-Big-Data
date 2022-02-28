@@ -34,7 +34,7 @@ x4 = { title: "Virtualization and databases",
 			{ user: 'valy', text: 'Find me on Facebook! Always!' },
 			{ user: 'dragsos', text: 'Strange' },
 			{ user: 'marin', text: 'Mediocre'}
-                            ]
+              ]
 	} ;
 
 db.first_collection.insert(x2) ;
@@ -124,6 +124,8 @@ db.first_collection.find() ;
 //--    Restore the "damaged" document
 // first, delete it
 db.first_collection.remove( { tags : ['databases', 'mongodb', 'indexing'] }) ;
+db.first_collection.remove( { 'I Like Databases' }) ;
+
 //-- reinsert it
 x1 = { title: 'I Like Databases',
 		text_comments: ['Good!', 'Excellent', 'Mediocre', 'Disgusting' ]} ;
@@ -131,6 +133,7 @@ db.first_collection.insert(x1) ;
 // check
 db.first_collection.find() ;
 //
+
 // load the document into a variable
 var book = db.first_collection.findOne( {title: "I Like Databases"}) ;
 // add attribute "tags" in variable "book"
@@ -302,8 +305,8 @@ db.first_collection.update({title : "SQL la munte si la mare"}, d2);
 db.first_collection.findOne({title : "SQL la munte si la mare"}) ;
 
 
-//=======================================================
-//              Operator "$inc"
+//====================================================================
+//                         Operator "$inc"
 
 //--   "$inc" is useful for incrementing an attribute value
 
@@ -368,6 +371,7 @@ db.first_collection.update(
 	{"$unset" : {text_comments: 1 }})
 // check
 db.first_collection.find({"title": "I Like Databases"}) ;
+
 
 //--    Next, change the author of the second comment in the document representing
 // the  blog entry "I Like Databases"
@@ -565,6 +569,7 @@ db.first_collection.update (
 		{"user" : "dragos", "text" : "Good!", "votes" : 3 },
 		{"user" : "bjones", "text" : "Mediocre", "votes" : 1 } ]  } }  ) ;
 // check
+
 db.first_collection.findOne( { "title" : "NoSQL Databases"} ) ;
 // remove old comments attribute ("text_comments")
 db.first_collection.update (
