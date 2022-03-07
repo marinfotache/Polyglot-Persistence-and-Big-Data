@@ -1,6 +1,6 @@
 //===============================================================================
 //                           Queries and cursors in MongoDB
-// last update: 2022-02-21
+// last update: 2022-03-07
 
 
 //===============================================================================
@@ -70,7 +70,7 @@ db.first_collection.find( {"comments.0.user" : "dragos" }) ;
 db.first_collection.find( { author : {$exists : 1 } }) ;
 
 // Retrieve blog entries which have received at least two votes
-// ... but first we increment by 5 all the blog entries tagged with "NoSQL"
+// ... but, before this, we increment by 5 all the blog entries tagged with "NoSQL"
 db.first_collection.update ( {"tags" : "NoSQL" }, {$inc : {"votes" : 5}}, false, true ) ;
 // ... and here is the query
 db.first_collection.find( {"votes" : {"$gte" : 2 } }) ;
@@ -244,10 +244,11 @@ db.first_collection.find( ) ;
 
 
 //--    Retrieve all the blog entries where user "dragos" commented "Strange"
-// The following query extracts the blog entries for which there a comment "Strange"
+
+// The following query extracts the blog entries for which there is a comment "Strange"
 //   and a commenter "dragos"
 db.first_collection.find( {"comments.user": "dragos", "comments.text": "Strange"}) ;
-// The second returned document has "dragos" amont commenters and "Strange"
+// The second returned document has "dragos" among commenters and "Strange"
 //   among comments, but actually "dragos" commented differently ("Mediocre") that book
 
 //      Solution requires "$elemMatch" operator
@@ -315,8 +316,6 @@ db.first_collection.find() ;
 
 
 // use bigdata2022
-// or
-// use bigdata
 
 
 //===============================================================================
@@ -366,7 +365,7 @@ db.postalCodes.find() ;
 
 
 //--     There is a logical relationship between collections "counties" and
-//  "postalCodes" (in relational database model this relatioship triggers a
+//  "postalCodes" (in relational database model this relationship involves a
 //  referential integrity).
 //  This is impossible to declare in Document DBMSs; we'll find out some options
 //   for chaining the queries in order to retrieve information from multiple
@@ -376,7 +375,7 @@ db.postalCodes.find() ;
 //--    Requierement: show the county name and the region for city of Pascani
 // Basic idea: retrieve any postal code in Iasi, then store the "countyCode" of
 //   that document (associated to a postal/zip code) in a variable, and then
-//   use the variable for filtering collection "couties"
+//   use the variable for filtering collection "counties"
 //------------------------------------------------------------------------------
 
 // retrieve any postal code for Pascani
@@ -412,7 +411,7 @@ db.counties.find({'_id' : db.postalCodes.findOne ({cityTownVillage : 'Pascani'})
 //------------------------------------------------------------------------------
 //--    We already saw that:
 //      * "find()" returns a cursor (reference) to a set of documents
-//      * similar to SQL DBMS's, we cannont acces directly the cursor records, but we have to
+//      * similar to SQL DBMS's, we cannot acces directly the cursor records, but we have to
 //        load them sequentially into variables.
 //------------------------------------------------------------------------------
 //      Consequently, for displaying the county name and the region for city of Pascani,
