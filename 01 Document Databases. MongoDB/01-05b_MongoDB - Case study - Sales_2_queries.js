@@ -1,7 +1,7 @@
 //===============================================================================
-//                                      Case study:  SALES
+//                                      Case study:  sales2022
 //===============================================================================
-// last update: 2021-03-01
+// last update: 2021-03-08
 
 
 //--   show databases on the server
@@ -11,7 +11,7 @@ show dbs
 db
 
 //--   select current database
-use sales
+use sales2022
 
 //--   list all colections in current database
 show collections
@@ -26,7 +26,7 @@ db.receipts.find().pretty() ;
 
 //==================================================================================
 //
-//                             Queries for database SALES
+//                             Queries for database sales2022
 //
 //==================================================================================
 
@@ -64,7 +64,11 @@ myCursor.forEach(function(x) {
 db.counties.find({'_id' : myCountyCode }) ;
 
 
+
 //--    A solution based on Aggregation Framework and operator "$out"
+
+// db.adminCommand( { setFeatureCompatibilityVersion: "4.4" } )
+
 db.postalCodes.aggregate( [
 	{ $match: { _id : "700505" }},
 	{ $project : { countyCode :1, _id: 0} },
@@ -82,19 +86,19 @@ db.counties.find({'_id' :(db.region_zip.findOne()).countyCode }) ;
 db.result.remove({}) ;
 
 // aggregate returns a cursor which will be processed row by row
-db.postalCodes.aggregate({ $match: {_id : "700505"}}).forEach(function(pc)
-	{	var county = db.counties.findOne({_id: pc.countyCode});
-        if (county !== null)
-        {
-        	pc.countyName = county.countyName;
+db.postalCodes.aggregate([
+	{ $match: {_id : "700505"}}]).forEach(function(pc) {
+	var county = db.counties.findOne({_id: pc.countyCode});
+        if (county !== null) {
+        		pc.countyName = county.countyName;
             pc.countyRegion = county.countyRegion;
-            } else
-            {
+        } else {
             	pc.countyName = "not found";
-                pc.countyRegion = "not found";
-            }
-            db.result.insert(pc)
-        }   ) ;
+              pc.countyRegion = "not found";
+        }
+        db.result.insert(pc)
+}   ) ;
+
 // display collection results
 db.result.find()
 
@@ -227,29 +231,31 @@ db.counties.aggregate([
 //--                 Display number of counties for each region
 //----------------------------------------------------------------------------------
 
-db.counties.aggregate(
+db.counties.aggregate([
     { $group: { _id: {region: "$countyRegion"}, n_of_counties: { $sum: 1} } },
-     { $sort: {_id: 1}} );
+     { $sort: {_id: 1}}
+	 ]);
 
 
 //----------------------------------------------------------------------------------
 //--                   Display all the counties of each region
 //----------------------------------------------------------------------------------
 
-db.counties.aggregate(
+db.counties.aggregate([
     { $group: { _id: {region: "$countyRegion"},
        n_of_counties: { $sum: 1},
        counties: { $addToSet: "$countyName"} } },
-     { $sort: {_id: 1}} );
+     { $sort: {_id: 1}}
+	 ]);
 
 
 //----------------------------------------------------------------------------------
 //-- 												Get the overall number of invoices
 //----------------------------------------------------------------------------------
 
-db.invoices.aggregate(
+db.invoices.aggregate([
 	{ $group: { _id: null, n_of_invoices : { $sum : 1 } }
-	}  ) ;
+	]}  ) ;
 
 
 //----------------------------------------------------------------------------------
@@ -271,12 +277,25 @@ db.invoices.aggregate  ([
 //----------------------------------------------------------------------------------
 //-- 						        Get invoice amount without VAT
 //----------------------------------------------------------------------------------
+
+// sol. 1
 db.invoices.aggregate( [
 	{ $unwind : "$items" },
 	{ $group : { _id : "$_id", amount_without_VAT :
-		{ $sum : {$multiply : ["$items.quantity", "$items.unitPrice" ] } } } },
+				{ $sum : {$multiply : ["$items.quantity", "$items.unitPrice" ] } } } },
 	{ $sort : {_id : 1} }
 	] ) ;
+
+
+// sol. 2 - with `$addFields`
+db.invoices.aggregate( [
+	{ $unwind : "$items" },
+  { $addFields : { line_amount : { $multiply: ["$items.quantity", "$items.unitPrice" ] } } },
+	{ $group : { _id : "$_id", amount_without_VAT : { $sum : "$line_amount" } } },
+	{ $sort : {_id : 1} }
+
+	] ) ;
+
 
 //----------------------------------------------------------------------------------
 // 												Get invoice amount with VAT
@@ -290,10 +309,12 @@ db.invoices.aggregate( [
 	{ $sort : {_id : 1} }
 	] ) ;
 
+// sol. 2 - with `$addFields`
+
 
 
 //----------------------------------------------------------------------------------
-// 									   	    Extract daily sales
+// 									   	    Extract daily sales2022
 //----------------------------------------------------------------------------------
 
 db.invoices.aggregate( [
@@ -331,7 +352,7 @@ db.invoices.aggregate( [
 
 
 //----------------------------------------------------------------------------------
-// 						Get average invoice amount for each day (with sales)
+// 						Get average invoice amount for each day (with sales2022)
 //----------------------------------------------------------------------------------
 
 db.invoices.aggregate( [
@@ -383,7 +404,7 @@ db.getCollection("invoices").aggregate([
 
 
 //----------------------------------------------------------------------------------
-// 								Display invoices issued in the first sales date
+// 								Display invoices issued in the first sales2022 date
 //----------------------------------------------------------------------------------
 // the subquery result is scalar (it contains min(invDate))
 
@@ -434,7 +455,7 @@ db.invoices.aggregate( [
 
 
 //----------------------------------------------------------------------------------
-// 						Display invoices issued in the first 7 days of sales
+// 						Display invoices issued in the first 7 days of sales2022
 //----------------------------------------------------------------------------------
 //
 
@@ -461,7 +482,7 @@ db.invoices.aggregate([
 
 
 //----------------------------------------------------------------------------------
-//   Get, for each day of sales, the invoices with highest and the lowest amount
+//   Get, for each day of sales2022, the invoices with highest and the lowest amount
 //----------------------------------------------------------------------------------
 
 // sol. 1

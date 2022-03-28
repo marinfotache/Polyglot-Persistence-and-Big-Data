@@ -1,7 +1,7 @@
 //===============================================================================
 //                                      Case study:  SALES
 //===============================================================================
-// last update: 2021-03-01
+// last update: 2022-02-21
 
 //--   show databases on the server
 show dbs
@@ -36,6 +36,8 @@ db.counties.createIndex({countyRegion : 1}, {unique: false}) ;
 db.counties.find() ;
 
 
+
+
 //==================================================================================
 //                      second collection - "postalCodes"
 db.postalCodes.remove({}) ;
@@ -56,23 +58,53 @@ db.postalCodes.createIndex({countyCode: 1}, {unique: false}) ;
 db.postalCodes.find() ;
 
 
+// Question: How about this structure (do not execute the command!!!) ?
+db.counties2.save ( { _id : 'IS', countyName : 'Iasi', countyRegion  : 'Moldova' ,
+	zip_codes : [
+		{ post_code : '700505', cityName : 'Iasi' },
+		{ post_code : '701150', cityName : 'Pascani' }
+	]
+});
+
+
+// Question: ... and how about this structure (do not execute the command!!!) ?
+db.postalCodes2.save ( {
+	_id : '700505',
+	cityName : 'Iasi',
+	county : { countyCode : 'IS', countyName : 'Iasi', countyRegion  : 'Moldova' }
+ });
+
+
+
+
 //==================================================================================
 //          					third collection - customers
 //   each document will be identified by system object id
 
 db.customers.remove({}) ;
 
-db.customers.save ( { custName : 'Client 1 SRL', custFiscalCode: 'R1001',
-	address : 'Tranzitiei, 13 bis',  postCode : '700505',
-	contacts : [ { person : {
-			persCode : 'CNP1', familyName : 'Ioan', surName : 'Vasile',
-			address : 'I.L.Caragiale, 22', sex : 'B', postCode : '700505',
-			homePhone : '0232123456', officePhone : '0232987654', mobilePhone : '0742222222'
-					}, position :  'Director general' }
+db.customers.save ( {
+	custName : 'Client 1 SRL',
+	custFiscalCode: 'R1001',
+	address : 'Tranzitiei, 13 bis',
+	postCode : '700505',
+	contacts : [
+			{ person : {
+						persCode : 'CNP1',
+						familyName : 'Ioan',
+						surName : 'Vasile',
+						address : 'I.L.Caragiale, 22',
+						sex : 'B',
+						postCode : '700505',
+						homePhone : '0232123456',
+						officePhone : '0232987654',
+						mobilePhone : '0742222222'
+								},
+				position :  'Director general'
+			}
 		] }) ;
 
-db.customers.save ( { custName : 'Client 2 SA', custFiscalCode: 'R1002',
-	postCode : '700505', phone : '0232212121',
+db.customers.save ( { custName : 'Client 2 SA', custFiscalCode: 'R1002', postCode : '700505', phone : '0232212121',
 	contacts : [
 		{ person : { persCode : 'CNP2', familyName : 'Vasile', surName : 'Ion',
 			sex : 'B', postCode : '700505', homePhone : '0234234567',
@@ -124,6 +156,7 @@ db.customers.save ( { custName : 'Client 7 SRL', custFiscalCode: 'R1007', addres
 			homePhone : '0240901234', officePhone : '0240109876', mobilePhone : '0779422223'
 					}, position :  'Sef aprovizionare' } ] }) ;
 
+
 db.customers.update ( {custName : "Client 4"},  {$addToSet : { contacts : { $each : [
 		{ person :
 			{ persCode : 'CNP7', familyName : 'Popa', surName : 'Ioanid',
@@ -170,17 +203,14 @@ db.products.find().pretty() ;
 
 
 //==================================================================================
-
 //
 //											fifth collection: invoices
 //
 db.invoices.remove({}) ;
 
 // invoice 1111
-var myClient = db.customers.findOne ( { custName : 'Client 1 SRL'}) ;
-
 db.invoices.insert ( {_id : 1111, invDate : new ISODate("2019-08-01T11:00:00Z"),
-	custID :  myClient._id,
+	custID :  db.customers.findOne({ custName : 'Client 1 SRL'})._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 1, prodName : 'Produs 1', mu : 'buc',
@@ -604,10 +634,16 @@ db.invoices.find().pretty() ;
 db.receipts.drop()
 
 // receipt 1234
-db.receipts.insert ( { _id : 1234, recDate : new ISODate("2019-08-12T11:00:00Z"),
-	docCode: 'OP', docNo : '121', docDate : new ISODate("2019-08-10T11:00:00Z"),
-	invoicesCollected : [
-		{ invNo : 1111, amount : 4527400 } ] } ) ;
+db.receipts.insert ( {
+		_id : 1234,
+		recDate : new ISODate("2019-08-12T11:00:00Z"),
+		docCode: 'OP',
+		docNo : '121',
+		docDate : new ISODate("2019-08-10T11:00:00Z"),
+		invoicesCollected : [
+			{ invNo : 1111, amount : 4527400 }
+			]
+		} ) ;
 
 
 // receipt 1235
