@@ -1,1 +1,1 @@
-PostgreSQL options for managing and querying JSON data.
+PostgreSQL options for managing and querying JSON table attributes.
