@@ -1,7 +1,7 @@
 //===============================================================================
 //                                      Case study:  sales2022
 //===============================================================================
-// last update: 2021-03-08
+// last update: 2022-03-29
 
 
 //--   show databases on the server
@@ -254,8 +254,8 @@ db.counties.aggregate([
 //----------------------------------------------------------------------------------
 
 db.invoices.aggregate([
-	{ $group: { _id: null, n_of_invoices : { $sum : 1 } }
-	]}  ) ;
+	{ $group: { _id: null, n_of_invoices : { $sum : 1 } } }
+	]) ;
 
 
 //----------------------------------------------------------------------------------
@@ -391,7 +391,7 @@ db.getCollection("invoices").aggregate([
 
     		db.customers.find({ postCode : 						// here we extract all the customers located
 																								  //   at the same zipcode as the customer for invoice 1111
-					db.customers.findOne(	{ _id: 										// here we extract the zipcode of
+					db.customers.findOne(	{ _id: 								// here we extract the zipcode of
 				                                              //       the customer for invoice 1111
 							db.invoices.findOne({ _id :1111}).custID      // this line extracts the `custID` for invoice 1111
 							}).postCode
@@ -404,7 +404,7 @@ db.getCollection("invoices").aggregate([
 
 
 //----------------------------------------------------------------------------------
-// 								Display invoices issued in the first sales2022 date
+// 								Display invoices issued in the first sales date
 //----------------------------------------------------------------------------------
 // the subquery result is scalar (it contains min(invDate))
 
@@ -785,3 +785,100 @@ db.inv.aggregate([
 	{ $sort : { toBeReceived : -1 } },
 	{ $limit : 1 }
 ]) ;
+
+
+//----------------------------------------------------------------------------------
+//Extract customers with at least the number of invoices of customer "Client 5 SRL"?
+//----------------------------------------------------------------------------------
+
+// the ObjectId of "Client 1 SRL"
+(db.customers.findOne({custName : "Client 5 SRL"}))._id
+
+// the number of invoices issued for "Client 1 SRL"
+db.invoices.find({custID : (db.customers.findOne({custName : "Client 5 SRL"}))._id }).count()
+
+
+// now, the solution
+db.invoices.aggregate([
+	{ $group : { _id : "$custID", n_of_invoices : { $sum : 1 }}},
+  { $lookup: {
+          from: "customers",
+          localField: "_id",
+          foreignField: "_id",
+          as: "customer" } },
+	{ $unwind : "$customer"},
+	{ $project : { "customer_name" : "$customer.custName", n_of_invoices : 1}},
+  { $addFields : { n_of_invoices_cust1 :
+			db.invoices.find({custID : (db.customers.findOne({custName : "Client 5 SRL"}))._id }).count()
+	 } },
+  { $match: {  $expr : { $gte : [ "$n_of_invoices", "$n_of_invoices_cust1"  ]  } }}
+
+])
+
+//----------------------------------------------------------------------------------
+///// 			solution 2 - with intermediate results
+
+// save a collection only with the number of invoices of "Client 5 SRL" and a `foo` column (set on 1)
+db.invoices.aggregate([
+	 { $match : {custID : (db.customers.findOne({custName : "Client 5 SRL"}))._id }},
+   { $group: { _id: null, n_of_invoices_cust5: { $sum: 1 } }},
+	 { $project : {n_of_invoices_cust5 : 1, _id : 0}},
+   { $addFields : { foo : 1} },
+	 { $out : "n_of_invoices_cust5"}
+])
+
+// save a collection with the number of invoices for each customer and a `foo` column (set on 1)
+db.invoices.aggregate([
+	{ $group : { _id : "$custID", n_of_invoices : { $sum : 1 }}},
+   { $addFields : { foo : 1} },
+	 { $out : "customers_n_of_invoices"}
+])
+
+// join the newly created collections
+db.customers_n_of_invoices.aggregate([
+  { $lookup: {
+          from: "n_of_invoices_cust5",
+          localField: "foo",
+          foreignField: "foo",
+          as: "customer_5" } },
+	{ $unwind : "$customer_5"},
+  { $match: {  $expr : { $gte : [ "$n_of_invoices", "$customer_5.n_of_invoices_cust5"  ]  } }}
+])
+
+
+
+
+//----------------------------------------------------------------------------------
+//  Extract customers with the sales amount greater than or equal to
+//   the customer "Client 5 SRL"?
+//----------------------------------------------------------------------------------
+
+// we adapt the second solution from the previous example
+
+
+// save a collection only with the sales for "Client 5 SRL" and a `foo` column (set on 1)
+db.invoices.aggregate([
+	 { $match : {custID : (db.customers.findOne({custName : "Client 5 SRL"}))._id }},
+   { $group: { _id: null, sales_cust5: { $sum: "" } }},
+	 { $project : {n_of_invoices_cust5 : 1, _id : 0}},
+   { $addFields : { foo : 1} },
+	 { $out : "n_of_invoices_cust5"}
+])
+
+// save a collection with the number of invoices for each customer and a `foo` column (set on 1)
+db.invoices.aggregate([
+	{ $group : { _id : "$custID", n_of_invoices : { $sum : 1 }}},
+   { $addFields : { foo : 1} },
+	 { $out : "customers_n_of_invoices"}
+])
+
+// join the newly created collections
+db.customers_n_of_invoices.aggregate([
+  { $lookup: {
+          from: "n_of_invoices_cust5",
+          localField: "foo",
+          foreignField: "foo",
+          as: "customer_5" } },
+	{ $unwind : "$customer_5"},
+  { $match: {  $expr : { $gte : [ "$n_of_invoices", "$customer_5.n_of_invoices_cust5"  ]  } }}
+])

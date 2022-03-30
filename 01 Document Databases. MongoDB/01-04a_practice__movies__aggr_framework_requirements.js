@@ -1,4 +1,4 @@
-// last update: 2022-02-21
+// last update: 2022-03-07
 
 /* ---------------------------------------------------------------*/
 /* Create (if not already created) the `movies` collection in a
@@ -49,8 +49,8 @@ https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/blob/master/01
 
 
 /* ---------------------------------------------------------------*/
-/*   extract all movies whose genre is `Comedy`; display only
-              this genre for each extracted movie */
+/*   extract all movies whose one of their genre is `Comedy`;     */
+/*   display only this genre for each extracted movie             */
 /* ---------------------------------------------------------------*/
 
 

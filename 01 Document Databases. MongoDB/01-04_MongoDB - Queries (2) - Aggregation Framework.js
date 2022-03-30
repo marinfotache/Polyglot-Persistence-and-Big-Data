@@ -317,7 +317,7 @@ db.books.aggregate([
 
 
 //------------------------------------------------------------------------------
-//--  Display, for all books, the title, the author and the comments,
+//--  Display, for all books: the title, the author and the comments,
 //--  only if one the commenters is "Valerica Greavu-Serban" and
 //   his comment got exactly five votes
 //------------------------------------------------------------------------------
@@ -622,6 +622,15 @@ db.books.aggregate([
                       year: { "$year": "$release_date" }},
                n_of_books: { $sum: 1 } } },
     { $sort: { _id : 1 } }  ] ) ;
+
+
+db.books.aggregate([
+    { $addFields : { release_year : { $year : "$release_date" }} },
+   { $group: { _id: { publisher: "$publisher", year: "$release_year"},
+               n_of_books: { $sum: 1 } } },
+    { $sort: { _id : 1 } }  ] ) ;
+
+
 
 
 //===============================================================================
