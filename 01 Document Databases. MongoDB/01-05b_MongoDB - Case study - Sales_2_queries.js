@@ -1,7 +1,7 @@
 //===============================================================================
 //                                      Case study:  sales2022
 //===============================================================================
-// last update: 2022-03-29
+// last update: 2022-04-02
 
 
 //--   show databases on the server
@@ -242,8 +242,7 @@ db.counties.aggregate([
 //----------------------------------------------------------------------------------
 
 db.counties.aggregate([
-    { $group: { _id: {region: "$countyRegion"},
-       n_of_counties: { $sum: 1},
+    { $group: { _id: {region: "$countyRegion"}, n_of_counties: { $sum: 1},
        counties: { $addToSet: "$countyName"} } },
      { $sort: {_id: 1}}
 	 ]);
@@ -310,6 +309,16 @@ db.invoices.aggregate( [
 	] ) ;
 
 // sol. 2 - with `$addFields`
+db.invoices.aggregate( [
+	{ $unwind : "$items" },
+  { $addFields : { line_amount : { $multiply: ["$items.quantity", "$items.unitPrice" ] } } },
+  { $addFields : { line_vat : { $multiply: ["$line_amount", "$items.product.percVAT" ] } } },
+	{ $addFields : { line_with_vat : { $add: ["$line_amount", "$line_vat" ] } } },
+	{ $group : { _id : "$_id", invoice_amount : { $sum : "$line_with_vat"  } } },
+	{ $sort : {_id : 1} }
+	] ) ;
+
+
 
 
 
@@ -390,15 +399,16 @@ db.getCollection("invoices").aggregate([
 		{$match : { custID : { $in :
 
     		db.customers.find({ postCode : 						// here we extract all the customers located
-																								  //   at the same zipcode as the customer for invoice 1111
-					db.customers.findOne(	{ _id: 								// here we extract the zipcode of
-				                                              //       the customer for invoice 1111
-							db.invoices.findOne({ _id :1111}).custID      // this line extracts the `custID` for invoice 1111
-							}).postCode
-						}, {_id: 1}).map( function(x) { return x._id; } )   // `map` will return the customer ids as an array of values
+																									//   at the same zipcode as the customer for invoice 1111
+						db.customers.findOne(	{ _id: 							// here we extract the zipcode of
+				                                          //       the customer for invoice 1111
+						    db.invoices.findOne({ _id :1111}).custID      // this line extracts the `custID` for invoice 1111
 
-					}
-			}}
+				    }).postCode
+
+		    }, {_id: 1}).map( function(x) { return x._id; } )   // `map` will return customer ids as an array of values
+
+		}}}
 ])
 
 
@@ -431,7 +441,7 @@ db.invoices.aggregate([
 // 3.1 this is the subquery result
 db.invoices.aggregate([
 	{ $group : { _id : null, invDate : { $min : "$invDate" }}},
-        { $out : "first_day"}
+  { $out : "first_day"}
 ]) ;
 
 // 3.2 now, use it for filtering the 'invoice' collection
@@ -482,40 +492,45 @@ db.invoices.aggregate([
 
 
 //----------------------------------------------------------------------------------
-//   Get, for each day of sales2022, the invoices with highest and the lowest amount
+//   Get, for each day of sales, the invoices with highest and the lowest amount
 //----------------------------------------------------------------------------------
 
 // sol. 1
 db.invoices.aggregate([
 	{ $unwind : "$items" },
-	{ $group : { _id : { _id : "$_id", invDate : "$invDate"},  invoice_amount : { $sum : { $add : [
-				{ $multiply : ["$items.quantity", "$items.unitPrice" ] },
-				{ $multiply : ["$items.quantity", "$items.unitPrice", "$items.product.percVAT" ] }
+	{ $group : { _id : { _id : "$_id", invDate : "$invDate"},
+			invoice_amount : { $sum : { $add : [
+					{ $multiply : ["$items.quantity", "$items.unitPrice" ] },
+					{ $multiply : ["$items.quantity", "$items.unitPrice", "$items.product.percVAT" ] }
 															] } } } } ,
 	{ $sort : { invoice_amount : 1 } },
 	{ $group : { _id: "$_id.invDate",
-		biggestInvoice : { $last : "$_id._id" },
-		biggestValue : { $last : "$invoice_amount" },
-		smallestInvoice : { $first : "$_id._id" },
-		smallestValue : { $first : "$invoice_amount" } } } ]) ;
+				biggestInvoice : { $last : "$_id._id" },
+				biggestValue : { $last : "$invoice_amount" },
+				smallestInvoice : { $first : "$_id._id" },
+				smallestValue : { $first : "$invoice_amount" }
+	} } ]) ;
+
 
 // sol. 2 - using "project"
 db.invoices.aggregate([
 	{ $unwind : "$items" },
-	{ $group : { _id : { _id : "$_id", invDate : "$invDate"},  invoice_amount : { $sum : { $add : [
-				{ $multiply : ["$items.quantity", "$items.unitPrice" ] },
-				{ $multiply : ["$items.quantity", "$items.unitPrice", "$items.product.percVAT" ] }
+	{ $group : { _id : { _id : "$_id", invDate : "$invDate"},
+			invoice_amount : { $sum : { $add : [
+					{ $multiply : ["$items.quantity", "$items.unitPrice" ] },
+					{ $multiply : ["$items.quantity", "$items.unitPrice", "$items.product.percVAT" ] }
 															] } } } } ,
 	{ $sort : { invoice_amount : 1 } },
 	{ $group : { _id: "$_id.invDate",
-		biggestInvoice : { $last : "$_id._id" },
-		biggestValue : { $last : "$invoice_amount" },
-		smallestInvoice : { $first : "$_id._id" },
-		smallestValue : { $first : "$invoice_amount" } } },
-	{ $project : { _id : 1,
-		invDate : "$_id.invDate",
-		biggestInvoice : { number : "$biggestInvoice", amount : "$biggestValue"  },
-		smallestInvoice : { number : "$smallestInvoice", amount : "$smallestValue"  }   }	} ]) ;
+			biggestInvoice : { $last : "$_id._id" },
+			biggestValue : { $last : "$invoice_amount" },
+			smallestInvoice : { $first : "$_id._id" },
+			smallestValue : { $first : "$invoice_amount" } } },
+	{ $project : {
+			_id : 1,
+			invDate : "$_id.invDate",
+			biggestInvoice : { number : "$biggestInvoice", amount : "$biggestValue"  },
+			smallestInvoice : { number : "$smallestInvoice", amount : "$smallestValue"  }   }	} ]) ;
 
 
 //----------------------------------------------------------------------------------
@@ -553,7 +568,7 @@ db.invoices.aggregate ( [
 	{ $project : { year_ : { $year : "$invDate" }, month_ : { $month : "$invDate" },
 		day_ : { $dayOfMonth : "$invDate" }  } } ,
 	{ $group : { _id : { year_ : "$year_", month_ : "$month_", day_ : "$day_" },
-		n_of_invoices : { $sum : 1 } } },
+				n_of_invoices : { $sum : 1 } } },
 	{ $sort : { year_ : 1, month_ : 1, day_ : 1 } }  ] ) ;
 // we need to sort the result
 
@@ -584,14 +599,14 @@ db.invoices.aggregate ( [
 db.invoices.aggregate([
 	{ $unwind : "$items" },
 	{ $group : { _id : { _id : "$_id"},
-		amountWithoutVAT : { $sum : { $multiply : ["$items.quantity", "$items.unitPrice"] }  } ,
-		amountVAT : { $sum : { $multiply : ["$items.quantity", "$items.unitPrice",
-			"$items.product.percVAT" ] }  } ,
-		amountWithVAT : { $sum : { $add : [
+			amountWithoutVAT : { $sum : { $multiply : ["$items.quantity", "$items.unitPrice"] }  } ,
+			amountVAT : { $sum : { $multiply : ["$items.quantity", "$items.unitPrice",
+					"$items.product.percVAT" ] }  } ,
+			amountWithVAT : { $sum : { $add : [
 				{ $multiply : ["$items.quantity", "$items.unitPrice" ] } ,
 				{ $multiply : ["$items.quantity", "$items.unitPrice",
 				"$items.product.percVAT" ] } ] }}
-		}},
+	}},
 	{ $sort : { _id : 1 } },
 	{ $project : { _id : 1,  amounts : { withoutVAT : "$amountWithoutVAT",
 		VAT : "$amountVAT", withVAT : "$amountWithVAT"  } } }
@@ -602,9 +617,9 @@ db.invoices.aggregate([
 db.invoices.aggregate([
 	{ $unwind : "$items" },
 	{ $group : { _id : { _id : "$_id"},
-		amountWithoutVAT : { $sum : { $multiply : ["$items.quantity", "$items.unitPrice"] }  } ,
-		amountVAT : { $sum : { $multiply : ["$items.quantity", "$items.unitPrice",
-			"$items.product.percVAT" ] }  }
+			amountWithoutVAT : { $sum : { $multiply : ["$items.quantity", "$items.unitPrice"] }  } ,
+			amountVAT : { $sum : { $multiply : ["$items.quantity", "$items.unitPrice",
+				"$items.product.percVAT" ] }  }
 		}},
 	{ $sort : { _id : 1 } },
 	{ $project : { _id : 1,  amounts : { withoutVAT : "$amountWithoutVAT",
@@ -858,27 +873,45 @@ db.customers_n_of_invoices.aggregate([
 
 // save a collection only with the sales for "Client 5 SRL" and a `foo` column (set on 1)
 db.invoices.aggregate([
-	 { $match : {custID : (db.customers.findOne({custName : "Client 5 SRL"}))._id }},
-   { $group: { _id: null, sales_cust5: { $sum: "" } }},
-	 { $project : {n_of_invoices_cust5 : 1, _id : 0}},
-   { $addFields : { foo : 1} },
-	 { $out : "n_of_invoices_cust5"}
+		{ $match : {custID : (db.customers.findOne({custName : "Client 5 SRL"}))._id }},
+		{ $unwind : "$items" },
+		{ $addFields : { line_amount : { $multiply: ["$items.quantity", "$items.unitPrice" ] } } },
+		{ $addFields : { line_vat : { $multiply: ["$line_amount", "$items.product.percVAT" ] } } },
+		{ $addFields : { line_with_vat : { $add: ["$line_amount", "$line_vat" ] } } },
+		{ $group : { _id : null, sales_cust5 : { $sum : "$line_with_vat"  } } },
+		{ $project : {n_of_invoices_cust5 : 1, _id : 0, sales_cust5: 1}},
+  	{ $addFields : { foo : 1} },
+		{ $out : "sales_cust5"}
 ])
 
-// save a collection with the number of invoices for each customer and a `foo` column (set on 1)
+
+// save a collection with the sales for each customer and a `foo` column (set on 1)
 db.invoices.aggregate([
-	{ $group : { _id : "$custID", n_of_invoices : { $sum : 1 }}},
-   { $addFields : { foo : 1} },
-	 { $out : "customers_n_of_invoices"}
+		{ $unwind : "$items" },
+		{ $addFields : { line_amount : { $multiply: ["$items.quantity", "$items.unitPrice" ] } } },
+		{ $addFields : { line_vat : { $multiply: ["$line_amount", "$items.product.percVAT" ] } } },
+		{ $addFields : { line_with_vat : { $add: ["$line_amount", "$line_vat" ] } } },
+		{ $group : { _id : "$custID", sales_cust : { $sum : "$line_with_vat"  } } },
+  	{ $lookup: {
+          from: "customers",
+          localField: "_id",
+          foreignField: "_id",
+          as: "customer" } },
+		{ $unwind : "$customer"},
+  	{ $addFields : { foo : 1} },
+		{ $project : { _id :0, customer_name : "$customer.custName", sales_cust : 1, foo: 1} },
+		{ $out : "sales_customers"}
 ])
+
+
 
 // join the newly created collections
-db.customers_n_of_invoices.aggregate([
+db.sales_customers.aggregate([
   { $lookup: {
-          from: "n_of_invoices_cust5",
+          from: "sales_cust5",
           localField: "foo",
           foreignField: "foo",
           as: "customer_5" } },
 	{ $unwind : "$customer_5"},
-  { $match: {  $expr : { $gte : [ "$n_of_invoices", "$customer_5.n_of_invoices_cust5"  ]  } }}
+  { $match: {  $expr : { $gte : [ "$sales_cust", "$customer_5.sales_cust5"  ]  } }}
 ])
