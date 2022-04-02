@@ -269,7 +269,7 @@ db.invoices.aggregate  ([
 //-- number of daily invoices ordered by dates
 db.invoices.aggregate  ([
 	{ $group: { _id: "$invDate", n_of_invoices : { $sum : 1 } } },
-	{ $sort : {invDate : 1} }
+	{ $sort : {_id : 1} }
 	] ) ;
 
 
@@ -323,7 +323,7 @@ db.invoices.aggregate( [
 
 
 //----------------------------------------------------------------------------------
-// 									   	    Extract daily sales2022
+// 									   	    Extract daily sales
 //----------------------------------------------------------------------------------
 
 db.invoices.aggregate( [
@@ -332,7 +332,7 @@ db.invoices.aggregate( [
 				{ $multiply : ["$items.quantity", "$items.unitPrice" ] },
 				{ $multiply : ["$items.quantity", "$items.unitPrice", "$items.product.percVAT" ] }
 															] } } } } ,
-	{ $sort : {invDate : 1} }
+	{ $sort : {_id : 1} }
 	] ) ;
 
 
@@ -342,9 +342,30 @@ db.invoices.aggregate( [
 
 db.invoices.aggregate( [
 	{ $unwind : "$items" },
-	{ $group : { _id : "$invDate", sold_products : { $addToSet : "$items.product.prodName" } }},
-	{ $sort : {invDate : 1} }
+	{ $group : { _id : "$invDate",
+			n_of_inv_lines : { $sum : 1},
+			sold_products : { $addToSet : "$items.product.prodName" } }},
+  { $addFields : { n_of_prods : { $size: "$sold_products"} } },
+	{ $sort : {_id : 1} }
 	] ) ;
+
+
+//----------------------------------------------------------------------------------
+//				For each date, get the number and the list of invoices, and
+//               the number and the list of products
+//----------------------------------------------------------------------------------
+
+db.invoices.aggregate( [
+	{ $unwind : "$items" },
+	{ $group : { _id : "$invDate",
+			invoice_list : { $addToSet : "$_id" } ,
+			n_of_inv_lines : { $sum : 1},
+			sold_products : { $addToSet : "$items.product.prodName" } }},
+  { $addFields : { n_of_invoices : { $size: "$invoice_list"} } },
+  { $addFields : { n_of_prods : { $size: "$sold_products"} } },
+	{ $sort : {_id : 1} }
+	] ) ;
+
 
 
 //----------------------------------------------------------------------------------
@@ -444,28 +465,39 @@ db.invoices.aggregate([
   { $out : "first_day"}
 ]) ;
 
-// 3.2 now, use it for filtering the 'invoice' collection
+// 3.2a now, use it for filtering the 'invoice' collection
 db.invoices.aggregate( [
 		{$match : {invDate:   db.first_day.findOne().invDate  }}
 	] )
 
 
-//!!!
-// unfortunately, we cannot join collections `invoices` and `first_day` by attribute `invDate`
-// next query DOES NOT WORK!!! (it returns wrong results)
+// 3.2b another solution - with `lookup`
 db.invoices.aggregate( [
     { $lookup: {
           from: "first_day",
           localField: "invDate",
           foreignField: "invDate",
-          as: "first_date_invoices" } }
+          as: "first_date_invoices" } },
+  	{ $addFields : { array_size : { $size: "$first_date_invoices"} } },
+		{ $match : { array_size : { $gt : 0} } }
 	] )
-//!!!
+
+
+// 3.2c yet another solution - with `lookup`
+db.first_day.aggregate( [
+    { $lookup: {
+          from: "invoices",
+          localField: "invDate",
+          foreignField: "invDate",
+          as: "first_date_invoices" } },
+		{ $unwind : "$first_date_invoices"}
+	] )
+
 
 
 
 //----------------------------------------------------------------------------------
-// 						Display invoices issued in the first 7 days of sales2022
+// 						Display invoices issued in the first 7 days of sales
 //----------------------------------------------------------------------------------
 //
 
@@ -800,6 +832,7 @@ db.inv.aggregate([
 	{ $sort : { toBeReceived : -1 } },
 	{ $limit : 1 }
 ]) ;
+
 
 
 //----------------------------------------------------------------------------------
