@@ -890,7 +890,13 @@ db.customers_n_of_invoices.aggregate([
           foreignField: "foo",
           as: "customer_5" } },
 	{ $unwind : "$customer_5"},
-  { $match: {  $expr : { $gte : [ "$n_of_invoices", "$customer_5.n_of_invoices_cust5"  ]  } }}
+  { $match: {  $expr : { $gte : [ "$n_of_invoices", "$customer_5.n_of_invoices_cust5"  ]  } }},
+  { $lookup: {
+          from: "customers",
+          localField: "_id",
+          foreignField: "_id",
+          as: "customer" } }
+
 ])
 
 
