@@ -1,7 +1,7 @@
 //===============================================================================
 //                            (Very) Basics operations with MongoDB
 //===============================================================================
-// last update: 2022-02-21
+// last update: 2022-04-03
 
 // For installation of MongoDB Community Server and Robo 3T, select presentation:
 // https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/blob/master/01%20Document%20Databases.%20MongoDB/01%20Document_DB__MongoDB.pptx
@@ -38,6 +38,8 @@ use bigdata2022
 show collections
 
 use sales2021
+
+use sdbis2022
 
 
 //--    count the number of documents in a collection

@@ -1,7 +1,7 @@
 //===============================================================================
 //                           Managing collections in MongoDB
 //===============================================================================
-// last update: 2022-02-21
+// last update: 2022-04-03
 
 
 
@@ -12,8 +12,8 @@
 //--   other examples are taken/inspired from the MongoDB online documentation
 //===============================================================================
 
-//--    Set (if necessary) "bigdata2022" as current db
-use bigdata2022
+//--    Set (if necessary) "sdbis2022" as current db
+use sdbis2022
 
 //--    Remove (if necessary) all documents in collection "first_collection"
 db.first_collection.remove({}) ;
@@ -124,7 +124,7 @@ db.first_collection.find() ;
 //--    Restore the "damaged" document
 // first, delete it
 db.first_collection.remove( { tags : ['databases', 'mongodb', 'indexing'] }) ;
-db.first_collection.remove( { 'I Like Databases' }) ;
+db.first_collection.remove( { title : 'I Like Databases' }) ;
 
 //-- reinsert it
 x1 = { title: 'I Like Databases',
@@ -198,6 +198,7 @@ db.first_collection.update( {title: "I Like Databases"},
 	 {"$unset" : {tags : 1} }) ;
 // Check the update
 db.first_collection.find( {title: "I Like Databases"}) ;
+
 
 
 //=========================================================================================
@@ -303,6 +304,7 @@ db.first_collection.update({title : "SQL la munte si la mare"}, d2);
 
 // now it is ok
 db.first_collection.findOne({title : "SQL la munte si la mare"}) ;
+
 
 
 //====================================================================

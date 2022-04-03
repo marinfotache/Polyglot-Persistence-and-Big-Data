@@ -10,10 +10,9 @@
 //--     and most examples are completely uninspiring
 //===============================================================================
 
-//--    Set (if necessary) "bigdata2022" as current db
-//use bigdata2022
+//--    Set (if necessary) "sdbis2022" as current db
+//use sdbis2022
 
-//use bigdata
 
 //===============================================================================
 //         Queries - recap from previous scripts and some new basic features
@@ -315,7 +314,7 @@ cursor.forEach(function(x) {
 db.first_collection.find() ;
 
 
-// use bigdata2022
+// use sdbis2022
 
 
 //===============================================================================
