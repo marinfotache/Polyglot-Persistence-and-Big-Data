@@ -1,7 +1,7 @@
 //===============================================================================
 //  Aggregation Framework (The High-Level Query Language for MongoDB databases)
 //===============================================================================
-// last update: 2022-03-07
+// last update: 2022-04-05
 
 //===============================================================================
 //--  some of the Examples are taken/inspired from the book
@@ -10,10 +10,10 @@
 //--     and most examples are completely uninspiring
 //===============================================================================
 
-//--    Set (if necessary) "bigdata2022" as current db
-//use bigdata2022
+//--    Set (if necessary) "sdbis2022" as current db
+//use sdbis2022
 // or
-// use bigdata
+// use bigdata2022
 
 //===============================================================================
 //  Populate a slightly different (from `first_collection`) collection: `books`
@@ -169,6 +169,7 @@ db.books.aggregate( [
 	{ $sort : { _id : 1 } } ] ) ;
 
 
+
 //------------------------------------------------------------------------------
 //--             Display the sales amount for each book
 //------------------------------------------------------------------------------
@@ -193,12 +194,18 @@ db.books.aggregate([
     { $match: { release_date : { $gte : ISODate("2014-01-01"), $lte : ISODate("2014-12-31")}}}
   ])
 
+
 // sol. 2 - with $addFields
 db.books.aggregate([
     { $addFields : { release_year : { $year : "$release_date" }} },
     { $match: { release_year : 2014}}
   ])
 
+
+// sol. 3 - with `$expr`
+db.books.aggregate([
+   { $match: {  $expr : { $eq : [ { $year : "$release_date" }, 2014 ]  } }}
+  ])
 
 
 
@@ -240,7 +247,14 @@ db.books.aggregate([
     { $match: { authors : { $size : { $gt : 1} }     }}
   ])
 
-// ... but solution with ``$addFields` based on the size of array `authors` does:
+
+// but the next one does...
+db.books.aggregate([
+    { $match : { $expr : { $gt : [ {$size : "$authors" }, 1  ]  }  }  }
+  ])
+
+
+// another solution uses ``$addFields`:
 db.books.aggregate([
     { $addFields : { n_of_authors : { $size : "$authors" }} },
     { $match: { n_of_authors : { $gt : 1}}}
@@ -386,17 +400,15 @@ db.books.aggregate( [
 		] ) ;
 
 
+
+
 //------------------------------------------------------------------------------
 //--                     Fing the average price of a book
 //------------------------------------------------------------------------------
 
 db.books.aggregate( [
-   { $group: { _id: "all books",
-               avg_price: { $avg : "$price" }
-             }
-    }
+   { $group: { _id: "all books", avg_price: { $avg : "$price" } } }
      ])
-
 
 
 //------------------------------------------------------------------------------
@@ -417,6 +429,7 @@ db.books.aggregate( [
   { $group: { _id: "$publisher", n_of_books: { $sum: 1 } }}
   ] ) ;
 
+
 // solution with `$count`
 db.books.aggregate( [
   { $match: { publisher : "Polirom" }},
@@ -434,6 +447,7 @@ db.books.aggregate([
     { $group: { _id :  "author: Valerica Greavu-Serban" ,
                n_of_books: { $sum: 1 } }} ]) ;
 
+
 //-- The same requirement, but remove author name from the result
 db.books.aggregate([
     { $match: { authors : "Valerica Greavu-Serban" }},
@@ -441,6 +455,7 @@ db.books.aggregate([
                n_of_books: { $sum: 1 } }},
      {$project : { n_of_books:1,  _id: 0} }
      ]) ;
+
 
 // solution with `$count`
 db.books.aggregate( [
@@ -542,7 +557,7 @@ db.books.aggregate( [
 //--              Display number of books for each publisher
 //------------------------------------------------------------------------------
 db.books.aggregate([
-   { $group: { _id: {"publisher": "$publisher"}, count: { $sum: 1 } } },
+    { $group: { _id: {"publisher": "$publisher"}, count: { $sum: 1 } } },
     { $sort : { _id : 1 } } ]) ;
 
 
@@ -662,8 +677,9 @@ db.books.aggregate([
    { $sort :{ _id: 1}}]) ;
 
 
+
 //===============================================================================
-//--	     Pivot tables "...a la Mongo": "$unwind" operator
+//--	            Unnesting arrays: "$unwind" operator
 //===============================================================================
 
 //------------------------------------------------------------------------------
