@@ -94,9 +94,13 @@ db.first_collection.find( {"votes" : {"$gte" : 2, "$lte" : 5 } }) ;
 // Retrieve blog entries tagged "NoSQL" AND at least a comment posted by "dragos"
 db.first_collection.find( {"tags" : "NoSQL" , "comments.user" : "dragos"} ) ;
 
+// solution with `$and`
+db.first_collection.find( { "$and" : [ {"tags" : "NoSQL"}, {"comments.user" : "dragos" } ] } )  ;
+
+
 
 //===============================================================================
-//                  (Logical) Operator "$or"
+//                     (Logical) Operator "$or"
 //===============================================================================
 
 // Retrieve blog entries tagged "NoSQL" OR at least a comment posted by "dragos"
@@ -297,6 +301,7 @@ cursor.forEach(function(x) {
 	} ) ;
 
 
+
 //------------------------------------------------------------------------------
 //--    Requierement: Update documents, such as all the blog entries
 //      containing "database" in the their title
@@ -381,6 +386,10 @@ db.postalCodes.find() ;
 row_postalCode = db.postalCodes.findOne ({cityTownVillage : 'Pascani'}) ;
 // use the variable in a filter applied to collection "counties"
 db.counties.find({'_id' : row_postalCode['countyCode']}) ;
+
+// ...or ...
+db.counties.find({'_id' : row_postalCode.countyCode}) ;
+
 
 //  Caution: "findOne" works, whereas "find" does not!
 row_postalCode = db.postalCodes.find({cityTownVillage : 'Pascani'}) ;

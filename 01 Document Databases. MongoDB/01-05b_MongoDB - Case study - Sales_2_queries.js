@@ -1,7 +1,7 @@
 //===============================================================================
-//                                      Case study:  sales2022
+//                                   Case study:  sales
 //===============================================================================
-// last update: 2022-04-02
+// last update: 2022-04-05
 
 
 //--   show databases on the server
@@ -11,7 +11,7 @@ show dbs
 db
 
 //--   select current database
-use sales2022
+use sales
 
 //--   list all colections in current database
 show collections
@@ -26,7 +26,7 @@ db.receipts.find().pretty() ;
 
 //==================================================================================
 //
-//                             Queries for database sales2022
+//                             Queries for database sales
 //
 //==================================================================================
 
@@ -145,6 +145,24 @@ db.postalCodes.aggregate([
     { $match: { _id : "700505"   } },
     { $project: {post_codes__counties : 1} }
 ])
+
+
+// something more challenging: `lookup` - `let` - `pipeline`
+db.counties.aggregate([
+		{ $lookup : {
+					from : "postalCodes",
+					let : { countyCode_ : "$_id"},
+					pipeline : [
+    						{ $match: { $expr : { $and : [
+										{ $eq : [ "$_id", "700505"  ] },
+										{ $eq : [  "$$countyCode_", "$countyCode"] }
+									   ]} } }
+					],
+					as : "postal_code"
+		}  },
+		{ $match : { $expr : { $gt : [ { $size : "$postal_code"}, 0 ] }}}
+]) ;
+
 
 
 
@@ -382,7 +400,7 @@ db.invoices.aggregate( [
 
 
 //----------------------------------------------------------------------------------
-// 						Get average invoice amount for each day (with sales2022)
+// 						Get average invoice amount for each day (with sdbis)
 //----------------------------------------------------------------------------------
 
 db.invoices.aggregate( [

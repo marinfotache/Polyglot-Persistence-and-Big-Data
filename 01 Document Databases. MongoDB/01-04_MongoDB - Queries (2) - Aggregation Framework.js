@@ -179,8 +179,7 @@ db.books.aggregate( [
 
 // solution with $addFields
 db.books.aggregate([
-    { $addFields : { book_sales :
-       { $multiply: [ "$quantity_sold", "$price" ] }
+    { $addFields : { book_sales : { $multiply: [ "$quantity_sold", "$price" ] }
       } }
   ])
 
@@ -500,7 +499,7 @@ db.books.aggregate([
 
 
 //------------------------------------------------------------------------------
-//--     Display the books whose total number of comments' votes exceeds 13
+//--     Display the books whose total sum of comments' votes exceeds 13
 //------------------------------------------------------------------------------
 
 // solution with $addFields based on the summing across array
@@ -529,9 +528,13 @@ db.books.aggregate([
 // SELECT col1 FROM tab1 GROUP BY col1
 //
 
+
 //------------------------------------------------------------------------------
 //--          How many publishers are there in the database/collection?
 //------------------------------------------------------------------------------
+
+// SELECT DISTINCT publisher FROM books
+
 
 // -- 1st solution
 db.books.aggregate( [
@@ -594,6 +597,14 @@ db.books.aggregate([
 db.books.aggregate([
    { $group: { _id: { "Cost <= 30 RON (0=Yes, 1=No) " : {$cond: [ { $lte: [ "$price", 30 ] }, 0, 1 ]}},
                n_of_books: { $sum: 1 } }} ]) ;
+
+db.books.aggregate([
+   { $group: { _id: { "Cost <= 30 RON (0=Yes, 1=No) " :
+          {$cond: [ { $lte: [ "$price", 30 ] }, 0, 1 ]}},
+               n_of_books: { $sum: 1 } }},
+    {$addFields : { n_of_books : { $toInt: "$n_of_books"} } }
+             ]) ;
+
 
 
 //------------------------------------------------------------------------------
@@ -853,6 +864,7 @@ db.books.aggregate([
    { $unwind: "$comments" },
    { $match: { "$authors" : "$comments.user" }}
 ])
+
 
 // but the next one does; notice `$expr` included in `$match`
 db.books.aggregate([
