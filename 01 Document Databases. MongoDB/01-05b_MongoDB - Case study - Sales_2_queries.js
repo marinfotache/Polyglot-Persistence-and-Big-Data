@@ -1,7 +1,7 @@
 //===============================================================================
 //                                   Case study:  sales
 //===============================================================================
-// last update: 2022-04-05
+// last update: 2022-04-19
 
 
 //--   show databases on the server
@@ -244,6 +244,18 @@ db.counties.aggregate([
           as: "counties__post_codes" } }
 ])
 
+// ...or (better formatted)
+db.counties.aggregate([
+    { $match : {"countyRegion" : "Moldova" }},
+    { $lookup: {
+          from: "postalCodes",
+          localField: "_id",
+          foreignField: "countyCode",
+          as: "c_pc" } },
+     { $unwind : "$c_pc"},
+     { $project : {postal_code : "$c_pc._id", loc : "$c_pc.cityName", _id : 0, countyName : 1 }}
+])
+
 
 //----------------------------------------------------------------------------------
 //--                 Display number of counties for each region
@@ -439,7 +451,7 @@ db.getCollection("invoices").aggregate([
 
     		db.customers.find({ postCode : 						// here we extract all the customers located
 																									//   at the same zipcode as the customer for invoice 1111
-						db.customers.findOne(	{ _id: 							// here we extract the zipcode of
+						db.customers.findOne(	{ _id: 					// here we extract the zipcode of
 				                                          //       the customer for invoice 1111
 						    db.invoices.findOne({ _id :1111}).custID      // this line extracts the `custID` for invoice 1111
 
@@ -860,7 +872,7 @@ db.inv.aggregate([
 // the ObjectId of "Client 1 SRL"
 (db.customers.findOne({custName : "Client 5 SRL"}))._id
 
-// the number of invoices issued for "Client 1 SRL"
+// the number of invoices issued for "Client 5 SRL"
 db.invoices.find({custID : (db.customers.findOne({custName : "Client 5 SRL"}))._id }).count()
 
 
@@ -874,10 +886,10 @@ db.invoices.aggregate([
           as: "customer" } },
 	{ $unwind : "$customer"},
 	{ $project : { "customer_name" : "$customer.custName", n_of_invoices : 1}},
-  { $addFields : { n_of_invoices_cust1 :
+  { $addFields : { n_of_invoices_cust5 :
 			db.invoices.find({custID : (db.customers.findOne({custName : "Client 5 SRL"}))._id }).count()
 	 } },
-  { $match: {  $expr : { $gte : [ "$n_of_invoices", "$n_of_invoices_cust1"  ]  } }}
+  { $match: {  $expr : { $gte : [ "$n_of_invoices", "$n_of_invoices_cust5"  ]  } }}
 
 ])
 
