@@ -204,9 +204,27 @@ MATCH (p:Person) -[r1:ACTED_IN]-> (m:Movie) <-[r2:ACTED_IN]- (keanu:Person)
 WHERE keanu.name = 'Keanu Reeves'
 RETURN p.name, m.title, keanu.name
 
+// ...or
+MATCH (p:Person) -[r1:ACTED_IN]-> (m:Movie)
+MATCH (m:Movie) <-[r2:ACTED_IN]- (keanu:Person)
+WHERE keanu.name = 'Keanu Reeves' AND p.name <> 'Keanu Reeves'
+RETURN DISTINCT p.name, m.title, keanu.name
+
+//...or
+MATCH (m:Movie) <-[r2:ACTED_IN]- (keanu:Person)
+MATCH (p:Person) -[r1:ACTED_IN]-> (m:Movie)
+WHERE keanu.name = 'Keanu Reeves' AND p.name <> 'Keanu Reeves'
+RETURN DISTINCT p.name, m.title, keanu.name
+
 
 //## 	Display the directors of the movies featuring Keanu Reeves
 MATCH (p:Person) -[r1:DIRECTED]-> (m:Movie) <-[r2:ACTED_IN]- (keanu:Person)
+WHERE keanu.name = 'Keanu Reeves'
+RETURN p.name, type(r1), m.title, keanu.name
+
+//...or
+MATCH (m:Movie) <-[r2:ACTED_IN]- (keanu:Person)
+MATCH (p:Person) -[r1:DIRECTED]-> (m:Movie)
 WHERE keanu.name = 'Keanu Reeves'
 RETURN p.name, type(r1), m.title, keanu.name
 
