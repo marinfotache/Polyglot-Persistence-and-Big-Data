@@ -263,7 +263,7 @@ MATCH (k:Person) -[r1:ACTED_IN]-> (m1:Movie)
 WHERE k.name = 'Keanu Reeves'
 MATCH (k_colleague:Person) -[r2:ACTED_IN]-> (m1:Movie)
 MATCH (k_colleague:Person) -[r3:ACTED_IN]-> (m2:Movie)
-MATCH (k_colleague2:Person) -[r4:ACTED_IN]-> (m2:Movie)   
+MATCH (k_colleague2:Person) -[r4:ACTED_IN]-> (m2:Movie)
 RETURN *
 
 
@@ -310,10 +310,26 @@ MATCH (carrie:Person) -[r2:ACTED_IN]-> (m)
 WHERE carrie.name = 'Carrie-Anne Moss'
 RETURN m.title
 
+//...or
+MATCH (keanu:Person) -[r1:ACTED_IN]-> (m:Movie)
+WHERE keanu.name = 'Keanu Reeves'
+MATCH (carrie:Person) -[r2:ACTED_IN]-> (m)
+WHERE carrie.name = 'Carrie-Anne Moss'
+RETURN m.title
+
+
 // ... and another solution...
 MATCH (keanu:Person) -[r1:ACTED_IN]-> (m_keanu:Movie)
 WHERE keanu.name = 'Keanu Reeves'
 WITH m_keanu
+MATCH (carrie:Person) -[r2:ACTED_IN]-> (m_carrie)
+WHERE carrie.name = 'Carrie-Anne Moss' AND
+	m_carrie.title = m_keanu.title
+RETURN m_keanu.title
+
+//...or
+MATCH (keanu:Person) -[r1:ACTED_IN]-> (m_keanu:Movie)
+WHERE keanu.name = 'Keanu Reeves'
 MATCH (carrie:Person) -[r2:ACTED_IN]-> (m_carrie)
 WHERE carrie.name = 'Carrie-Anne Moss' AND
 	m_carrie.title = m_keanu.title
