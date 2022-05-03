@@ -228,6 +228,14 @@ MATCH (p:Person) -[r1:DIRECTED]-> (m:Movie)
 WHERE keanu.name = 'Keanu Reeves'
 RETURN p.name, type(r1), m.title, keanu.name
 
+//...or
+MATCH (m:Movie) <-[r2:ACTED_IN]- (keanu:Person)
+WHERE keanu.name = 'Keanu Reeves'
+MATCH (p:Person) -[r1:DIRECTED]-> (m:Movie)
+RETURN p.name, type(r1), m.title, keanu.name
+
+
+
 
 //## intersection in Cypher
 //## 	Display the movies in which Keanu Reeves played with Carrie-Anne Moss
