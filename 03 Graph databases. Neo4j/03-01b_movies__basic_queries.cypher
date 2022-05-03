@@ -258,6 +258,15 @@ WHERE keanu.name = 'Keanu Reeves'
 RETURN keanu.name, m.title, keanu_colleague.name, m2.title, colleague_of_keanu_colleagues.name
 ORDER BY keanu.name, m.title, keanu_colleague.name, m2.title, colleague_of_keanu_colleagues.name
 
+//...or
+MATCH (k:Person) -[r1:ACTED_IN]-> (m1:Movie)
+WHERE k.name = 'Keanu Reeves'
+MATCH (k_colleague:Person) -[r2:ACTED_IN]-> (m1:Movie)
+MATCH (k_colleague:Person) -[r3:ACTED_IN]-> (m2:Movie)
+MATCH (k_colleague2:Person) -[r4:ACTED_IN]-> (m2:Movie)   
+RETURN *
+
+
 
 
 //###################################################################################
