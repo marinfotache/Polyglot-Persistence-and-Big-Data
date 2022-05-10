@@ -1,15 +1,15 @@
 --############################################################################
 --### 	          Export `sales` database from PostgreSQL to Neo4j
 --############################################################################
+-- last update: 2022-05-10
 
 --
 -- I.
 -- Connect to PgAdmin
--- create and populate database `sales` using scripts
--- see scripts `03-03a...` and `03-03b...` on github directory:
+-- create and populate database `sales` using scripts `03-03a...` and `03-03b...` on github directory:
 -- `https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/tree/master/04%20Graph%20databases.%20Neo4j`
 
--- as `sales` is the current database in pgAdmin IV, run the following statements
+-- after setting `sales` as the default database in pgAdmin IV, run the following statements
 
 DROP TABLE IF EXISTS sales__pg_to_neo4j ;
 
@@ -147,7 +147,7 @@ SELECT * FROM sales__pg_to_neo4j ;
 	1.c choose `Format` as `text` and save it a accessibile directory
 
 The result must ressemble to the content of the file
-`04-03b_export_sales_pg_to_neo4j.cypher`
+`03-03b_export_sales_pg_to_neo4j.cypher`
 
 
 --############################################################################
@@ -163,7 +163,7 @@ The result must ressemble to the content of the file
 //##############################################################################
 // In order to create the nodes, relationships and constraints, please
 //  copy the entire content of the file/script resulted in step II
-// (`04-03b_export_sales_pg_to_neo4j.cypher`), paste it into the
+// (`03-03b_export_sales_pg_to_neo4j.cypher`), paste it into the
 //  Neo4j Browser window, and run it.
 //##############################################################################
 
