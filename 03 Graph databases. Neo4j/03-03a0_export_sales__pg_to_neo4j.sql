@@ -6,7 +6,7 @@
 --
 -- I.
 -- Connect to PgAdmin
--- create and populate database `sales` using scripts `03-03a...` and `03-03b...` on github directory:
+-- create and populate database `sales` using scripts `03-03a1...` and `03-03a2...` on github directory:
 -- `https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/tree/master/04%20Graph%20databases.%20Neo4j`
 
 -- after setting `sales` as the default database in pgAdmin IV, run the following statements

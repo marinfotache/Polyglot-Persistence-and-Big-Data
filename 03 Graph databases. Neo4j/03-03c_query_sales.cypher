@@ -3,6 +3,7 @@
 //###            Cypher Queries (many requirements were used for MongoDB,
 //###   so you can compare (in a certain extent) Cypher with Aggregation Framework)
 //###################################################################################
+// last update: 2022-05-10
 
 //###################################################################################
 //###  Notice: Each of the following queries will be executed individually
