@@ -1,11 +1,12 @@
 --############################################################################
 --### 	      Export `chinook` database from PostgreSQL to Neo4j
 --#############################################################################
+-- last update: 2022-05-10
 
 -- I.
 -- Connect to PgAdmin
 -- create and populate database `chinook` using script
--- `04-04a2 Chinook_PostgreSql 2017.sql`
+-- `03-04a2 Chinook_PostgreSql 2017.sql`
 
 -- set `chinook` as the current.default database in pgAdmin IV, then run the following statements
 
