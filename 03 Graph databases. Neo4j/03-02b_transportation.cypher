@@ -2,7 +2,7 @@
 //### 			    Mini Case Study Cypher Neo4j: Transportation
 //###				   B. Querying the database
 //#############################################################################
-//### last update: 2021-03-18
+//### last update: 2022-05-10
 
 
 //#######################################################################################
@@ -57,8 +57,7 @@ RETURN county, region
 
 
 //# 	Display city names and counties;
-//     results will be ordered by countries and,
-//       within counties, by city names
+//     results will be ordered by countries and, within counties, by city names
 MATCH (city:City) -[rel:IS_IN_COUNTY]->(county:County)
 RETURN city.cityName, county.countyName
 ORDER BY county.countyName, city.cityName
@@ -72,64 +71,53 @@ ORDER BY county.countyName, city.cityName
 //# 	Display the cities in "Vrancea" county
 
 // first solution (only nodes are displayed):
-MATCH
-	(city:City)
-		-[relCounty:IS_IN_COUNTY]->
-	(county:County {countyName : 'Vrancea'} )
+MATCH (city:City) -[relCounty:IS_IN_COUNTY]-> (county:County {countyName : 'Vrancea'} )
 RETURN city.cityName, county.countyName
 ORDER BY city.cityName
 
 // second solution (only nodes are displayed):
-MATCH
-	(city:City)
-		-[relCounty:IS_IN_COUNTY]->
-	(county:County)
+MATCH (city:City) -[relCounty:IS_IN_COUNTY]-> (county:County)
 WHERE county.countyName = 'Vrancea'
 RETURN city.cityName, county.countyName
 ORDER BY city.cityName
 
 // third solution (all nodes are relationship are displayed):
-MATCH
-	(city:City)
-		-[relCounty:IS_IN_COUNTY]->
-	(county:County)
+MATCH (city:City) -[relCounty:IS_IN_COUNTY]-> (county:County)
 WHERE county.countyName = 'Vrancea'
 RETURN *
 ORDER BY city.cityName
 
 // fourth solution (all nodes only one relationship are displayed):
-MATCH
-	(city:City)
-		-[relCounty:IS_IN_COUNTY]->
-	(county:County)
+MATCH (city:City) -[relCounty:IS_IN_COUNTY]-> (county:County)
 WHERE county.countyName = 'Vrancea'
 RETURN city, relCounty, county
 ORDER BY city.cityName
 
 
-//# In which county city of Adjud is placed on ?
-MATCH
-	(city:City)
-		-[relCounty:IS_IN_COUNTY]->
-	(county:County)
+//# In which county city of Adjud is placed on?
+MATCH (city:City) -[relCounty:IS_IN_COUNTY]-> (county:County)
 WHERE city.cityName = 'Adjud'
 RETURN county.countyName
 
 
 //# Which are the cities in the same county as the city of Adjud ?
-MATCH
-	(city1:City)  -[relCounty:IS_IN_COUNTY]-> (county:County)
-		<- [relCounty2:IS_IN_COUNTY]-  (city2:City)
+
+// sol.1
+MATCH  (city1:City)  -[relCounty:IS_IN_COUNTY]-> (county:County) <- [relCounty2:IS_IN_COUNTY]-  (city2:City)
 WHERE city1.cityName = 'Adjud'
+RETURN city2.cityName
+
+// sol.2
+MATCH  (city1:City)  -[relCounty1:IS_IN_COUNTY]-> (county:County)
+WHERE city1.cityName = 'Adjud'
+MATCH  (city2:City)  -[relCounty2:IS_IN_COUNTY]-> (county:County)
+WHERE city2.cityName <> 'Adjud'
 RETURN city2.cityName
 
 // the same result, but display all the nodes and relationships
 MATCH
-	(city1:City)
-		-[relCounty:IS_IN_COUNTY]->
-	(county:County)
-		<- [relCounty2:IS_IN_COUNTY]-
-	(city2:City)
+	(city1:City) -[relCounty:IS_IN_COUNTY]-> (county:County)
+										<- [relCounty2:IS_IN_COUNTY]- (city2:City)
 WHERE city1.cityName = 'Adjud'
 RETURN *
 
@@ -137,76 +125,73 @@ RETURN *
 //# 	Display the cities from region of "Moldova"
 
 // 	first solution (only nodes are displayed):
-MATCH
-	(city:City)
-		-[relCounty:IS_IN_COUNTY]->
-	(county:County)
-		-[relRegion:IS_IN_REGION]->
-	(region:Region{ regionName: 'Moldova' })
+MATCH (city:City) -[relCounty:IS_IN_COUNTY]-> (county:County)
+		-[relRegion:IS_IN_REGION]-> (region:Region{ regionName: 'Moldova' })
 RETURN city.cityName, county.countyName, region.regionName
 ORDER BY city.cityName
 
 //	second solution (only nodes are displayed):
-MATCH
-	(city:City)
-		-[relCounty:IS_IN_COUNTY]->
-	(county:County)
-		-[relRegion:IS_IN_REGION]->
-	(region:Region)
+MATCH (city:City) -[relCounty:IS_IN_COUNTY]-> (county:County)
+		-[relRegion:IS_IN_REGION]-> (region:Region)
 WHERE region.regionName = 'Moldova'
 RETURN city.cityName, county.countyName, region.regionName
 ORDER BY city.cityName
 
-//	third solution (all nodes are relationship are displayed):
-MATCH
-	(city:City)
-		-[relCounty:IS_IN_COUNTY]->
-	(county:County)
-		-[relRegion:IS_IN_REGION]->
-	(region:Region)
+//	third solution (only nodes are displayed):
+MATCH (county:County) -[relRegion:IS_IN_REGION]-> (region:Region)
+WHERE region.regionName = 'Moldova'
+MATCH (city:City) -[relCounty:IS_IN_COUNTY]-> (county:County)
+RETURN city.cityName, county.countyName, region.regionName
+ORDER BY city.cityName
+
+//	fourth solution (all nodes are relationship are displayed):
+MATCH (city:City) -[relCounty:IS_IN_COUNTY]-> (county:County)
+		-[relRegion:IS_IN_REGION]-> (region:Region)
 WHERE region.regionName = 'Moldova'
 RETURN *
 ORDER BY city.cityName
 
 
 //# In which region the city of Adjud is placed on ?
-MATCH
-	(city:City)
-		-[relCounty:IS_IN_COUNTY]->
-	(county:County)
-		-[relRegion:IS_IN_REGION]->
-	(region:Region)
+
+// sol. 1
+MATCH (city:City) -[relCounty:IS_IN_COUNTY]-> (county:County)
+		-[relRegion:IS_IN_REGION]-> (region:Region)
 WHERE city.cityName = 'Adjud'
 RETURN region.regionName
 
+// sol. 2
+MATCH (city:City) -[relCounty:IS_IN_COUNTY]-> (county:County)
+WHERE city.cityName = 'Adjud'
+MATCH (county:County) -[relRegion:IS_IN_REGION]-> (region:Region)
+RETURN region.regionName
+
+
 
 //# Which are the cities in the same region as the city of Adjud ?
-MATCH
-	(city1:City)
-		-[relCounty:IS_IN_COUNTY]->
-	(county:County)
-		-[relRegion:IS_IN_REGION]->
-	(region:Region)
-		<- [relRegion2:IS_IN_REGION]-
-	(county2:County)
-		<- [relCounty2:IS_IN_COUNTY]-
-	(city2:City)
+MATCH (city1:City) -[relCounty:IS_IN_COUNTY]-> (county:County)
+		-[relRegion:IS_IN_REGION]-> (region:Region)
+					<- [relRegion2:IS_IN_REGION]- (county2:County)
+								<- [relCounty2:IS_IN_COUNTY]- (city2:City)
 WHERE city1.cityName = 'Adjud'
 RETURN city2.cityName
 
 // the same problem, but display all the nodes and relationships
-MATCH
-	(city1:City)
-		-[relCounty:IS_IN_COUNTY]->
-	(county:County)
-		-[relRegion:IS_IN_REGION]->
-	(region:Region)
-		<- [relRegion2:IS_IN_REGION]-
-	(county2:County)
-		<- [relCounty2:IS_IN_COUNTY]-
-	(city2:City)
+MATCH (city1:City) -[relCounty:IS_IN_COUNTY]-> (county:County)
+		-[relRegion:IS_IN_REGION]-> (region:Region)
+					<- [relRegion2:IS_IN_REGION]- (county2:County)
+								<- [relCounty2:IS_IN_COUNTY]- (city2:City)
 WHERE city1.cityName = 'Adjud'
 RETURN *
+
+// another solution...
+MATCH (city1:City) -[relCounty1:IS_IN_COUNTY]-> (county1:County)
+WHERE city1.cityName = 'Adjud'
+MATCH (county1:County) -[relRegion1:IS_IN_REGION]-> (region:Region)
+MATCH (county2:County) -[relRegion2:IS_IN_REGION]-> (region:Region)
+MATCH (city2:City) -[relCounty2:IS_IN_COUNTY]-> (county2:County)
+RETURN *
+
 
 
 
@@ -250,36 +235,37 @@ ORDER BY region.regionName, county.countyName
 
 
 //##################################################################################
-//###							Graph queries (1): Basics
+//###										Graph queries (1): The Basics
 //###
 
-//#		Display the neighbour cities of Iasi, excluding the anchor
-//      (path departure node - Iasi)
+//#		Display the neighbour cities of Iasi, excluding the anchor (path departure node is Iasi)
 //	 (first order neighbours)
-MATCH
-	(n:City { cityName: 'Iasi' })
-		-[:CONNECTED_TO*1]-
-	(neighborhood)
+MATCH (n:City { cityName: 'Iasi' }) -[:CONNECTED_TO*1]- (neighborhood)
 RETURN neighborhood
 
 
-//#		Display the neighbour cities of Iasi, including the anchor
-//      (path departure node - Iasi)
-//	 (first order neighbours)
-MATCH
-	(n:City { cityName: 'Iasi' })
-		-[:CONNECTED_TO*0..1]->
-	(neighborhood)
+//#		Display the neighbour cities of Iasi, including the anchor (path departure node is Iasi)
+//	 (the anchor and its first order neighbours)
+MATCH (n:City { cityName: 'Iasi' }) -[:CONNECTED_TO*0..1]-> (neighborhood)
+RETURN neighborhood
+
+
+//#		Display the neighbour cities of Vaslui, including the anchor (path departure node is Iasi)
+//	 (the anchor and its first order neighbours)
+
+// notice the difference between the solution...
+MATCH (n:City { cityName: 'Vaslui' }) -[:CONNECTED_TO*0..1]-> (neighborhood)
+RETURN neighborhood
+
+// ... and the solution...
+MATCH (n:City { cityName: 'Vaslui' }) -[:CONNECTED_TO*0..1]- (neighborhood)
 RETURN neighborhood
 
 
 //#		Display the neighbor cities of Iasi (first order neighbours)
 // 	with more than 30000 inhabitants (filter nodes)
 //  	(filter the path nodes)
-MATCH
-	(n:City { cityName: 'Iasi' })
-		-[:CONNECTED_TO*1]-
-	(neighborhood)
+MATCH (n:City { cityName: 'Iasi' }) -[:CONNECTED_TO*1]- (neighborhood)
 WHERE neighborhood.population >= 30000
 RETURN *
 
@@ -287,55 +273,46 @@ RETURN *
 //#		Display the neighbor cities of Iasi (first order neighbours)
 //   found at exactly 53 km from Iasi (filter relationships - equality operator)
 //	  (filter the path relationship)
-MATCH
-	(n:City { cityName: 'Iasi' })
-		-[rel:CONNECTED_TO*1{distance : 53}]-
-	(neighborhood)
+MATCH (n:City { cityName: 'Iasi' }) -[rel:CONNECTED_TO*1{distance : 53}]- (neighborhood)
 RETURN *
 
 
 //#		Display the neighbor cities of Iasi (first order neighbours)
 //   within less than 60 kilometers
 //  (filter the path relationship - "greater-than" operator)
-MATCH
-	(n:City { cityName: 'Iasi' })
-		-[rel:CONNECTED_TO*1]->
-	(neighborhood)
+MATCH (n:City { cityName: 'Iasi' }) -[rel:CONNECTED_TO*1]-> (neighborhood)
 WHERE rel.distance <= 60
 RETURN *
 
-// it does not work; see below: collections
+// !!!!!  it does not work; see below the section on collections
 
 
-//#		Display only the neighbors of the neighbours of Iasi
+//#		Display the neighbours (1st order) the neighbours of the neighbours (2nd order) of the node Iasi
+MATCH (n:City { cityName: 'Iasi' }) -[rel:CONNECTED_TO*0..2]- (neighborhood)
+RETURN neighborhood
+
+
+//#		Display only the neighbours of the neighbours of Iasi
 //	 (second order neighbours)
-MATCH
-	(n:City { cityName: 'Iasi' })
-		-[rel:CONNECTED_TO*2]->
-	(neighborhood)
+MATCH (n:City { cityName: 'Iasi' }) -[rel:CONNECTED_TO*2]- (neighborhood)
 RETURN neighborhood
 
 
 //#		Display only the third and fourth order neighbours of Iasi
-MATCH
-	(n:City { cityName: 'Iasi' })
-		-[rel:CONNECTED_TO*3..4]-
-	(neighborhood)
+MATCH (n:City { cityName: 'Iasi' }) -[rel:CONNECTED_TO*3..4]- (neighborhood)
 RETURN neighborhood
+
 
 //#		Display only the third and fourth order neighbours of Iasi,
 //      this time excluding Iasi (as intermediary or final path node)
-MATCH
-	(n:City { cityName: 'Iasi' })
-		-[rel:CONNECTED_TO*3..4]->
-	(neighborhood)
+MATCH (n:City { cityName: 'Iasi' }) -[rel:CONNECTED_TO*3..4]-> (neighborhood)
 WHERE neighborhood.cityName <> 'Iasi'
 RETURN neighborhood
 
 
 
 //##############################################################################
-//###						Graph queries (2): Paths
+//###						  				Graph queries (2): Paths
 //###
 
 
@@ -437,7 +414,7 @@ RETURN p
 
 
 // #######################################################################
-// ####   					Collections
+// ####   											Collections
 
 
 //# 	Displays as collection all the cities in every county
@@ -541,7 +518,7 @@ ORDER BY total_distance
 
 
 //#####################################################################################
-//###						Advanced aggregation queries
+//###													Advanced aggregation queries
 //###
 
 //# 	Display the counties with more than one city in the database
@@ -561,9 +538,7 @@ RETURN county.countyName, count(*)
 ORDER BY count(*) DESC LIMIT 1
 
 
-// next solution works fine even if there are two or more counties with the same max number of cities,
-//    we need another solution - see below
-
+// next solution works fine even if there are two or more counties with the same max number of cities
 MATCH (city:City) -[relCounty:IS_IN_COUNTY]->(county:County)
 WITH county.countyName AS countyName, count(*) AS n_of_cities
 WITH MAX(n_of_cities) AS max_n_of_cities

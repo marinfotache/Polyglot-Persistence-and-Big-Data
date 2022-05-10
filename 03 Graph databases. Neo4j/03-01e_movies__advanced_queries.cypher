@@ -89,7 +89,6 @@ ORDER BY n_of_movies2
 
 
 
-
 //# Display top 5 actors playing in the largest number of characters
 MATCH (p:Person) -[r:ACTED_IN]-> ()
 WITH p,  r UNWIND r.roles AS movie_role
