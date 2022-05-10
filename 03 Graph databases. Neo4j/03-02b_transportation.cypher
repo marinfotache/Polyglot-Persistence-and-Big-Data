@@ -316,13 +316,9 @@ RETURN neighborhood
 //###
 
 
-//#		Display all the paths from Iasi to Bacau but
-//			with no more than ONE intermediary node
+//#		Display all the paths from Iasi to Bacau but with no more than ONE intermediary node
 //     see cardinality [rel:CONNECTED_TO*0..2]
-MATCH p =
-	(n:City { cityName: 'Iasi' })
-		-[rel:CONNECTED_TO*0..2]-
-	(neighborhood)
+MATCH p = (n:City { cityName: 'Iasi' }) -[rel:CONNECTED_TO*0..2]- (neighborhood)
 WHERE neighborhood.cityName = 'Bacau'
 RETURN p
 
@@ -330,10 +326,7 @@ RETURN p
 //#		Display all the paths from Iasi to Bacau
 //			with no more than TWO intermediary nodes
 //      see cardinality [rel:CONNECTED_TO*0..3]
-MATCH p =
-	(n:City { cityName: 'Iasi' })
-		-[rel:CONNECTED_TO*0..3]-
-	(neighborhood)
+MATCH p = (n:City { cityName: 'Iasi' }) -[rel:CONNECTED_TO*0..3]- (neighborhood)
 WHERE neighborhood.cityName = 'Bacau'
 RETURN p
 
@@ -341,10 +334,7 @@ RETURN p
 //#		Display all the paths from Iasi to Bacau with
 //			exactly TWO intermediary nodes
 //     see cardinality [rel:CONNECTED_TO*3..3]
-MATCH p =
-	(n:City { cityName: 'Iasi' })
-		-[rel:CONNECTED_TO*3..3]-
-	(neighborhood)
+MATCH p = (n:City { cityName: 'Iasi' }) -[rel:CONNECTED_TO*3..3]- (neighborhood)
 WHERE neighborhood.cityName = 'Bacau'
 RETURN p
 
@@ -352,10 +342,7 @@ RETURN p
 //#		Display all the paths from Iasi to Bacau
 //			with no more than FIVE intermediary nodes
 //     see cardinality [rel:CONNECTED_TO*0..6]
-MATCH p =
-	(n:City { cityName: 'Iasi' })
-		-[rel:CONNECTED_TO*0..6]-
-	(neighborhood)
+MATCH p = (n:City { cityName: 'Iasi' }) -[rel:CONNECTED_TO*0..6]- (neighborhood)
 WHERE neighborhood.cityName = 'Bacau'
 RETURN p
 
@@ -363,22 +350,23 @@ RETURN p
 //#		Display all the paths from Iasi to Bacau with
 //			exactly FIVE intermediary nodes
 //     see cardinality [rel:CONNECTED_TO*6..6]
-MATCH p =
-	(n:City { cityName: 'Iasi' })
-		-[rel:CONNECTED_TO*6..6]-
-	(neighborhood)
+MATCH p = (n:City { cityName: 'Iasi' }) -[rel:CONNECTED_TO*6..6]- (neighborhood)
 WHERE neighborhood.cityName = 'Bacau'
 RETURN p
 
+
+//#		Display all paths from Iasi to Bacau
+MATCH p=(:City {cityName: "Iasi"})-[:CONNECTED_TO*]-(:City {cityName: "Bacau"})
+WHERE all(c IN nodes(p) WHERE 1=size([m IN nodes(p) WHERE m=c]))
+RETURN DISTINCT [n IN nodes(p) | n.cityName] AS Path, length(p) AS Length
 
 
 //#		Display the shortest path (as number of nodes) from Iasi to Bacau
 
 //		syntax 1
 MATCH p = SHORTESTPATH(
-	(n:City { cityName: 'Iasi' })
-		-[rel:CONNECTED_TO*]-
-	(neighborhood{ cityName: 'Bacau' }) )
+	(n:City { cityName: 'Iasi' }) -[rel:CONNECTED_TO*]-(neighborhood{ cityName: 'Bacau' })
+	)
 RETURN p
 
 //		syntax 2
@@ -446,16 +434,19 @@ WHERE rs.distance <= 60
 RETURN *
 
 
+
 //#		Display all paths from Iasi to Bacau shorter than 175 km
 //  this time using collections and UNWIND
-MATCH p = (n1 {cityName: 'Iasi'}) -[r:CONNECTED_TO*]- (n2 {cityName: 'Bacau'})
-WITH  n1, r, n2,
-	EXTRACT (node IN NODES(p) | node.cityName ) AS path,
-	EXTRACT (rel IN RELATIONSHIPS(p) | rel.distance ) AS distances
-WITH path, distances UNWIND distances AS length
-WITH path, distances, SUM(length) AS total_distance
-WHERE total_distance <= 175
-RETURN *
+MATCH p=(:City {cityName: "Iasi"})-[r:CONNECTED_TO*]-(:City {cityName: "Bacau"})
+WHERE all(c IN nodes(p) WHERE 1=size([m IN nodes(p) WHERE m=c]))
+WITH DISTINCT [n IN nodes(p) | n.cityName] AS Path, length(p) AS Length, r
+WITH Path, Length, r
+UNWIND (r) AS rds
+WITH Path, Length, SUM(rds.distance) AS total_distance
+WHERE total_distance < 175
+RETURN Path, Length, total_distance
+ORDER BY total_distance
+
 
 
 //#			Display as text each path from Iasi to Bacau
@@ -482,21 +473,6 @@ RETURN text, total_distance
 ORDER BY total_distance
 
 
-//#		Display all the routes from Iasi to Bacau in ascending order of total distance
-//   but without passing through node more than once
-// solution was suggested by Michael Hunger at:
-// http://stackoverflow.com/questions/28261198/finding-cypher-paths-that-dont-visit-the-same-node-twice
-//
-MATCH p = (n1 {cityName: 'Iasi'}) -[:CONNECTED_TO*]- (n2 {cityName: 'Bacau'})
-WHERE NONE (n IN nodes(p)
-	WHERE size(filter(x IN nodes(p)
-		WHERE n = x))> 1)
-WITH REDUCE (text = ' ', nod IN NODES(p) | text + ' - ' + nod.cityName) as text,
- REDUCE (dist = 0, rel IN RELATIONSHIPS(p) | dist + rel.distance) as total_distance
-RETURN text, total_distance
-ORDER BY total_distance
-
-
 //#		Display Display the shortest route (in terms of distance) from Iasi to Bacau
 MATCH p = (n1 {cityName: 'Iasi'}) -[:CONNECTED_TO*]- (n2 {cityName: 'Bacau'})
 WITH REDUCE (text = ' ', nod IN NODES(p) | text + ' - ' + nod.cityName) as text,
@@ -506,7 +482,7 @@ ORDER BY total_distance
 LIMIT 1
 
 
-//#		Display all paths from Iasi to Bacau shorter than 175 km
+//#		Display all paths from Iasi to Bacau shorter than 175 km (REPRISE)
 MATCH p = (n1 {cityName: 'Iasi'}) -[:CONNECTED_TO*]- (n2 {cityName: 'Bacau'})
 WITH REDUCE (text = ' ', nod IN NODES(p) | text + ' - ' + nod.cityName) as text,
  REDUCE (dist = 0, rel IN RELATIONSHIPS(p) | dist + rel.distance) as total_distance
