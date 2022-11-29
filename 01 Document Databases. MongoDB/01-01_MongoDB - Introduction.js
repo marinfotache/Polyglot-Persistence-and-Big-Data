@@ -1,18 +1,15 @@
 //===============================================================================
 //                            (Very) Basics operations with MongoDB
 //===============================================================================
-// last update: 2022-04-03
+// last update: 2022-11-29
 
 // For installation of MongoDB Community Server and Robo 3T, select presentation:
 // https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/blob/master/01%20Document%20Databases.%20MongoDB/01%20Document_DB__MongoDB.pptx
 
 
-//--   An excellent MongoDB client (we'll use it this semester): Robo 3T (free)
-// http://robomongo.org/
+//--   An excellent MongoDB client (we'll use it this semester): Studio 3T (free)
 
-//--   In order to launch a commad or group of commands in Robomongo/Robo 3T
-// select commang/gruoup (by mouse/keyboard) and then press Ctrl + Enter keys
-// (on Mac systems the key combination is cmd + Enter)
+
 
 //--    Display all available command for working with databases
 db.help()
@@ -22,31 +19,39 @@ show dbs
 // ...or
 show databases
 
+
 //--    show current database (from now we'll use mainly "db") in comments
 db
+
 
 //--    show some information/stistics about current db
 db.stats()
 
+
 //--    change/set the current db
-use sales
 
 //--    set "bigdata2022" as current bd
-use bigdata2022
+//use bigdata2022
+
+//use sales2021
+
+//use sdbis2022
+
+use sia2022
+
 
 //--    display existing collections (of documents) in the current db
 show collections
-
-use sales2021
-
-use sdbis2022
 
 
 //--    count the number of documents in a collection
 db.first_collection.count()
 
+
 //--    retrieve one document (record) in a collection
 db.first_collection.findOne()
+
+
 
 
 //===============================================================================
