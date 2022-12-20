@@ -17,6 +17,10 @@
 // The results will be hard to read
 MATCH (n1)-[r]->(n2) RETURN n1, r, n2;
 
+// Display lines/products and receipts only for invoice 1111 (customer ('Client 1 SRL'))
+MATCH (n1) -[]- (n2) -[]- (n3) 
+WHERE n1.cust_name = 'Client 1 SRL' AND n2.invoice_id = 1111  
+RETURN *
 
 
 //###################################################################################
@@ -52,6 +56,26 @@ RETURN pc.town AS town_name, c.name AS county_name, r.name AS region_name
 MATCH (pc:PostalCode) -[rel1:PostalCodeInCounty]-> (c:County) -[rel2:CountyInRegion]-> (r:Region)
 WHERE pc.town = 'Pascani'
 RETURN pc.town AS town_name, c.name AS county_name, r.name AS region_name
+
+
+//###################################################################################
+//--       Show the county name and the region for city of Iasi (two or more postal codes)
+
+// solution 1
+MATCH (pc:PostalCode) -[rel:PostalCodeInCounty]-> (c:County) -[]-> (r:Region)
+WHERE pc.town = 'Iasi'
+RETURN DISTINCT pc.town AS town_name, c.name AS county_name, r.name AS region_name
+
+// solution 2
+MATCH (pc:PostalCode) -[]-> (c:County) -[]-> (r:Region)
+WHERE pc.town = 'Iasi'
+RETURN DISTINCT pc.town AS town_name, c.name AS county_name, r.name AS region_name
+
+// solution 3
+MATCH (pc:PostalCode) -[rel1:PostalCodeInCounty]-> (c:County) -[rel2:CountyInRegion]-> (r:Region)
+WHERE pc.town = 'Iasi'
+RETURN DISTINCT pc.town AS town_name, c.name AS county_name, r.name AS region_name
+
 
 
 
