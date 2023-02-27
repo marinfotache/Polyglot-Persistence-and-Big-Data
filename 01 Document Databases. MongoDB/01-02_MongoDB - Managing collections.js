@@ -1,7 +1,7 @@
 //===============================================================================
 //                           Managing collections in MongoDB
 //===============================================================================
-// last update: 2022-04-03
+// last update: 2023-02-27
 
 
 
@@ -12,17 +12,16 @@
 //--   other examples are taken/inspired from the MongoDB online documentation
 //===============================================================================
 
-//--    Set (if necessary) "sdbis2022" as current db
-use sdbis2022
+//--    Set (if necessary) "sia2022" as current db
+use sia2022
 
 //--    Remove (if necessary) all documents in collection "first_collection"
-db.first_collection.remove({}) ;
+db.first_collection.deleteMany({}) ;
 
 //--    Insert documents, this time using variables
 x1 =  { title: 'I Like Databases',
 		text_comments: ['Good!', 'Excellent', 'Mediocre', 'Disgusting' ]} ;
 db.first_collection.insert(x1) ;
-
 
 x2 = { titlel: "SQL la munte si la mare",
 		text_comments: ['Boring', 'Disgusting', 'Mediocre' ]} ;
@@ -72,38 +71,15 @@ db.first_collection.insertMany(array1) ;
 db.first_collection.find() ;
 
 
+
 //===============================================================================
 //                              Now, for the updates
 //===============================================================================
 
 //=======================================================
-//              A begginer's mistake with "update"
+//    A beginner's mistake with function "findAndModify"
 //
-//--    DO NOT replace entire documents !
-//  The next update is wrong (we want to add some tags for the book "I Like Databases")
-db.first_collection.update( {title: "I Like Databases"},
-	 {tags : ['databases', 'mongodb', 'indexing'] }) ;
 
-// The above update command removed all the other attributes of the document (keeping only "tags")
-db.first_collection.find( {title: "I Like Databases"}) ;
-// nothing is displayed since the title was removed (only ObjectId and attribute "tags" were kept)
-db.first_collection.find() ;
-
-//=======================================================
-//     The same problem with function "findAndModify"
-
-//--    Restore the "damaged" document
-// first, delete it
-db.first_collection.remove( { tags : ['databases', 'mongodb', 'indexing'] }) ;
-
-//-- reinsert it
-x1 =  { title: 'I Like Databases',
-		text_comments: ['Good!', 'Excellent', 'Mediocre', 'Disgusting' ]} ;
-db.first_collection.insert(x1) ;
-// check
-db.first_collection.find() ;
-
-//
 //--     "findAndModify" modifies and returns a single document
 //
 // Example: we want to add some tags for the book "I Like Databases"
@@ -115,7 +91,7 @@ db.first_collection.findAndModify({
 });
 // check
 db.first_collection.find() ;
-// you can notice the same mistake as in previous "update"
+
 
 
 //=============================================================================
@@ -261,6 +237,7 @@ db.first_collection.update({}, { $rename: { "titlel": "title" } } );
 db.first_collection.findOne({title : "SQL la munte si la mare"}) ;
 
 
+//---------------------------------------------------------------------------------------
 //--   It worked, but not as planned (see "comments" - we wanted a pair of "user"/"text"
 // properties for each comment, not one user for all of the comments.
 
@@ -307,6 +284,7 @@ db.first_collection.findOne({title : "SQL la munte si la mare"}) ;
 
 
 
+
 //====================================================================
 //                         Operator "$inc"
 
@@ -324,6 +302,7 @@ db.first_collection.update({title: "SQL la munte si la mare"},
 	{"$inc" : {num_of_comm : 1}}) ;
 // check
 db.first_collection.findOne({title : "SQL la munte si la mare"}) ;
+
 
 
 //=======================================================
@@ -391,8 +370,8 @@ db.first_collection.update ( {title: "I Like Databases", "comments.user": "blogg
 //    ({comments: [ { user: "bjones", text: "Interesting article!" },
 //    { user: "blogger", text: "Another related article is at http://example.com/db/db.txt" } ]})
 
-// Solution is simple, but wait until the sub-section
-//   Operator "arrayAttribute.$.property"
+// Solution is simple, but wait until the sub-section and example for the
+//   perator "arrayAttribute.$.property"
 
 
 
@@ -436,6 +415,7 @@ db.first_collection.update (
 // check
 db.first_collection.findOne({"title" : "I Like Databases"} ) ;
 
+
 // In the same document add (in just one move) two tags
 db.first_collection.update (
 	{"title" : "I Like Databases"},
@@ -461,6 +441,7 @@ db.first_collection.update (
 	{$push : { "tags" : "partitioning" }}) ;
 // check
 db.first_collection.findOne({"title" : "I Like Databases"} ) ;
+
 
 //--    But there is a more elegant solution - by using "$push" with option "each"
 // delete the tags
@@ -534,6 +515,7 @@ db.first_collection.update (
 db.first_collection.findOne ( { "title": "SQL la munte si la mare"} ) ;
 
 
+
 //=======================================================
 //                    Operator "$pull"
 
@@ -555,6 +537,7 @@ db.first_collection.update (
 	{"$pull" : {"tags" : "relational algebra"} } ) ;
 // check
 db.first_collection.findOne ( { "title": "SQL la munte si la mare"} ) ;
+
 
 
 //=======================================================
@@ -592,6 +575,7 @@ db.first_collection.find( { "title" : "NoSQL Databases"}, {"comments" : 1} ) ;
 
 
 
+
 //=======================================================
 //             Operator "arrayAttribute.$.property"
 //  (changing element of an array when not knowing the element index)
@@ -616,6 +600,8 @@ db.first_collection.findOne( { "title" : "Virtualization and databases"} ) ;
 //... or by retrieving all the  blog entries for which there is a comment
 // written by ("comments.user) "dragos"
 db.first_collection.find ( {"comments.user" : "dragos" }) ;
+
+
 
 
 //===============================================================================
