@@ -1,6 +1,8 @@
 //===============================================================================
 //                           Queries and cursors in MongoDB
-// last update: 2022-03-07
+//===============================================================================
+
+// last update: 2023-02-27
 
 
 //===============================================================================
@@ -10,8 +12,8 @@
 //--     and most examples are completely uninspiring
 //===============================================================================
 
-//--    Set (if necessary) "sdbis2022" as current db
-//use sdbis2022
+//--    Set (if necessary) "dm2023" as current db
+use dm2023
 
 
 //===============================================================================
@@ -26,20 +28,23 @@ db.first_collection.find() ;
 //                       Projection (selecting attributes)
 //===============================================================================
 
-// Display values of only atribute "title"
+db.first_collection.find() ;
+
+// Display values of only atribute "title":
 db.first_collection.find( {}, { "title" : 1}) ;
 
-// Display values of all attributes except "tags"
+// Display values of all attributes except "tags":
 db.first_collection.find( {}, { "tags" : 0}) ;
 
-// Display values of all attributes except "tags" and "comments"
+// Display values of all attributes except "tags" and "comments":
 db.first_collection.find( {}, { "tags" : 0, "comments" : 0}) ;
 
-// Display values for only "title" and "votes" (and the default ObjectId)
+// Display values for only "title" and "votes" (and the default ObjectId):
 db.first_collection.find( {}, { "title" : 1, "votes" : 1 } ) ;
 
-// Display values for only "title" and "votes" but without ObjectId
+// Display values for only "title" and "votes" but without ObjectId:
 db.first_collection.find( {}, { "title" : 1, "votes" : 1, "_id" :0 } ) ;
+
 
 
 //===============================================================================
@@ -70,7 +75,7 @@ db.first_collection.find( { author : {$exists : 1 } }) ;
 
 // Retrieve blog entries which have received at least two votes
 // ... but, before this, we increment by 5 all the blog entries tagged with "NoSQL"
-db.first_collection.update ( {"tags" : "NoSQL" }, {$inc : {"votes" : 5}}, false, true ) ;
+db.first_collection.updateMany ( {"tags" : "NoSQL" }, {$inc : {"votes" : 5}}, false, true ) ;
 // ... and here is the query
 db.first_collection.find( {"votes" : {"$gte" : 2 } }) ;
 
@@ -143,6 +148,7 @@ db.first_collection.find( { votes: {$not: { $gte: 2, $lte: 5 } } } ) ;
 db.first_collection.find( {"comments.user": { $nin:  ["dragos", "unknown"] } } ) ;
 
 
+
 //===============================================================================
 //                                        NULLs
 //===============================================================================
@@ -161,6 +167,7 @@ db.first_collection.find( { tags: null } )  ;
 db.first_collection.find({ tags : {"$in" : [null], "$exists" : true}})
 
 
+
 //===============================================================================
 //                              operator "$all"
 //===============================================================================
@@ -177,6 +184,7 @@ db.first_collection.find( {"comments.user" : "valy", "comments.user" :  "dragos"
 db.first_collection.find( {"comments.user" : { $all : ["valy", "dragos" ] }} ) ;
 
 
+
 //===============================================================================
 //                            operator "$size"
 //===============================================================================
@@ -185,6 +193,7 @@ db.first_collection.find( {"comments.user" : { $all : ["valy", "dragos" ] }} ) ;
 
 //--    Retrieve the blog entries having exactly two comments
 db.first_collection.find({"comments" : {"$size" : 2}}) ;
+
 
 
 //===============================================================================
@@ -212,6 +221,7 @@ db.first_collection.find().sort({author: 1}) ;
 db.first_collection.find().sort({author: 1, title: -1}) ;
 
 
+
 //===============================================================================
 //                     operator "$slice"
 //===============================================================================
@@ -222,11 +232,12 @@ db.first_collection.update ( {"title" : "NoSQL Databases"},
 		{"user" : "valy", "text" : "Quite Good!!", "votes" : 2 },
 					 } }  ) ;
 
-// Display the last two comments of that book
+// Display the last two comments of that book:
 db.first_collection.findOne( {"title" : "NoSQL Databases"}, {"comments" : {"$slice" : -2}}) ;
 
-// Display the first two comments of the same book
+// Display the first two comments of the same book:
 db.first_collection.findOne( {"title" : "NoSQL Databases"}, {"comments" : {"$slice" : 2}}) ;
+
 
 
 //===============================================================================
@@ -246,6 +257,7 @@ db.first_collection.update ( {title : "SQL la munte si la mare"},
 db.first_collection.find( ) ;
 
 
+
 //--    Retrieve all the blog entries where user "dragos" commented "Strange"
 
 // The following query extracts the blog entries for which there is a comment "Strange"
@@ -256,6 +268,7 @@ db.first_collection.find( {"comments.user": "dragos", "comments.text": "Strange"
 
 //      Solution requires "$elemMatch" operator
 db.first_collection.find({"comments" : {"$elemMatch" : {user: "dragos", text: "Strange" } } } ) ;
+
 
 
 
@@ -322,27 +335,27 @@ db.first_collection.find() ;
 // use sdbis2022
 
 
+
 //===============================================================================
 //--         Working with two or more (logically related) collections
 //===============================================================================
 
 //          first collection - "counties"
 db.counties.drop() ;
-db.counties.save ( { _id : 'IS', countyName : 'Iasi', countyRegion  : 'Moldova' });
-db.counties.insert ( { _id : 'B', countyName : 'Bucuresti'});
-db.counties.save ( { _id : 'VN', countyName : 'Vrancea', countyRegion  : 'Moldova' });
-db.counties.save ( { _id : 'NT', countyName : 'Neamt', countyRegion  : 'Moldova' });
-db.counties.save ( { _id : 'SV', countyName : 'Suceava', countyRegion  : 'Moldova' });
-db.counties.save ( { _id : 'VS', countyName : 'Vaslui', countyRegion  : 'Moldova' });
-db.counties.save ( { _id : 'TM', countyName : 'Timis', countyRegion  : 'Banat'});
-db.counties.save ( { _id : 'DJ', countyName : 'Dolj', countyRegion  : 'Oltenia'});
+db.counties.insertOne ( { _id : 'IS', countyName : 'Iasi', countyRegion  : 'Moldova' });
+db.counties.insertOne ( { _id : 'B', countyName : 'Bucuresti'});
+db.counties.insertOne ( { _id : 'VN', countyName : 'Vrancea', countyRegion  : 'Moldova' });
+db.counties.insertOne ( { _id : 'NT', countyName : 'Neamt', countyRegion  : 'Moldova' });
+db.counties.insertOne ( { _id : 'SV', countyName : 'Suceava', countyRegion  : 'Moldova' });
+db.counties.insertOne ( { _id : 'VS', countyName : 'Vaslui', countyRegion  : 'Moldova' });
+db.counties.insertOne ( { _id : 'TM', countyName : 'Timis', countyRegion  : 'Banat'});
+db.counties.insertOne ( { _id : 'DJ', countyName : 'Dolj', countyRegion  : 'Oltenia'});
 
 // create indexes
-db.counties.createIndex({_id : 1}, {unique: true}) ;
-db.counties.createIndex({countyName: 1}, {unique: true}) ;
-db.counties.createIndex({countyRegion : 1}, {unique: false}) ;
 
-db.counties.getIndexes()
+db.counties.createIndex({"countyName": 1}, {unique: true}) ;
+db.counties.createIndex({"countyRegion" : 1}, {unique: false}) ;
+
 
 // check
 db.counties.find() ;
@@ -350,19 +363,18 @@ db.counties.find() ;
 
 //          second collection - "postalCodes"
 db.postalCodes.drop() ;
-db.postalCodes.save ( { _id : '700505', cityTownVillage : 'Iasi', countyCode : 'IS' });
-db.postalCodes.save ( { _id : '701150', cityTownVillage : 'Pascani', countyCode : 'IS' });
-db.postalCodes.save ( { _id : '706500', cityTownVillage : 'Vaslui', countyCode : 'VS' });
-db.postalCodes.save ( { _id : '705300', cityTownVillage : 'Focsani', countyCode : 'VN' });
-db.postalCodes.save ( { _id : '706400', cityTownVillage : 'Birlad', countyCode : 'VS' });
-db.postalCodes.save ( { _id : '705800', cityTownVillage : 'Suceava', countyCode : 'SV' });
-db.postalCodes.save ( { _id : '705550', cityTownVillage : 'Roman', countyCode : 'NT' });
-db.postalCodes.save ( { _id : '701900', cityTownVillage : 'Timisoara', countyCode : 'TM' });
+db.postalCodes.insertOne ( { _id : '700505', cityTownVillage : 'Iasi', countyCode : 'IS' });
+db.postalCodes.insertOne ( { _id : '701150', cityTownVillage : 'Pascani', countyCode : 'IS' });
+db.postalCodes.insertOne ( { _id : '706500', cityTownVillage : 'Vaslui', countyCode : 'VS' });
+db.postalCodes.insertOne ( { _id : '705300', cityTownVillage : 'Focsani', countyCode : 'VN' });
+db.postalCodes.insertOne ( { _id : '706400', cityTownVillage : 'Birlad', countyCode : 'VS' });
+db.postalCodes.insertOne ( { _id : '705800', cityTownVillage : 'Suceava', countyCode : 'SV' });
+db.postalCodes.insertOne ( { _id : '705550', cityTownVillage : 'Roman', countyCode : 'NT' });
+db.postalCodes.insertOne ( { _id : '701900', cityTownVillage : 'Timisoara', countyCode : 'TM' });
 
 // create indexes for this collection
-db.postalCodes.createIndex({_id : 1}, {unique: true}) ;
-db.postalCodes.createIndex({cityTownVillage: 1}, {unique: false}) ;
-db.postalCodes.createIndex({countyCode: 1}, {unique: false}) ;
+db.postalCodes.createIndex({"cityTownVillage": 1}, {unique: false}) ;
+db.postalCodes.createIndex({"countyCode": 1}, {unique: false}) ;
 
 // check
 db.postalCodes.find() ;
@@ -391,10 +403,10 @@ db.counties.find({'_id' : row_postalCode['countyCode']}) ;
 db.counties.find({'_id' : row_postalCode.countyCode}) ;
 
 
-//  Caution: "findOne" works, whereas "find" does not!
-row_postalCode = db.postalCodes.find({cityTownVillage : 'Pascani'}) ;
+//  Caution: "findOne" works, whereas "find" needs extracting arrays's first element (`[0]`)!
+row_postalCode = db.postalCodes.find({cityTownVillage : 'Pascani'})[0] ;
 // use the variable in a filter applied to collection "counties"
-db.counties.find({'_id' : row_postalCode['countyCode']}) ;
+db.counties.find({'_id' : row_postalCode.countyCode}) ;
 //  this query displays all of the counties, not only county where city of Pascani is located
 
 //  A variable-document attribute can be stored into a scalar variable which further can serve as
@@ -404,6 +416,7 @@ row_postalCode = db.postalCodes.findOne ({_id : '701150'}) ;
 vPostalCode = row_postalCode['countyCode'] ;
 // use the variable in "find" command
 db.counties.find({'_id' : vPostalCode }) ;
+
 
 
 //===============================================================================
@@ -614,18 +627,3 @@ db.first_collection.distinct( 'comments.user', { tags: "SQL" } )
 // Get an array with all region names
 db.counties.distinct("countyRegion")
 
-
-//===============================================================================
-//                            Grouping (OPTIONAL)
-//===============================================================================
-
-db.first_collection.find();
-
-//--    Display the number of written blog entries for each author?
-db.first_collection.group ({
-	key : {author : true},
-	initial : {"n_of_blog entries" : 0 } ,
-	reduce : function(doc, aggregator) {
-		aggregator.n_of_blog entries += 1 ;
-		}
-	} ) ;
