@@ -1,7 +1,7 @@
 //===============================================================================
 //                            (Very) Basics operations with MongoDB
 //===============================================================================
-// last update: 2022-11-29
+// last update: 2023-02-27
 
 // For installation of MongoDB Community Server and Robo 3T, select presentation:
 // https://github.com/marinfotache/Polyglot-Persistence-and-Big-Data/blob/master/01%20Document%20Databases.%20MongoDB/01%20Document_DB__MongoDB.pptx
@@ -9,7 +9,8 @@
 
 //--   An excellent MongoDB client (we'll use it this semester): Studio 3T (free)
 
-
+////////////////////////////////////////////////////////////////////////////////
+//            The commands will be run one-by-one (NOT AS SCRIPT!!!)
 
 //--    Display all available command for working with databases
 db.help()
@@ -37,7 +38,9 @@ db.stats()
 
 //use sdbis2022
 
-use sia2022
+// use sia2022
+
+use dm2023
 
 
 //--    display existing collections (of documents) in the current db
@@ -65,22 +68,24 @@ db.first_collection.findOne()
 //-- we want to create a database named "bigdata2022"
 //--    there is no such a commad "create database"
 //--    instead we will just set "bigdata2022" as current database (even it is not created!)
-use bigdata2022
+// use bigdata2022
+use dm2023
 
 
 //--    Display available commands
-db.bigdata2022.help()
+//db.bigdata2022.help()
+db.dm2023.help()
+
 
 //--    Remove collection "first_collection" from current db ("bda")
 db.first_collection.drop()
 
 
 
-
 //--    Create collection "first_collection" (in current db).
 // Notice that there is no CREATE COLLECTION command; instead the collection is created
 //  at the moment of the first "insert"
-db.first_collection.insert(
+db.first_collection.insertOne(
 	{
 	title: 'I Hate Databases',
 	url: 'http://first_collection-unreal-example.com/ihatedatabases.html',
@@ -143,8 +148,9 @@ db.first_collection.find({title : "SQL la munte si la mare"}) ;
 
 
 //--    Update the most recent document; in this document we add property (field) "country_author"
-db.first_collection.update({title: "SQL la munte si la mare"}, {$set: {country_author: "Romania"}}) ;
+db.first_collection.updateMany({title: "SQL la munte si la mare"}, {$set: {country_author: "Romania"}}) ;
 
+//
 // SQL pseudo-equivalent:
 // ALTER TABLE first_collection ADD country_author....
 // UPDATE first_collection SET country_author = 'Romania' WHERE title = 'SQL la munte si la mare'
@@ -188,7 +194,7 @@ db.first_collection.find ({}, {title : true, _id : false } )  ;
 
 //--    Remove all the documents commented by user "greavy";
 // notice the notation "comments.user"
-db.first_collection.remove({'comments.user' : 'greavy'}) ;
+db.first_collection.deleteMany({'comments.user' : 'greavy'}) ;
 // checkProgram(
 db.first_collection.find()
 
@@ -198,7 +204,7 @@ db.first_collection.find()
 
 
 //--    Remove all the documents of collection "first_collection"
-db.first_collection.remove({}) ;
+db.first_collection.deleteMany({}) ;
 
 //  SQL equivalent:
 // DELETE FROM first_collection
