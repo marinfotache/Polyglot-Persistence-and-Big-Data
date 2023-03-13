@@ -1,7 +1,7 @@
 //===============================================================================
 //                                      Case study:  SALES
 //===============================================================================
-// last update: 2022-02-21
+// last update: 2022-12-06
 
 //--   show databases on the server
 show dbs
@@ -19,14 +19,14 @@ show collections
 //==================================================================================
 //                              first collection - "counties"
 db.counties.remove({}) ;
-db.counties.save ( { _id : 'IS', countyName : 'Iasi', countyRegion  : 'Moldova' });
-db.counties.insert ( { _id : 'B', countyName : 'Bucuresti'});
-db.counties.save ( { _id : 'VN', countyName : 'Vrancea', countyRegion  : 'Moldova' });
-db.counties.save ( { _id : 'NT', countyName : 'Neamt', countyRegion  : 'Moldova' });
-db.counties.save ( { _id : 'SV', countyName : 'Suceava', countyRegion  : 'Moldova' });
-db.counties.save ( { _id : 'VS', countyName : 'Vaslui', countyRegion  : 'Moldova' });
-db.counties.save ( { _id : 'TM', countyName : 'Timis', countyRegion  : 'Banat'});
-db.counties.save ( { _id : 'DJ', countyName : 'Dolj', countyRegion  : 'Oltenia'});
+db.counties.insertOne ( { _id : 'IS', countyName : 'Iasi', countyRegion  : 'Moldova' });
+db.counties.insertOne ( { _id : 'B', countyName : 'Bucuresti'});
+db.counties.insertOne ( { _id : 'VN', countyName : 'Vrancea', countyRegion  : 'Moldova' });
+db.counties.insertOne ( { _id : 'NT', countyName : 'Neamt', countyRegion  : 'Moldova' });
+db.counties.insertOne ( { _id : 'SV', countyName : 'Suceava', countyRegion  : 'Moldova' });
+db.counties.insertOne ( { _id : 'VS', countyName : 'Vaslui', countyRegion  : 'Moldova' });
+db.counties.insertOne ( { _id : 'TM', countyName : 'Timis', countyRegion  : 'Banat'});
+db.counties.insertOne ( { _id : 'DJ', countyName : 'Dolj', countyRegion  : 'Oltenia'});
 
 // indexes
 db.counties.createIndex({_id : 1}) ;
@@ -41,14 +41,14 @@ db.counties.find() ;
 //==================================================================================
 //                      second collection - "postalCodes"
 db.postalCodes.remove({}) ;
-db.postalCodes.save ( { _id : '700505', cityName : 'Iasi', countyCode : 'IS' });
-db.postalCodes.save ( { _id : '701150', cityName : 'Pascani', countyCode : 'IS' });
-db.postalCodes.save ( { _id : '706500', cityName : 'Vaslui', countyCode : 'VS' });
-db.postalCodes.save ( { _id : '705300', cityName : 'Focsani', countyCode : 'VN' });
-db.postalCodes.save ( { _id : '706400', cityName : 'Birlad', countyCode : 'VS' });
-db.postalCodes.save ( { _id : '705800', cityName : 'Suceava', countyCode : 'SV' });
-db.postalCodes.save ( { _id : '705550', cityName : 'Roman', countyCode : 'NT' });
-db.postalCodes.save ( { _id : '701900', cityName : 'Timisoara', countyCode : 'TM' });
+db.postalCodes.insertOne ( { _id : '700505', cityName : 'Iasi', countyCode : 'IS' });
+db.postalCodes.insertOne ( { _id : '701150', cityName : 'Pascani', countyCode : 'IS' });
+db.postalCodes.insertOne ( { _id : '706500', cityName : 'Vaslui', countyCode : 'VS' });
+db.postalCodes.insertOne ( { _id : '705300', cityName : 'Focsani', countyCode : 'VN' });
+db.postalCodes.insertOne ( { _id : '706400', cityName : 'Birlad', countyCode : 'VS' });
+db.postalCodes.insertOne ( { _id : '705800', cityName : 'Suceava', countyCode : 'SV' });
+db.postalCodes.insertOne ( { _id : '705550', cityName : 'Roman', countyCode : 'NT' });
+db.postalCodes.insertOne ( { _id : '701900', cityName : 'Timisoara', countyCode : 'TM' });
 
 // indexes
 db.postalCodes.createIndex({_id : 1}) ;
@@ -58,8 +58,8 @@ db.postalCodes.createIndex({countyCode: 1}, {unique: false}) ;
 db.postalCodes.find() ;
 
 
-// Question: How about this structure (do not execute the command!!!) ?
-db.counties2.save ( { _id : 'IS', countyName : 'Iasi', countyRegion  : 'Moldova' ,
+// Question: What do you think about this structure (do not execute the command!!!) ?
+db.counties2.insertOne ( { _id : 'IS', countyName : 'Iasi', countyRegion  : 'Moldova' ,
 	zip_codes : [
 		{ post_code : '700505', cityName : 'Iasi' },
 		{ post_code : '701150', cityName : 'Pascani' }
@@ -68,7 +68,7 @@ db.counties2.save ( { _id : 'IS', countyName : 'Iasi', countyRegion  : 'Moldova'
 
 
 // Question: ... and how about this structure (do not execute the command!!!) ?
-db.postalCodes2.save ( {
+db.postalCodes2.insertOne ( {
 	_id : '700505',
 	cityName : 'Iasi',
 	county : { countyCode : 'IS', countyName : 'Iasi', countyRegion  : 'Moldova' }
@@ -83,7 +83,7 @@ db.postalCodes2.save ( {
 
 db.customers.remove({}) ;
 
-db.customers.save ( {
+db.customers.insertOne ( {
 	custName : 'Client 1 SRL',
 	custFiscalCode: 'R1001',
 	address : 'Tranzitiei, 13 bis',
@@ -104,7 +104,7 @@ db.customers.save ( {
 			}
 		] }) ;
 
-db.customers.save ( { custName : 'Client 2 SA', custFiscalCode: 'R1002', postCode : '700505', phone : '0232212121',
+db.customers.insertOne ( { custName : 'Client 2 SA', custFiscalCode: 'R1002', postCode : '700505', phone : '0232212121',
 	contacts : [
 		{ person : { persCode : 'CNP2', familyName : 'Vasile', surName : 'Ion',
 			sex : 'B', postCode : '700505', homePhone : '0234234567',
@@ -116,7 +116,7 @@ db.customers.save ( { custName : 'Client 2 SA', custFiscalCode: 'R1002', postCod
 					}, position :  'Sef aprovizionare' }
 		] }) ;
 
-db.customers.save ( { custName : 'Client 3 SRL', custFiscalCode: 'R1003', address : 'Prosperitatii, 22',
+db.customers.insertOne ( { custName : 'Client 3 SRL', custFiscalCode: 'R1003', address : 'Prosperitatii, 22',
 	postCode : '706500', phone : '0235222222',
 	contacts : [
 		{ person : { persCode : 'CNP4', familyName : 'Lazar', surName : 'Caraion',
@@ -129,27 +129,27 @@ db.customers.save ( { custName : 'Client 3 SRL', custFiscalCode: 'R1003', addres
 					}, position :  'Director financiar' }
 		] }) ;
 
-db.customers.save ( { custName : 'Client 4', address : 'Sapientei, 56',
+db.customers.insertOne ( { custName : 'Client 4', address : 'Sapientei, 56',
 	contacts : [ 	{ person : { persCode : 'CNP6', familyName : 'Vasc', surName : 'Simona',
 			address : 'M.Eminescu, 13', sex : 'F', postCode : '701150',
 			officePhone : '0237432109', mobilePhone : '0794222227'
 					}, position :  'Director general' } ] }) ;
 
-db.customers.save ( { custName : 'Client 5 SRL', custFiscalCode: 'R1005',
+db.customers.insertOne ( { custName : 'Client 5 SRL', custFiscalCode: 'R1005',
 	postCode : '701900', phone :  '0567111111',
 	contacts : [ 	{ person : { persCode : 'CNP7', familyName : 'Popa', surName : 'Ioanid',
 			address : 'I.Ion, Bl.H2, Sc.C, Ap.45', sex : 'B', postCode : '701900',
 			homesPhone : '0238789012', officePhone : '0238321098'
 					}, position :  'Sef aprovizionare' } ] }) ;
 
-db.customers.save ( { custName : 'Client 6 SA', custFiscalCode: 'R1006', address : 'Pacientei, 33',
+db.customers.insertOne ( { custName : 'Client 6 SA', custFiscalCode: 'R1006', address : 'Pacientei, 33',
 	postCode : '705550',
 	contacts : [ 	{ person : { persCode : 'CNP8', familyName : 'Bogacs', surName : 'Ildiko',
 			address : 'I.V.Viteazu, 67', sex : 'F', postCode : '705550',
 			homePhone : '0239890123', officePhone : '0239210987', mobilePhone : '0722222299'
 					}, position :  'Director financiar' } ] }) ;
 
-db.customers.save ( { custName : 'Client 7 SRL', custFiscalCode: 'R1007', address :  'Victoria Capitalismului, 2',
+db.customers.insertOne ( { custName : 'Client 7 SRL', custFiscalCode: 'R1007', address :  'Victoria Capitalismului, 2',
 	postCode : '701900', phone : '0567121212',
 	contacts : [ 	{ person : { persCode : 'CNP9', familyName : 'Ioan', surName : 'Vasilica',
 			address : 'Garii, Bl.B4, Sc.A, Ap.1', sex : 'F', postCode : '701900',
@@ -176,7 +176,7 @@ db.customers.find().pretty() ;
 //==================================================================================
 
 //         		fourth collection - products
-// 	example of upsert  (update combined with insert)
+// 	example of upsert  (update combined with insertOne)
 
 db.products.remove({}) ;
 db.products.update ( {_id : 1},
@@ -209,7 +209,7 @@ db.products.find().pretty() ;
 db.invoices.remove({}) ;
 
 // invoice 1111
-db.invoices.insert ( {_id : 1111, invDate : new ISODate("2019-08-01T11:00:00Z"),
+db.invoices.insertOne ( {_id : 1111, invDate : new ISODate("2019-08-01T11:00:00Z"),
 	custID :  db.customers.findOne({ custName : 'Client 1 SRL'})._id,
 	items : [
 		{ line : 1,
@@ -231,7 +231,7 @@ db.invoices.insert ( {_id : 1111, invDate : new ISODate("2019-08-01T11:00:00Z"),
 
 // invoice 1112
 var myClient = db.customers.findOne ( { custName : 'Client 5 SRL'}) ;
-db.invoices.insert ( {_id : 1112, invDate : new ISODate("2019-08-01T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 1112, invDate : new ISODate("2019-08-01T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -246,7 +246,7 @@ db.invoices.insert ( {_id : 1112, invDate : new ISODate("2019-08-01T11:00:00Z"),
 
 // invoice 1113
 var myClient = db.customers.findOne ( { custName : 'Client 2 SA'}) ;
-db.invoices.insert ( {_id : 1113, invDate : new ISODate("2019-08-01T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 1113, invDate : new ISODate("2019-08-01T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -256,7 +256,7 @@ db.invoices.insert ( {_id : 1113, invDate : new ISODate("2019-08-01T11:00:00Z"),
 
 // invoice 1114
 var myClient = db.customers.findOne ( { custName : 'Client 6 SA'}) ;
-db.invoices.insert ( {_id : 1114, invDate : new ISODate("2019-08-01T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 1114, invDate : new ISODate("2019-08-01T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -274,7 +274,7 @@ db.invoices.insert ( {_id : 1114, invDate : new ISODate("2019-08-01T11:00:00Z"),
 
 // invoice 1115
 var myClient = db.customers.findOne ( { custName : 'Client 1 SRL'}) ;
-db.invoices.insert ( {_id : 1115, invDate : new ISODate("2019-08-02T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 1115, invDate : new ISODate("2019-08-02T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -284,7 +284,7 @@ db.invoices.insert ( {_id : 1115, invDate : new ISODate("2019-08-02T11:00:00Z"),
 
 // invoice 1116
 var myClient = db.customers.findOne ( { custName : 'Client 7 SRL'}) ;
-db.invoices.insert ( {_id : 1116, invDate : new ISODate("2019-08-02T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 1116, invDate : new ISODate("2019-08-02T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -295,7 +295,7 @@ db.invoices.insert ( {_id : 1116, invDate : new ISODate("2019-08-02T11:00:00Z"),
 
 // invoice 1117
 var myClient = db.customers.findOne ( { custName : 'Client 1 SRL'}) ;
-db.invoices.insert ( {_id : 1117, invDate : new ISODate("2019-08-03T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 1117, invDate : new ISODate("2019-08-03T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -309,7 +309,7 @@ db.invoices.insert ( {_id : 1117, invDate : new ISODate("2019-08-03T11:00:00Z"),
 
 // invoice 1118
 var myClient = db.customers.findOne ( { custName : 'Client 1 SRL'}) ;
-db.invoices.insert ( {_id : 1118, invDate : new ISODate("2019-08-04T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 1118, invDate : new ISODate("2019-08-04T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -323,7 +323,7 @@ db.invoices.insert ( {_id : 1118, invDate : new ISODate("2019-08-04T11:00:00Z"),
 
 // invoice 1119
 var myClient = db.customers.findOne ( { custName : 'Client 3 SRL'}) ;
-db.invoices.insert ( {_id : 1119, invDate : new ISODate("2019-08-07T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 1119, invDate : new ISODate("2019-08-07T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -345,7 +345,7 @@ db.invoices.insert ( {_id : 1119, invDate : new ISODate("2019-08-07T11:00:00Z"),
 
 // invoice 1120
 var myClient = db.customers.findOne ( { custName : 'Client 1 SRL'}) ;
-db.invoices.insert ( {_id : 1120, invDate : new ISODate("2019-08-07T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 1120, invDate : new ISODate("2019-08-07T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -355,7 +355,7 @@ db.invoices.insert ( {_id : 1120, invDate : new ISODate("2019-08-07T11:00:00Z"),
 
 // invoice 1121
 var myClient = db.customers.findOne ( { custName : 'Client 4'}) ;
-db.invoices.insert ( {_id : 1121, invDate : new ISODate("2019-08-07T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 1121, invDate : new ISODate("2019-08-07T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 5, prodName : 'Produs 5', mu : 'buc', prodCateg : 'Tigari',  percVAT  : .24 },
@@ -369,12 +369,12 @@ db.invoices.insert ( {_id : 1121, invDate : new ISODate("2019-08-07T11:00:00Z"),
 
 // invoice 1122  - empty (no lines)
 var myClient = db.customers.findOne ( { custName : 'Client 5 SRL'}) ;
-db.invoices.insert ( {_id : 1122, invDate : new ISODate("2019-08-07T11:00:00Z"), custID : myClient._id }) ;
+db.invoices.insertOne ( {_id : 1122, invDate : new ISODate("2019-08-07T11:00:00Z"), custID : myClient._id }) ;
 
 
 // invoice 2111
 var myClient = db.customers.findOne ( { custName : 'Client 1 SRL'}) ;
-db.invoices.insert ( {_id : 2111, invDate : new ISODate("2019-08-14T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 2111, invDate : new ISODate("2019-08-14T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 1, prodName : 'Produs 1', mu : 'buc', prodCateg : 'Tigari',  percVAT  : 0.24 },
@@ -392,7 +392,7 @@ db.invoices.insert ( {_id : 2111, invDate : new ISODate("2019-08-14T11:00:00Z"),
 
 // invoice 2112
 var myClient = db.customers.findOne ( { custName : 'Client 5 SRL'}) ;
-db.invoices.insert ( {_id : 2112, invDate : new ISODate("2019-08-14T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 2112, invDate : new ISODate("2019-08-14T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -407,7 +407,7 @@ db.invoices.insert ( {_id : 2112, invDate : new ISODate("2019-08-14T11:00:00Z"),
 
 // invoice 2113
 var myClient = db.customers.findOne ( { custName : 'Client 2 SA'}) ;
-db.invoices.insert ( {_id : 2113, invDate : new ISODate("2019-08-14T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 2113, invDate : new ISODate("2019-08-14T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -417,7 +417,7 @@ db.invoices.insert ( {_id : 2113, invDate : new ISODate("2019-08-14T11:00:00Z"),
 
 // invoice 2115
 var myClient = db.customers.findOne ( { custName : 'Client 1 SRL'}) ;
-db.invoices.insert ( {_id : 2115, invDate : new ISODate("2019-08-15T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 2115, invDate : new ISODate("2019-08-15T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -427,7 +427,7 @@ db.invoices.insert ( {_id : 2115, invDate : new ISODate("2019-08-15T11:00:00Z"),
 
 // invoice 2116
 var myClient = db.customers.findOne ( { custName : 'Client 7 SRL'}) ;
-db.invoices.insert ( {_id : 2116, invDate : new ISODate("2019-08-15T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 2116, invDate : new ISODate("2019-08-15T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -438,7 +438,7 @@ db.invoices.insert ( {_id : 2116, invDate : new ISODate("2019-08-15T11:00:00Z"),
 
 // invoice 2117
 var myClient = db.customers.findOne ( { custName : 'Client 1 SRL' }) ;
-db.invoices.insert ( {_id : 2117, invDate : new ISODate("2019-08-16T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 2117, invDate : new ISODate("2019-08-16T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -452,7 +452,7 @@ db.invoices.insert ( {_id : 2117, invDate : new ISODate("2019-08-16T11:00:00Z"),
 
 // invoice 2118
 var myClient = db.customers.findOne ( { custName : 'Client 1 SRL'}) ;
-db.invoices.insert ( {_id : 2118, invDate : new ISODate("2019-08-16T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 2118, invDate : new ISODate("2019-08-16T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -466,7 +466,7 @@ db.invoices.insert ( {_id : 2118, invDate : new ISODate("2019-08-16T11:00:00Z"),
 
 // invoice 2119
 var myClient = db.customers.findOne ( { custName : 'Client 3 SRL'}) ;
-db.invoices.insert ( {_id : 2119, invDate : new ISODate("2019-08-21T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 2119, invDate : new ISODate("2019-08-21T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -488,7 +488,7 @@ db.invoices.insert ( {_id : 2119, invDate : new ISODate("2019-08-21T11:00:00Z"),
 
 // invoice 2121
 var myClient = db.customers.findOne ( { custName : 'Client 4'}) ;
-db.invoices.insert ( {_id : 2121, invDate : new ISODate("2019-08-21T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 2121, invDate : new ISODate("2019-08-21T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 5, prodName : 'Produs 5', mu : 'buc', prodCateg : 'Tigari',  percVAT  : .24 },
@@ -502,12 +502,12 @@ db.invoices.insert ( {_id : 2121, invDate : new ISODate("2019-08-21T11:00:00Z"),
 
 // invoice 2122  - empty (no lines)
 var myClient = db.customers.findOne ( { custName : 'Client 5 SRL'}) ;
-db.invoices.insert ( {_id : 2122, invDate : new ISODate("2019-08-22T11:00:00Z"), custID : myClient._id }) ;
+db.invoices.insertOne ( {_id : 2122, invDate : new ISODate("2019-08-22T11:00:00Z"), custID : myClient._id }) ;
 
 
 // invoice 3111
 var myClient = db.customers.findOne ( { custName : 'Client 1 SRL'}) ;
-db.invoices.insert ( {_id : 3111, invDate : new ISODate("2019-09-01T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 3111, invDate : new ISODate("2019-09-01T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 1, prodName : 'Produs 1', mu : 'buc', prodCateg : 'Tigari',  percVAT  : 0.24 },
@@ -525,7 +525,7 @@ db.invoices.insert ( {_id : 3111, invDate : new ISODate("2019-09-01T11:00:00Z"),
 
 // invoice 3112
 var myClient = db.customers.findOne ( { custName : 'Client 5 SRL'}) ;
-db.invoices.insert ( {_id : 3112, invDate : new ISODate("2019-09-01T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 3112, invDate : new ISODate("2019-09-01T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -540,7 +540,7 @@ db.invoices.insert ( {_id : 3112, invDate : new ISODate("2019-09-01T11:00:00Z"),
 
 // invoice 3113
 var myClient = db.customers.findOne ( { custName : 'Client 2 SA'}) ;
-db.invoices.insert ( {_id : 3113, invDate : new ISODate("2019-09-02T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 3113, invDate : new ISODate("2019-09-02T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -550,7 +550,7 @@ db.invoices.insert ( {_id : 3113, invDate : new ISODate("2019-09-02T11:00:00Z"),
 
 // invoice 3115
 var myClient = db.customers.findOne ( { custName : 'Client 1 SRL'}) ;
-db.invoices.insert ( {_id : 3115, invDate : new ISODate("2019-09-02T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 3115, invDate : new ISODate("2019-09-02T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -560,7 +560,7 @@ db.invoices.insert ( {_id : 3115, invDate : new ISODate("2019-09-02T11:00:00Z"),
 
 // invoice 3116
 var myClient = db.customers.findOne ( { custName : 'Client 7 SRL'}) ;
-db.invoices.insert ( {_id : 3116, invDate : new ISODate("2019-09-10T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 3116, invDate : new ISODate("2019-09-10T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -571,7 +571,7 @@ db.invoices.insert ( {_id : 3116, invDate : new ISODate("2019-09-10T11:00:00Z"),
 
 // invoice 3117
 var myClient = db.customers.findOne ( { custName : 'Client 1 SRL' }) ;
-db.invoices.insert ( {_id : 3117, invDate : new ISODate("2019-09-10T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 3117, invDate : new ISODate("2019-09-10T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -585,7 +585,7 @@ db.invoices.insert ( {_id : 3117, invDate : new ISODate("2019-09-10T11:00:00Z"),
 
 // invoice 3118
 var myClient = db.customers.findOne ( { custName : 'Client 1 SRL'}) ;
-db.invoices.insert ( {_id : 3118, invDate : new ISODate("2019-09-17T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 3118, invDate : new ISODate("2019-09-17T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -599,7 +599,7 @@ db.invoices.insert ( {_id : 3118, invDate : new ISODate("2019-09-17T11:00:00Z"),
 
 // invoice 3119
 var myClient = db.customers.findOne ( { custName : 'Client 3 SRL'}) ;
-db.invoices.insert ( {_id : 3119, invDate : new ISODate("2019-10-07T11:00:00Z"), custID : myClient._id,
+db.invoices.insertOne ( {_id : 3119, invDate : new ISODate("2019-10-07T11:00:00Z"), custID : myClient._id,
 	items : [
 		{ line : 1,
 		  product : {_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
@@ -634,7 +634,7 @@ db.invoices.find().pretty() ;
 db.receipts.drop()
 
 // receipt 1234
-db.receipts.insert ( {
+db.receipts.insertOne ( {
 		_id : 1234,
 		recDate : new ISODate("2019-08-12T11:00:00Z"),
 		docCode: 'OP',
@@ -647,7 +647,7 @@ db.receipts.insert ( {
 
 
 // receipt 1235
-db.receipts.insert ( { _id : 1235, recDate : new ISODate("2019-08-18T11:00:00Z"),
+db.receipts.insertOne ( { _id : 1235, recDate : new ISODate("2019-08-18T11:00:00Z"),
 	docCode: 'CEC', docNo : '212', docDate : new ISODate("2019-08-17T11:00:00Z"),
 	invoicesCollected : [
 		{ invNo : 1112, amount : 129488 },
@@ -655,7 +655,7 @@ db.receipts.insert ( { _id : 1235, recDate : new ISODate("2019-08-18T11:00:00Z")
 
 
 // receipt 1236
-db.receipts.insert ( { _id : 1236, recDate : new ISODate("2019-09-07T11:00:00Z"),
+db.receipts.insertOne ( { _id : 1236, recDate : new ISODate("2019-09-07T11:00:00Z"),
 	docCode: 'OP', docNo : '321', docDate : new ISODate("2019-09-05T11:00:00Z"),
 	invoicesCollected : [
 		{ invNo : 1113, amount : 50000 },
@@ -664,14 +664,14 @@ db.receipts.insert ( { _id : 1236, recDate : new ISODate("2019-09-07T11:00:00Z")
 
 
 // receipt 1237
-db.receipts.insert ( { _id : 1237, recDate : new ISODate("2019-09-08T11:00:00Z"),
+db.receipts.insertOne ( { _id : 1237, recDate : new ISODate("2019-09-08T11:00:00Z"),
 	docCode: 'CEC', docNo : '445', docDate : new ISODate("2019-09-06T11:00:00Z"),
 	invoicesCollected : [
 		{ invNo : 1114, amount : 6272728 } ] } ) ;
 
 
 // receipt 1238
-db.receipts.insert ( { _id : 1238, recDate : new ISODate("2019-09-08T11:00:00Z"),
+db.receipts.insertOne ( { _id : 1238, recDate : new ISODate("2019-09-08T11:00:00Z"),
 	docCode: 'OP', docNo : '532', docDate : new ISODate("2019-09-06T11:00:00Z"),
 	invoicesCollected : [
 		{ invNo : 1115, amount : 70000 },
@@ -681,21 +681,21 @@ db.receipts.insert ( { _id : 1238, recDate : new ISODate("2019-09-08T11:00:00Z")
 
 
 // receipt 1239
-db.receipts.insert ( { _id : 1239, recDate : new ISODate("2019-09-09T11:00:00Z"),
+db.receipts.insertOne ( { _id : 1239, recDate : new ISODate("2019-09-09T11:00:00Z"),
 	docCode: 'OP', docNo : '622', docDate : new ISODate("2019-09-07T11:00:00Z"),
 	invoicesCollected : [
 		{ invNo : 1116, amount : 130200 }	] } ) ;
 
 
 // receipt 1240
-db.receipts.insert ( { _id : 1240, recDate : new ISODate("2019-09-09T11:00:00Z"),
+db.receipts.insertOne ( { _id : 1240, recDate : new ISODate("2019-09-09T11:00:00Z"),
 	docCode: 'OP', docNo : '432', docDate : new ISODate("2019-09-05T11:00:00Z"),
 	invoicesCollected : [
 		{ invNo : 1119, amount : 6015408 }	] } ) ;
 
 
 // receipt 1241
-db.receipts.insert ( { _id : 1241, recDate : new ISODate("2019-09-18T11:00:00Z"),
+db.receipts.insertOne ( { _id : 1241, recDate : new ISODate("2019-09-18T11:00:00Z"),
 	docCode: 'OP', docNo : '213', docDate : new ISODate("2019-09-11T11:00:00Z"),
 	invoicesCollected : [
 		{ invNo : 1121, amount : 4935248 },
