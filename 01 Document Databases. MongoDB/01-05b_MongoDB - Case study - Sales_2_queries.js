@@ -1,7 +1,7 @@
 //===============================================================================
 //                                   Case study:  sales
 //===============================================================================
-// last update: 2022-04-19
+// last update: 2022-12-06
 
 
 //--   show databases on the server
@@ -40,10 +40,13 @@ db.receipts.find().pretty() ;
 //-- Display information about the county to which postal code '700505' belongs to
 //----------------------------------------------------------------------------------
 
-
-// one of the the simplest...
+// one of the the simplest solutions (with `findOne`):
 var row_codpost = db.postalCodes.findOne ({_id : '700505'}) ;
 db.counties.find({'_id' : row_codpost['countyCode']}) ;
+
+// a solution based on `find`...`toArray`:
+var myArray = db.postalCodes.find({_id : '700505'}).toArray() ;
+db.counties.find({'_id' : myArray[0].countyCode'}) ;
 
 // another one based on a cursor & hasNext
 var myCursor = db.postalCodes.find ({_id : '700505'}) ;
@@ -54,6 +57,7 @@ if (myRow) {
 	}
 db.counties.find({'_id' : myCountyCode }) ;
 
+
 //  another one based on a cursor & forEach
 var myCursor = db.postalCodes.find ({_id : '700505'}) ;
 var  myCountyCode ;
@@ -62,7 +66,6 @@ myCursor.forEach(function(x) {
 	print(myCountyCode) ;
 	} ) ;
 db.counties.find({'_id' : myCountyCode }) ;
-
 
 
 //--    A solution based on Aggregation Framework and operator "$out"
@@ -96,11 +99,11 @@ db.postalCodes.aggregate([
             	pc.countyName = "not found";
               pc.countyRegion = "not found";
         }
-        db.result.insert(pc)
+        db.result.insertOne(pc)
 }   ) ;
 
 // display collection results
-db.result.find()
+db.result.find();
 
 
 //--------------------------------------------------------------------------------
@@ -119,7 +122,7 @@ db.counties.aggregate([
           as: "counties__post_codes"
         }
    }
-])
+]);
 
 // now, a left join of  `postalCodes` with `counties`
 db.postalCodes.aggregate([
@@ -132,7 +135,7 @@ db.postalCodes.aggregate([
           as: "post_codes__counties"
         }
    }
-])
+]);
 
 
 // display the county to which postal code '700505' belongs to
@@ -144,30 +147,42 @@ db.postalCodes.aggregate([
           as: "post_codes__counties" } },
     { $match: { _id : "700505"   } },
     { $project: {post_codes__counties : 1} }
-])
+]);
+
+
+// ... it is advisable to filter the records as soon as possible
+db.postalCodes.aggregate([
+    { $match: { _id : "700505"   } },
+    { $lookup: {
+          from: "counties",
+          localField: "countyCode",
+          foreignField: "_id",
+          as: "post_codes__counties" } },
+    { $project: {post_codes__counties : 1} }
+]);
+
 
 
 // something more challenging: `lookup` - `let` - `pipeline`
 db.counties.aggregate([
-		{ $lookup : {
-					from : "postalCodes",
-					let : { countyCode_ : "$_id"},
-					pipeline : [
-    						{ $match: { $expr : { $and : [
-										{ $eq : [ "$_id", "700505"  ] },
-										{ $eq : [  "$$countyCode_", "$countyCode"] }
-									   ]} } }
+	{ $lookup : {
+			from : "postalCodes",
+			let : { countyCode_ : "$_id"},
+			pipeline : [
+    					{ $match: { $expr : { $and : [
+									{ $eq : [ "$_id", "700505"  ] },
+									{ $eq : [  "$$countyCode_", "$countyCode"] }
+							   ]} } }
 					],
-					as : "postal_code"
-		}  },
-		{ $match : { $expr : { $gt : [ { $size : "$postal_code"}, 0 ] }}}
+			as : "postal_code"
+	}  },
+	{ $match : { $expr : { $gt : [ { $size : "$postal_code"}, 0 ] }}}
 ]) ;
 
 
 
-
 //----------------------------------------------------------------------------------
-//--     		     Show the county name and the region for city of Pascani
+//--     		 Show the county name and the region for city of Pascani
 //----------------------------------------------------------------------------------
 
 // Store the results of "find" into year_ array variable ("myArray")
@@ -208,17 +223,15 @@ db.postalCodes.find({'countyCode' : {"$regex" : myRegExp  } }) ;
 
 // pseudo-join
 db.result.remove({}) ;
-db.counties.aggregate({ $match: {countyRegion  : 'Moldova'}}).forEach(function(pc)
-	{	var postal_codes = db.postalCodes.find({countyCode: pc._id}).toArray() ;
-        if (postal_codes.length > 0)
-        {
-        	pc.postalCodes = postal_codes;
-            } else
-            {
-        	pc.postalCodes = "not found";
-            }
-            db.result.insert(pc)
-        }   ) ;
+db.counties.aggregate({ $match: {countyRegion  : 'Moldova'}}).forEach(function(pc) {	
+    var postal_codes = db.postalCodes.find({countyCode: pc._id}).toArray() ;
+    if (postal_codes.length > 0) {
+        pc.postalCodes = postal_codes;
+    } else {
+        pc.postalCodes = "not found";
+    }
+    db.result.insert(pc)
+}   ) ;
 // display collection results
 db.result.find().pretty() ;
 
@@ -279,7 +292,7 @@ db.counties.aggregate([
 
 
 //----------------------------------------------------------------------------------
-//-- 												Get the overall number of invoices
+//-- 				Get the overall number of invoices
 //----------------------------------------------------------------------------------
 
 db.invoices.aggregate([
@@ -288,7 +301,7 @@ db.invoices.aggregate([
 
 
 //----------------------------------------------------------------------------------
-//-- 													Get the number of daily invoices
+//-- 				Get the number of daily invoices
 //----------------------------------------------------------------------------------
 
 db.invoices.aggregate  ([
@@ -304,7 +317,7 @@ db.invoices.aggregate  ([
 
 
 //----------------------------------------------------------------------------------
-//-- 						        Get invoice amount without VAT
+//-- 						     Get invoice amount without VAT
 //----------------------------------------------------------------------------------
 
 // sol. 1
@@ -327,7 +340,7 @@ db.invoices.aggregate( [
 
 
 //----------------------------------------------------------------------------------
-// 												Get invoice amount with VAT
+// 								Get invoice amount with VAT
 //----------------------------------------------------------------------------------
 db.invoices.aggregate( [
 	{ $unwind : "$items" },
@@ -353,7 +366,7 @@ db.invoices.aggregate( [
 
 
 //----------------------------------------------------------------------------------
-// 									   	    Extract daily sales
+// 									  Extract daily sales
 //----------------------------------------------------------------------------------
 
 db.invoices.aggregate( [
@@ -399,7 +412,7 @@ db.invoices.aggregate( [
 
 
 //----------------------------------------------------------------------------------
-// 										      Get average invoice value (amount)
+// 						Get average invoice value (amount)
 //----------------------------------------------------------------------------------
 
 db.invoices.aggregate( [
@@ -412,7 +425,7 @@ db.invoices.aggregate( [
 
 
 //----------------------------------------------------------------------------------
-// 						Get average invoice amount for each day (with sdbis)
+// 				Get average invoice amount for each day 
 //----------------------------------------------------------------------------------
 
 db.invoices.aggregate( [
@@ -439,7 +452,7 @@ db.invoices.aggregate( [
 // we will use a `findOne` command as a subquery
 db.getCollection("invoices").aggregate([
 		{$match : { custID : db.invoices.findOne({ _id :1111}).custID }}  // this extracts the customerid for invoice 1111
-])
+]);
 
 
 //----------------------------------------------------------------------------------
@@ -450,22 +463,22 @@ db.getCollection("invoices").aggregate([
 		{$match : { custID : { $in :
 
     		db.customers.find({ postCode : 						// here we extract all the customers located
-																									//   at the same zipcode as the customer for invoice 1111
+																//   at the same zipcode as the customer for invoice 1111
 						db.customers.findOne(	{ _id: 					// here we extract the zipcode of
-				                                          //       the customer for invoice 1111
-						    db.invoices.findOne({ _id :1111}).custID      // this line extracts the `custID` for invoice 1111
+				                                                        //       the customer for invoice 1111
+						    db.invoices.findOne({ _id :1111}).custID         // this line extracts the `custID` for invoice 1111
 
 				    }).postCode
 
 		    }, {_id: 1}).map( function(x) { return x._id; } )   // `map` will return customer ids as an array of values
 
 		}}}
-])
+]);
 
 
 
 //----------------------------------------------------------------------------------
-// 								Display invoices issued in the first sales date
+// 					Display invoices issued in the first sales date
 //----------------------------------------------------------------------------------
 // the subquery result is scalar (it contains min(invDate))
 
@@ -476,7 +489,7 @@ db.invoices.aggregate([
 			(db.invoices.find().sort({ invDate : 1 }).limit(1).toArray())[0].invDate  // this is the scalar subquery
 		} }
 
-])
+]);
 
 
 // sol.2: extract a non-scalar subquery result with `find` combined with `sort`, `limit` and `map` (and `$in`)
@@ -484,7 +497,7 @@ db.invoices.aggregate([
 	{ $match :{ invDate : { $in :
 			db.invoices.find().sort({ invDate : 1 }).limit(1).map( function(x) { return x.invDate; } )   // this is the non-scalar subquery
 		} } }
-])
+]);
 
 
 // sol. 3: save the intermediary (subquery) results as a separate collection, then use it for filtering
@@ -498,7 +511,7 @@ db.invoices.aggregate([
 // 3.2a now, use it for filtering the 'invoice' collection
 db.invoices.aggregate( [
 		{$match : {invDate:   db.first_day.findOne().invDate  }}
-	] )
+	] );
 
 
 // 3.2b another solution - with `lookup`
@@ -510,7 +523,7 @@ db.invoices.aggregate( [
           as: "first_date_invoices" } },
   	{ $addFields : { array_size : { $size: "$first_date_invoices"} } },
 		{ $match : { array_size : { $gt : 0} } }
-	] )
+	] );
 
 
 // 3.2c yet another solution - with `lookup`
@@ -521,7 +534,7 @@ db.first_day.aggregate( [
           foreignField: "invDate",
           as: "first_date_invoices" } },
 		{ $unwind : "$first_date_invoices"}
-	] )
+	] );
 
 
 
@@ -536,14 +549,14 @@ db.invoices.aggregate([
     { $addFields : { min_date :  db.invoices.find().sort({ invDate : 1 }).limit(1).map( function(x) { return x.invDate; } ) [0]  } },
     { $addFields : { end_first_week : { $add: [ "$min_date", 7*24*60*60000 ]  } } } ,
     { $match : { invDate : { $lte : "$end_first_week"} } }    // this type of expression is not currently supported in MongoDB
-    ])
+    ]);
 
 // good news: next solution does work (with `$expr` included in "$match")
 db.invoices.aggregate([
     { $addFields : { min_date :  db.invoices.find().sort({ invDate : 1 }).limit(1).map( function(x) { return x.invDate; } ) [0]  } },
     { $addFields : { end_first_week : { $add: [ "$min_date", 7*24*60*60000 ]  } } } ,
     { $match: {  $expr : { $lte : [ "$invDate", "$end_first_week"  ]  } }}
-    ])
+    ]);
 
 
 
@@ -847,12 +860,12 @@ db.invoices.aggregate( [
           as: "inv" } },
     { $project : { invoiceAmount: "$amountWithVAT", amountPaid : { $sum: "$inv.amountPaid"} } },
     { $project : { invoiceAmount: 1, amountPaid : 1, toBePaid : { $subtract : ["$invoiceAmount", "$amountPaid"] } } }
-	] )
+	] );
 
 
 
 //----------------------------------------------------------------------------------
-//        Which is the invoice with the greatest amount to be received ?
+//          Which is the invoice with the greatest amount to be received ?
 //----------------------------------------------------------------------------------
 db.inv.aggregate([
 	{ $group : { _id :  "_id" ,
@@ -866,14 +879,14 @@ db.inv.aggregate([
 
 
 //----------------------------------------------------------------------------------
-//Extract customers with at least the number of invoices of customer "Client 5 SRL"?
+//Extract customers with at least the number of invoices of customer "Client 5 SRL"
 //----------------------------------------------------------------------------------
 
 // the ObjectId of "Client 1 SRL"
-(db.customers.findOne({custName : "Client 5 SRL"}))._id
+(db.customers.findOne({custName : "Client 5 SRL"}))._id;
 
 // the number of invoices issued for "Client 5 SRL"
-db.invoices.find({custID : (db.customers.findOne({custName : "Client 5 SRL"}))._id }).count()
+db.invoices.find({custID : (db.customers.findOne({custName : "Client 5 SRL"}))._id }).count();
 
 
 // now, the solution
@@ -891,7 +904,7 @@ db.invoices.aggregate([
 	 } },
   { $match: {  $expr : { $gte : [ "$n_of_invoices", "$n_of_invoices_cust5"  ]  } }}
 
-])
+]);
 
 //----------------------------------------------------------------------------------
 ///// 			solution 2 - with intermediate results
@@ -903,14 +916,14 @@ db.invoices.aggregate([
 	 { $project : {n_of_invoices_cust5 : 1, _id : 0}},
    { $addFields : { foo : 1} },
 	 { $out : "n_of_invoices_cust5"}
-])
+]);
 
 // save a collection with the number of invoices for each customer and a `foo` column (set on 1)
 db.invoices.aggregate([
 	{ $group : { _id : "$custID", n_of_invoices : { $sum : 1 }}},
    { $addFields : { foo : 1} },
 	 { $out : "customers_n_of_invoices"}
-])
+]);
 
 // join the newly created collections
 db.customers_n_of_invoices.aggregate([
@@ -927,14 +940,14 @@ db.customers_n_of_invoices.aggregate([
           foreignField: "_id",
           as: "customer" } }
 
-])
+]);
 
 
 
 
 //----------------------------------------------------------------------------------
 //  Extract customers with the sales amount greater than or equal to
-//   the customer "Client 5 SRL"?
+//   the customer "Client 5 SRL"
 //----------------------------------------------------------------------------------
 
 // we adapt the second solution from the previous example
@@ -951,7 +964,7 @@ db.invoices.aggregate([
 		{ $project : {n_of_invoices_cust5 : 1, _id : 0, sales_cust5: 1}},
   	{ $addFields : { foo : 1} },
 		{ $out : "sales_cust5"}
-])
+]);
 
 
 // save a collection with the sales for each customer and a `foo` column (set on 1)
@@ -970,7 +983,7 @@ db.invoices.aggregate([
   	{ $addFields : { foo : 1} },
 		{ $project : { _id :0, customer_name : "$customer.custName", sales_cust : 1, foo: 1} },
 		{ $out : "sales_customers"}
-])
+]);
 
 
 
@@ -983,4 +996,5 @@ db.sales_customers.aggregate([
           as: "customer_5" } },
 	{ $unwind : "$customer_5"},
   { $match: {  $expr : { $gte : [ "$sales_cust", "$customer_5.sales_cust5"  ]  } }}
-])
+]);
+
