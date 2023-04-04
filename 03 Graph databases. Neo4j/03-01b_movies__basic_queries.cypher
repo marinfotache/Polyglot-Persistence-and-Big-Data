@@ -2,7 +2,7 @@
 //### 													     Movies
 //###                This is a Neo4j Desktop built-in dataset
 //###################################################################################
-//### last update: 2022-05-03
+//### last update: 2023-04-04
 
 
 //#######################  		DB administration stuff		##################
@@ -13,6 +13,8 @@
 // 	      Notice: All of the queries (in this script and subsequent ones)
 //                  must be launched one by one in the Neo4j browser
 //###################################################################################
+
+call db.schema.visualization ;
 
 
 //###################################################################################
