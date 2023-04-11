@@ -2,7 +2,10 @@
 //### 													     Movies
 //###                This is a Neo4j Desktop built-in dataset
 //###################################################################################
-//### last update: 2022-05-03
+//### last update: 2023-04-11
+
+call db.schema.visualization ;
+
 
 //###################################################################################
 //###								       Aggregate queries without grouping
@@ -130,6 +133,9 @@ MATCH (p:Person) -[r:ACTED_IN]-> (m:Movie)
 RETURN p.name, COUNT(m) AS n_of_movies
 ORDER BY p.name
 
+//# 	Display the number of movies directed by each director
+//...
+
 
 //# 	Display the number movies for each person (actors, directors, writers, producers)
 MATCH (p:Person) -[]-> (m:Movie)
@@ -150,6 +156,18 @@ WHERE n_of_movies >=2
 WITH p, n_of_movies
 RETURN p.name, n_of_movies
 ORDER BY n_of_movies DESC
+
+
+/// --- aici am ramas pe 4 aprilie !!!!!!!!!!!
+
+// Find the movies with the largest cast (largest number of actors)
+MATCH (p:Person) -[r:ACTED_IN]-> (m:Movie)
+WITH m.title AS title, m.released AS year, COUNT(p) AS cast_size
+WITH max(cast_size) AS max_cast_size
+MATCH (p2:Person) -[r2:ACTED_IN]-> (m2:Movie)
+WITH max_cast_size, m2.title AS title, m2.released AS year, COUNT(p2) AS cast_size
+WHERE cast_size = max_cast_size
+RETURN *
 
 
 

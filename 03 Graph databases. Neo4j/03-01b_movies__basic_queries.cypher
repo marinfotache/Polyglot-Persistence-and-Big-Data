@@ -1,5 +1,5 @@
 //###################################################################################
-//### 													     Movies
+//### 													     Movies (part 2)
 //###                This is a Neo4j Desktop built-in dataset
 //###################################################################################
 //### last update: 2023-04-04
@@ -138,6 +138,13 @@ WHERE m.title = 'As Good as It Gets'
 RETURN p.name, type(r), m.title
 
 
+//## Find the years when movies casting Jack Nicholson were released
+MATCH (j:Person) -[r:ACTED_IN]-> (m:Movie)
+WHERE j.name = 'Jack Nicholson' 
+RETURN DISTINCT m.released
+ORDER BY m.released
+
+
 //## 	Display the movie director(s) and producer(s) for the movie `The Matrix`
 MATCH (p:Person) -[r:DIRECTED|PRODUCED]-> (m:Movie)
 WHERE m.title = 'The Matrix'
@@ -193,6 +200,7 @@ MATCH (p:Person)
 OPTIONAL MATCH (p) -[r:ACTED_IN]-> (m:Movie)
 RETURN p.name, type(r), m.title
 ORDER BY p.name
+
 
 
 
@@ -336,3 +344,30 @@ MATCH (carrie:Person) -[r2:ACTED_IN]-> (m_carrie)
 WHERE carrie.name = 'Carrie-Anne Moss' AND
 	m_carrie.title = m_keanu.title
 RETURN m_keanu.title
+
+
+//## 	Task: Display the actors who were directed by the directors of the movies 
+// featuring Keanu Reeves
+MATCH (keanu:Person) -[r1:ACTED_IN]-> (mov_keanu:Movie)
+WHERE keanu.name = 'Keanu Reeves'
+WITH mov_keanu
+MATCH (directors:Person) -[r2:DIRECTED]-> (mov_keanu)
+WITH directors
+MATCH (directors:Person) -[r3:DIRECTED]-> (mov_directors)
+WITH mov_directors
+MATCH (actors:Person) -[r4:ACTED_IN]-> (mov_directors)
+RETURN *
+
+
+MATCH (keanu:Person) -[r1:ACTED_IN]-> (mov_keanu:Movie)
+WHERE keanu.name = 'Keanu Reeves'
+WITH keanu, mov_keanu
+MATCH (directors:Person) -[r2:DIRECTED]-> (mov_keanu)
+WITH keanu, mov_keanu, directors
+MATCH (directors:Person) -[r3:DIRECTED]-> (mov_directors)
+WITH keanu, mov_keanu, directors, mov_directors
+MATCH (actors:Person) -[r4:ACTED_IN]-> (mov_directors)
+RETURN *
+
+
+

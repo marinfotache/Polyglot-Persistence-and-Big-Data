@@ -370,8 +370,7 @@ MATCH p = SHORTESTPATH(
 RETURN p
 
 //		syntax 2
-MATCH
-	(n1 {cityName: 'Iasi'}), (n2 {cityName: 'Bacau'})
+MATCH (n1 {cityName: 'Iasi'}), (n2 {cityName: 'Bacau'})
 RETURN allShortestPaths( (n1) -[:CONNECTED_TO*]- (n2) ) as path
 
 
@@ -494,7 +493,7 @@ ORDER BY total_distance
 
 
 //#####################################################################################
-//###													Advanced aggregation queries
+//###					Advanced aggregation queries
 //###
 
 //# 	Display the counties with more than one city in the database
