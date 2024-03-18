@@ -186,6 +186,7 @@ db.customers.update ( {custName : "Client 4"},  {$addToSet : { contacts : { $eac
 db.customers.find().pretty() ;
 
 
+
 //==================================================================================
 //   (4) collection "products" is equivalent to relational table "products"
 //==================================================================================
@@ -199,7 +200,14 @@ db.products.insertOne ({_id: 4, prodName : 'Produs 4', mu : 'l', prodCateg : 'Du
 db.products.insertOne ( {_id: 5, prodName : 'Produs 5', mu : 'buc', prodCateg : 'Cosmetice',  percVAT  : .24 } ) ;
 db.products.insertOne ( {_id: 6, prodName : 'Produs 6', mu : 'p250g', prodCateg : 'Cafea',  percVAT  : .24 }) ;
 
+// indexes
+db.products.createIndex({_id : 1}) ;
+db.products.createIndex({prodName: 1}, {unique: true}) ;
+db.products.createIndex({prodCateg: 1}, {unique: false}) ;
+
+
 db.products.find().pretty() ;
+
 
 
 //==================================================================================
