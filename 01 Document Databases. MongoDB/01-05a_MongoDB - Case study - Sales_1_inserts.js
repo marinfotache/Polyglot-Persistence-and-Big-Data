@@ -1,7 +1,12 @@
 //===============================================================================
 //                                      Case study:  SALES
 //===============================================================================
-// last update: 2022-12-06
+// last update: 2024-03-18
+
+
+//==================================================================================
+//           Some useful commands in Terminal (Mongo Shell) mode
+//==================================================================================
 
 //--   show databases on the server
 show dbs
@@ -16,8 +21,12 @@ use sales
 show collections
 
 
+
 //==================================================================================
-//                              first collection - "counties"
+//  (1) collection - "counties" is equivalent to relational table "counties"
+//==================================================================================
+// user-defined ObjectId
+
 db.counties.remove({}) ;
 db.counties.insertOne ( { _id : 'IS', countyName : 'Iasi', countyRegion  : 'Moldova' });
 db.counties.insertOne ( { _id : 'B', countyName : 'Bucuresti'});
@@ -37,9 +46,11 @@ db.counties.find() ;
 
 
 
-
 //==================================================================================
-//                      second collection - "postalCodes"
+//   (2) collection "postalCodes" is equivalent to relational table "postcodes"
+//==================================================================================
+// user-defined ObjectId
+
 db.postalCodes.remove({}) ;
 db.postalCodes.insertOne ( { _id : '700505', cityName : 'Iasi', countyCode : 'IS' });
 db.postalCodes.insertOne ( { _id : '701150', cityName : 'Pascani', countyCode : 'IS' });
@@ -66,7 +77,6 @@ db.counties2.insertOne ( { _id : 'IS', countyName : 'Iasi', countyRegion  : 'Mol
 	]
 });
 
-
 // Question: ... and how about this structure (do not execute the command!!!) ?
 db.postalCodes2.insertOne ( {
 	_id : '700505',
@@ -75,11 +85,13 @@ db.postalCodes2.insertOne ( {
  });
 
 
-
-
 //==================================================================================
-//          					third collection - customers
-//   each document will be identified by system object id
+//   				(3) collection "customers" maps three relational tables: 
+//      - "customers"
+//		- "contacts"
+//		- "people"
+//==================================================================================
+// system-generated ObjectId
 
 db.customers.remove({}) ;
 
@@ -174,38 +186,31 @@ db.customers.find().pretty() ;
 
 
 //==================================================================================
-
-//         		fourth collection - products
-// 	example of upsert  (update combined with insertOne)
+//   (4) collection "products" is equivalent to relational table "products"
+//==================================================================================
+// user-defined ObjectId
 
 db.products.remove({}) ;
-db.products.update ( {_id : 1},
-	{_id: 1, prodName : 'Produs 1', mu : 'buc', prodCateg : 'Cosmetice',  percVAT  : .24 },
-		{upsert : true} ) ;
-db.products.update ( {_id : 2},
-	{_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 },
-		{upsert : true} ) ;
-db.products.update ( {_id : 3},
-	{_id: 3, prodName : 'Produs 3', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.24 },
-		{upsert : true} ) ;
-db.products.update ( {_id : 4},
-	{_id: 4, prodName : 'Produs 4', mu : 'l', prodCateg : 'Dulciuri',  percVAT  : .12 },
-		{upsert : true} ) ;
-db.products.update ( {_id : 5},
-	{_id: 5, prodName : 'Produs 5', mu : 'buc', prodCateg : 'Cosmetice',  percVAT  : .24 },
-		{upsert : true} ) ;
-db.products.update ( {_id : 6},
-	{_id: 6, prodName : 'Produs 6', mu : 'p250g', prodCateg : 'Cafea',  percVAT  : .24 },
-			{upsert : true} ) ;
-
+db.products.insertOne ({_id: 1, prodName : 'Produs 1', mu : 'buc', prodCateg : 'Cosmetice',  percVAT  : .24 } ) ;
+db.products.insertOne ({_id: 2, prodName : 'Produs 2', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.12 }) ;
+db.products.insertOne ({_id: 3, prodName : 'Produs 3', mu : 'kg', prodCateg : 'Bere',  percVAT  : 0.24 }) ;
+db.products.insertOne ({_id: 4, prodName : 'Produs 4', mu : 'l', prodCateg : 'Dulciuri',  percVAT  : .12 }) ;
+db.products.insertOne ( {_id: 5, prodName : 'Produs 5', mu : 'buc', prodCateg : 'Cosmetice',  percVAT  : .24 } ) ;
+db.products.insertOne ( {_id: 6, prodName : 'Produs 6', mu : 'p250g', prodCateg : 'Cafea',  percVAT  : .24 }) ;
 
 db.products.find().pretty() ;
 
 
 //==================================================================================
-//
-//											fifth collection: invoices
-//
+//   		(5) collection "invoices" maps three relational tables: 
+//      - "invoices"
+//		- "invoice_details"
+//		- "products"
+// Note: "products" also appearse as a proper collection (see above)
+//==================================================================================
+// user-defined ObjectId
+
+
 db.invoices.remove({}) ;
 
 // invoice 1111
@@ -625,11 +630,13 @@ db.invoices.createIndex({codcl: 1}, {unique: false}) ;
 db.invoices.find().pretty() ;
 
 
+
 //==================================================================================
-//
-//		                the sixth collection: receipts
-//
+//   		(6) collection "receipts" maps two relational tables: 
+//      - "receipts"
+//		- "receipt_details"
 //==================================================================================
+// user-defined ObjectId
 
 db.receipts.drop()
 
