@@ -10,7 +10,9 @@
 //--   An excellent MongoDB client (we'll use it this semester): Studio 3T (free)
 
 ////////////////////////////////////////////////////////////////////////////////
-//            The commands will be run one-by-one (NOT AS SCRIPT!!!)
+//    The commands in this script will be run one-by-one (NOT AS SCRIPT!!!)
+////////////////////////////////////////////////////////////////////////////////
+
 
 //--    Display all available command for working with databases
 db.help()

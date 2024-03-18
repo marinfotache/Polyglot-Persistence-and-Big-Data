@@ -29,16 +29,33 @@ db.movies.insertMany(
 /* extract all documents */
 
 /* extract movies released in 2018 */
+db.movies.aggregate([
+    { $match: { year : 2018}}
+  ])
+
 
 /* extract movies released between 2015 and 2018 */
 
+
 /* extract movies released after 2015 */
+
+
+
 
 /* extract all movies whose genre is `Comedy` */
 
 /* extract all movies whose genre is `Comedy` or `Romance` */
 
+
 /* extract all movies whose genre is (at least) both `Comedy` and `Romance` */
+db.movies.aggregate([
+    {$match :  { "genres" : { $all : ["Comedy", "Romance" ] }} }
+    ])
+ 
+ 
+ 
+
+
 
 /* extract all movies with exactly five main actors in the cast */
 

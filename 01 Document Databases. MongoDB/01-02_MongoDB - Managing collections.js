@@ -12,8 +12,12 @@
 //--   other examples are taken/inspired from the MongoDB online documentation
 //===============================================================================
 
-//--    Set (if necessary) "sia2022" as current db
-use sia2022
+////////////////////////////////////////////////////////////////////////////////
+//    The commands in this script will be run one-by-one (NOT AS SCRIPT!!!)
+////////////////////////////////////////////////////////////////////////////////
+
+//--    Set (if necessary) "DM2023" as current db
+use dm2023
 
 //--    Remove (if necessary) all documents in collection "first_collection"
 db.first_collection.deleteMany({}) ;
@@ -64,9 +68,9 @@ array1 = [
 //-- `insertMany` will return ObjectId 's for all inserted documentes
 db.first_collection.insertMany(array1) ;
 // Note: the array could be inserted also with `insert` command, but no ObjectId will be provided
-//  as a results of inserts (of course, ObjectId 's exist in the collecttion)
+//  as a results of inserts (of course, ObjectId s exist in the collecttion)
 
-
+ 
 //--  Retrieve all the documents (check the inserts)
 db.first_collection.find() ;
 
@@ -115,9 +119,14 @@ var book = db.first_collection.findOne( {title: "I Like Databases"}) ;
 // add attribute "tags" in variable "book"
 book.tags = ['databases', 'mongodb', 'indexing'] ;
 // "save" command works as an upsert: if the document exists (based on its ObjectId) in
-//   the collection, "save" acts as an "update"; otherwise "save" acts like an "insert"
-db.first_collection.save(book)
-// check
+//   the collection, "save" acts as an "update"; otherwise "save" acts like an "insert"\
+
+db.first_collection.replaceOne(
+   {title: "I Like Databases"},
+   book, 
+   { upsert: true}
+)
+
 db.first_collection.find() ;
 
 
@@ -214,7 +223,7 @@ delete d1.text_comments;
 d1 ;
 
 // now replace the entire document with variable "d1"
-db.first_collection.update({titlel : "SQL la munte si la mare"}, d1);
+db.first_collection.replaceOne({titlel : "SQL la munte si la mare"}, d1);
 // check
 db.first_collection.findOne({title : "SQL la munte si la mare"}) ;
 
@@ -277,7 +286,7 @@ for (var i = 0 ; i < texts.length ; i++) {
 d2.comments = good_comm ;
 
 // replace existing document in the collection with variable "d2"
-db.first_collection.update({title : "SQL la munte si la mare"}, d2);
+db.first_collection.replaceOne({title : "SQL la munte si la mare"}, d2);
 
 // now it is ok
 db.first_collection.findOne({title : "SQL la munte si la mare"}) ;
@@ -296,7 +305,7 @@ d3 = db.first_collection.findOne({ title: "SQL la munte si la mare"}) ;
 //... add the attribute to the variable
 d3.num_of_comm = 0 ;
 //... replace the orginal document with variable content
-db.first_collection.update({ title: "SQL la munte si la mare"}, d3);
+db.first_collection.replaceOne({ title: "SQL la munte si la mare"}, d3);
 //  Increment (by 1) the number of comments for that book
 db.first_collection.update({title: "SQL la munte si la mare"},
 	{"$inc" : {num_of_comm : 1}}) ;
