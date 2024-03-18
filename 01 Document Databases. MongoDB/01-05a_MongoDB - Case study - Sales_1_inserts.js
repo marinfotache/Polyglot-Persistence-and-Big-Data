@@ -1,5 +1,6 @@
 //===============================================================================
-//                                      Case study:  SALES
+//                           Case study:  SALES in MongoDB
+//	  Part 1: Map the relational schema (create the database collections)
 //===============================================================================
 // last update: 2024-03-18
 
