@@ -2,7 +2,7 @@
 //                           Case study:  SALES in MongoDB
 //	 Part 2: Query database collections using (mainly) Aggregation Framework
 //===============================================================================
-// last update: 2024-03-18
+// last update: 2024-03-25
 
 
 //==================================================================================
@@ -149,7 +149,7 @@ db.postalCodes.aggregate([
 
 
 //--------------------------------------------------------------------------------
-// here is the solution (find the county the postal code '700505' belongs to
+// here is the solution (find the county the postal code '700505' belongs to)
 db.postalCodes.aggregate([
     { $lookup: {
           from: "counties",
@@ -160,8 +160,10 @@ db.postalCodes.aggregate([
     { $project: {post_codes__counties : 1} }
 ]);
 
+
+
 //--------------------------------------------------------------------------------
-// solution based on the lookup where the sttarting collection is `counties`
+// solution based on the lookup where the "starting" collection is `counties`
 db.counties.aggregate([
     { $lookup: {
           from: "postalCodes",
@@ -191,11 +193,11 @@ db.postalCodes.aggregate([
 db.counties.aggregate([
 	{ $lookup : {
 			from : "postalCodes",
-			let : { countyCode_ : "$_id"},
+			let : { countyCode_ : "$_id"},    // "$_id" is from collection `counties` 
 			pipeline : [
     					{ $match: { $expr : { $and : [
-									{ $eq : [ "$_id", "700505"  ] },
-									{ $eq : [  "$$countyCode_", "$countyCode"] }
+									{ $eq : [ "$_id", "700505"  ] }, // here "$_id" is from collection `postalCodes`
+									{ $eq : [  "$$countyCode_", "$countyCode"] } // attributes from both collections
 							   ]} } }
 					],
 			as : "postal_code"
@@ -241,29 +243,33 @@ db.postalCodes.aggregate([
           foreignField: "_id",
           as: "cities__counties" } },
     { $project: {cities__counties : 1} }
-]) 
+]) ;
+
+
 
 //--------------------------------------------------------------------------------
 // with `lookup` - `let` - `pipeline`
 db.counties.aggregate([
 	{ $lookup : {
 			from : "postalCodes",
-			let : { countyCode_ : "$_id"},
+			let : { countyCode_ : "$_id"},   // this attribute is from collection `counties`
 			pipeline : [
     					{ $match: { $expr : { $and : [
-									{ $eq : [ "$cityName", "Pascani"  ] },
-									{ $eq : [  "$$countyCode_", "$countyCode"] }
+									{ $eq : [ "$cityName", "Pascani"  ] },  // attribute is from collection `postalCodes`
+									{ $eq : [  "$$countyCode_", "$countyCode"] } // compare attributes from both collections
 							   ]} } }
 					],
 			as : "postal_code"
 	}  },
-	{ $match : { $expr : { $gt : [ { $size : "$postal_code"}, 0 ] }}}
+	{ $match : { $expr : { $gt : [ { $size : "$postal_code"}, 0 ] }}},
+	{ $project : { _id:1, countyName :1, county_region :1, city_name : "$postal_code.cityName"}}
 ]) ;
 
 
 
+
 //----------------------------------------------------------------------------------
-//             Get all the postal codes for region of Moldova
+//             Get all the postal codes for the cities in region of Moldova
 //----------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------
