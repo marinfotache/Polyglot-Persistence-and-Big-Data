@@ -2,11 +2,11 @@
 //### 													     Movies (part 2)
 //###                This is a Neo4j Desktop built-in dataset
 //###################################################################################
-//### last update: 2023-04-04
+//### last update: 2024-04-16
 
 
 //#######################  		DB administration stuff		##################
-// launch the script `03-01a...` in order to setup `movies` graph
+// launch the previous script (`03-01a...`) in order to setup `movies` graph
 
 
 //###################################################################################
@@ -18,7 +18,7 @@ call db.schema.visualization ;
 
 
 //###################################################################################
-//###			Simple queries retrieving and displaying nodes
+//###			             Simple queries retrieving and displaying nodes
 //###################################################################################
 
 
@@ -138,7 +138,7 @@ WHERE m.title = 'As Good as It Gets'
 RETURN p.name, type(r), m.title
 
 
-//## Find the years when movies casting Jack Nicholson were released
+//## Find the years when the movies casting Jack Nicholson were released
 MATCH (j:Person) -[r:ACTED_IN]-> (m:Movie)
 WHERE j.name = 'Jack Nicholson' 
 RETURN DISTINCT m.released
@@ -189,13 +189,13 @@ WHERE m.title = 'As Good as It Gets'
 RETURN *
 
 
-//## 	Which role (character) Helen Hunt played in `As Good as It Gets`
+//## 	Which role (character) Helen Hunt played in `As Good as It Gets`?
 MATCH (p:Person) -[r:ACTED_IN]-> (m:Movie)
 WHERE p.name = 'Helen Hunt' AND m.title = 'As Good as It Gets'
 RETURN r.roles
 
 
-//## LEFT JOIN in Cypher
+//## (sort of) LEFT JOIN in Cypher !
 MATCH (p:Person)
 OPTIONAL MATCH (p) -[r:ACTED_IN]-> (m:Movie)
 RETURN p.name, type(r), m.title
@@ -210,71 +210,130 @@ ORDER BY p.name
 
 
 //## 	Display the actors who played in movies along with Keanu Reeves
+
+// sol.1
 MATCH (p:Person) -[r1:ACTED_IN]-> (m:Movie) <-[r2:ACTED_IN]- (keanu:Person)
 WHERE keanu.name = 'Keanu Reeves'
 RETURN p.name, m.title, keanu.name
 
-// ...or
+// sol.2
 MATCH (p:Person) -[r1:ACTED_IN]-> (m:Movie)
 MATCH (m:Movie) <-[r2:ACTED_IN]- (keanu:Person)
 WHERE keanu.name = 'Keanu Reeves' AND p.name <> 'Keanu Reeves'
 RETURN DISTINCT p.name, m.title, keanu.name
 
-//...or
+// sol.3
 MATCH (m:Movie) <-[r2:ACTED_IN]- (keanu:Person)
 MATCH (p:Person) -[r1:ACTED_IN]-> (m:Movie)
 WHERE keanu.name = 'Keanu Reeves' AND p.name <> 'Keanu Reeves'
 RETURN DISTINCT p.name, m.title, keanu.name
+
+// sol.4
+MATCH (keanu:Person)
+WHERE keanu.name = 'Keanu Reeves'
+MATCH (m:Movie) <-[r2:ACTED_IN]- (keanu:Person)
+MATCH (p:Person) -[r1:ACTED_IN]-> (m:Movie)
+WHERE p.name <> 'Keanu Reeves'
+RETURN DISTINCT p.name, m.title, keanu.name
+
 
 
 //## 	Display the directors of the movies featuring Keanu Reeves
+
+// sol.1
 MATCH (p:Person) -[r1:DIRECTED]-> (m:Movie) <-[r2:ACTED_IN]- (keanu:Person)
 WHERE keanu.name = 'Keanu Reeves'
 RETURN p.name, type(r1), m.title, keanu.name
 
-//...or
+// sol.2
 MATCH (m:Movie) <-[r2:ACTED_IN]- (keanu:Person)
 MATCH (p:Person) -[r1:DIRECTED]-> (m:Movie)
 WHERE keanu.name = 'Keanu Reeves'
 RETURN p.name, type(r1), m.title, keanu.name
 
-//...or
+// sol.3
 MATCH (m:Movie) <-[r2:ACTED_IN]- (keanu:Person)
 WHERE keanu.name = 'Keanu Reeves'
 MATCH (p:Person) -[r1:DIRECTED]-> (m:Movie)
 RETURN p.name, type(r1), m.title, keanu.name
 
+// sol.4
+MATCH (keanu:Person)
+WHERE keanu.name = 'Keanu Reeves'
+MATCH (m:Movie) <-[r2:ACTED_IN]- (keanu:Person)
+MATCH (p:Person) -[r1:DIRECTED]-> (m:Movie)
+RETURN DISTINCT p.name, m.title, keanu.name
 
 
+//###################################################################################
+//##                            Intersection in Cypher
+//###################################################################################
 
-//## intersection in Cypher
 //## 	Display the movies in which Keanu Reeves played with Carrie-Anne Moss
+
+// sol.1 (result as text)
 MATCH (keanu:Person) -[r1:ACTED_IN]-> (m:Movie) <-[r2:ACTED_IN]- (carrie:Person)
 WHERE keanu.name = 'Keanu Reeves' AND carrie.name = 'Carrie-Anne Moss'
 RETURN keanu.name, m.title, carrie.name
 
-// ... a different form of the result
+// sol.2 (result as graph)
 MATCH (keanu:Person) -[r1:ACTED_IN]-> (m:Movie) <-[r2:ACTED_IN]- (carrie:Person)
 WHERE keanu.name = 'Keanu Reeves' AND carrie.name = 'Carrie-Anne Moss'
 RETURN *
+
+// sol.3 
+MATCH (keanu:Person) 
+WHERE keanu.name = 'Keanu Reeves' 
+MATCH (keanu:Person) -[r1:ACTED_IN]-> (m:Movie) <-[r2:ACTED_IN]- (carrie:Person)
+WHERE carrie.name = 'Carrie-Anne Moss'
+RETURN keanu.name, m.title, carrie.name
+
+// sol.4 
+MATCH (keanu:Person) 
+WHERE keanu.name = 'Keanu Reeves' 
+MATCH (carrie:Person) 
+WHERE carrie.name = 'Carrie-Anne Moss'
+MATCH (keanu:Person) -[r1:ACTED_IN]-> (m:Movie) <-[r2:ACTED_IN]- (carrie:Person)
+RETURN keanu.name, m.title, carrie.name
+
+// sol.5
+MATCH (keanu:Person) 
+WHERE keanu.name = 'Keanu Reeves' 
+MATCH (carrie:Person) 
+WHERE carrie.name = 'Carrie-Anne Moss'
+MATCH (keanu:Person) -[r1:ACTED_IN]-> (m:Movie) 
+MATCH (m:Movie) <-[r2:ACTED_IN]- (carrie:Person)
+RETURN keanu.name, m.title, carrie.name
+
 
 
 //## 	Display the actors who played in movies along with actors who, at their turn,
 // played in movies with Keanu Reeves
 
+// sol.1
 MATCH (keanu:Person) -[r1:ACTED_IN]-> (m:Movie) <-[r2:ACTED_IN]- (keanu_colleague:Person)
   -[r3:ACTED_IN]-> (m2:Movie) <- [r4:ACTED_IN]- (colleague_of_keanu_colleagues:Person)
-WHERE keanu.name = 'Keanu Reeves'
+WHERE keanu.name = 'Keanu Reeves' 
+  AND keanu_colleague.name <> 'Keanu Reeves' 
+  AND colleague_of_keanu_colleagues.name <> 'Keanu Reeves'
+  AND keanu_colleague.name <> colleague_of_keanu_colleagues.name
+  AND m.title <> m2.title
 RETURN keanu.name, m.title, keanu_colleague.name, m2.title, colleague_of_keanu_colleagues.name
 ORDER BY keanu.name, m.title, keanu_colleague.name, m2.title, colleague_of_keanu_colleagues.name
+// 87 records
 
-//...or
-MATCH (k:Person) -[r1:ACTED_IN]-> (m1:Movie)
+// sol.2
+MATCH (k:Person) 
 WHERE k.name = 'Keanu Reeves'
+MATCH (k:Person) -[r1:ACTED_IN]-> (m1:Movie)
 MATCH (k_colleague:Person) -[r2:ACTED_IN]-> (m1:Movie)
+WHERE k_colleague.name <> 'Keanu Reeves'
 MATCH (k_colleague:Person) -[r3:ACTED_IN]-> (m2:Movie)
 MATCH (k_colleague2:Person) -[r4:ACTED_IN]-> (m2:Movie)
-RETURN *
+WHERE k_colleague2.name <> 'Keanu Reeves' AND k_colleague.name <> k_colleague2.name
+  AND m1.title <> m2.title
+RETURN k.name, m1.title, k_colleague.name, m2.title, k_colleague2.name
+// 87 records
 
 
 
@@ -286,7 +345,7 @@ RETURN *
 //##          another type of solutions to intersection in Cypher
 
 // Task: find movies Keanu Reevers played with Carrie-Anne Moss:
-// in next solution comma between `(keanu:Person {name:"Keanu Reeves"})- [:ACTED_IN]-> (movie_keanu:Movie)`
+// in the next solution, the comma between `(keanu:Person {name:"Keanu Reeves"})- [:ACTED_IN]-> (movie_keanu:Movie)`
 //  and `(carrie:Person {name:"Carrie-Anne Moss"})` stands as a sort of cartesian product
 MATCH (keanu:Person {name:"Keanu Reeves"})- [:ACTED_IN]-> (movie_keanu:Movie),
   (carrie:Person {name:"Carrie-Anne Moss"})
@@ -296,13 +355,13 @@ RETURN keanu.name, movie_keanu.title, carrie.name
 
 // ## difference in Cypher
 
-//## 	Display the movies in which Keanu Reeves did not play along with Carrie-Anne Moss
+//## 	Display the movies in which Keanu Reeves did NOT play along with Carrie-Anne Moss
 // notice `NOT`
-MATCH (keanu:Person {name:"Keanu Reeves"})- [:ACTED_IN]-> (movie_keanu:Movie),
+MATCH 
+  (keanu:Person {name:"Keanu Reeves"})- [:ACTED_IN]-> (movie_keanu:Movie),
   (carrie:Person {name:"Carrie-Anne Moss"})
 WHERE NOT (movie_keanu)<-[:ACTED_IN]-(carrie)
 RETURN keanu.name, movie_keanu.title
-
 
 
 
@@ -310,7 +369,7 @@ RETURN keanu.name, movie_keanu.title
 //###	         Chaining the results among query steps - sol. 2 - WITH clause
 //###################################################################################
 
-//##              yet other solutions to intersection in Cypher
+//##               other solutions to intersection in Cypher
 
 //## Task: find movies Keanu Reeves played with Carrie-Anne Moss:
 MATCH (keanu:Person) -[r1:ACTED_IN]-> (m:Movie)
