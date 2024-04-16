@@ -301,8 +301,8 @@ MATCH (keanu:Person)
 WHERE keanu.name = 'Keanu Reeves' 
 MATCH (carrie:Person) 
 WHERE carrie.name = 'Carrie-Anne Moss'
-MATCH (keanu:Person) -[r1:ACTED_IN]-> (m:Movie) 
-MATCH (m:Movie) <-[r2:ACTED_IN]- (carrie:Person)
+MATCH (keanu) -[r1:ACTED_IN]-> (m:Movie) 
+MATCH (m:Movie) <-[r2:ACTED_IN]- (carrie)
 RETURN keanu.name, m.title, carrie.name
 
 

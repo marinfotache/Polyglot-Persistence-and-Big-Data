@@ -184,8 +184,8 @@ RETURN *
 // first (raw) solution
 MATCH (p:Person)
 OPTIONAL MATCH (p) -[r:DIRECTED]-> (m:Movie)
-RETURN p.name, type(r), COUNT(m) AS n_of_directed_movies
-ORDER BY p.name, type(r)
+RETURN p.name, type(r) AS tip_rel, COUNT(m) AS n_of_directed_movies
+ORDER BY p.name, tip_rel
 
 
 // solution that uses COALESCE for a better form of the results
@@ -196,11 +196,11 @@ RETURN p.name, COALESCE(type(r), 'no director') AS is_she_director,
 ORDER BY p.name
 
 
-//# 	Display numbers of people who acted as actors, directors AND
+//# 	Display numbers of people involved as actors, directors AND
 //  other positions/roles for making the movies
 
 // solution with CASE
-MATCH (p:Person) -[r]-> (m:Movie)
+MATCH (p:Person) -[r:ACTED_IN|DIRECTED|PRODUCED|WROTE]-> (m:Movie)
 RETURN
     CASE
     WHEN type(r) = 'DIRECTED' THEN 'directors'
@@ -210,7 +210,6 @@ RETURN
     COUNT(p) AS n_of_people
 ORDER BY  movie_positions
 
-
 //...and a solution based on UNION
 MATCH (p:Person) -[r:ACTED_IN]-> (m:Movie)
 RETURN 'actors' AS movie_positions, COUNT(p) AS n_of_people
@@ -218,14 +217,14 @@ UNION
 MATCH (p:Person) -[r:DIRECTED]-> (m:Movie)
 RETURN 'directors' AS movie_positions, COUNT(p) AS n_of_people
 UNION
-MATCH (p:Person) -[r]-> (m:Movie)
+MATCH (p:Person) -[r:PRODUCED|WROTE]-> (m:Movie)
 WHERE NOT type(r) IN ['ACTED_IN', 'DIRECTED']
 RETURN 'other positions' AS movie_positions, COUNT(p) AS n_of_people
 
 
 
 //###################################################################################
-//###				                      Your turn!
+//###				                          Your turn!
 //###################################################################################
 
 //# 	Display the number of movies released in each year
