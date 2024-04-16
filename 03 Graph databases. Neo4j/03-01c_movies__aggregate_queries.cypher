@@ -118,7 +118,7 @@ RETURN p2
 
 
 //###################################################################################
-//###								          Aggregation with groups
+//###                        Aggregation with groups
 //###################################################################################
 
 
@@ -135,14 +135,21 @@ ORDER BY p.name
 
 
 //# 	Display the number movies for each person (actors, directors, writers, producers)
+
+// sol. 1 - not entirely ok
 MATCH (p:Person) -[]-> (m:Movie)
 RETURN p.name, COUNT(m) AS n_of_movies
+ORDER BY p.name
+
+// sol. 2 - this seem correct
+MATCH (p:Person) -[]-> (m:Movie)
+RETURN p.name, COUNT(DISTINCT m) AS n_of_movies
 ORDER BY p.name
 
 
 //# 	Display the number movies for each person and position (actor, director, ...)
 MATCH (p:Person) -[r]-> (m:Movie)
-RETURN p.name, type(r), COUNT(m) AS n_of_movies
+RETURN p.name, type(r), COUNT(DISTINCT m) AS n_of_movies
 ORDER BY p.name, type(r)
 
 
