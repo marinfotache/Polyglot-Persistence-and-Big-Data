@@ -2,7 +2,7 @@
 //### 													     Movies
 //###                This is a Neo4j Desktop built-in dataset
 //###################################################################################
-//### last update: 2022-04-19
+//### last update: 2024-04-16
 
 
 //###################################################################################
@@ -132,3 +132,13 @@ RETURN m.title, r.roles
 MATCH () -[r:ACTED_IN]-> (m:Movie)
 WHERE ALL (role IN r.roles WHERE role IN ["DeDe", "Angelica Graynamore", "Patricia Graynamore"])
 RETURN m.title, r.roles
+
+
+//# Find all actors who never played in a movie with Keanu Reeves
+MATCH (keanu:Person {name:"Keanu Reeves"}) -[:ACTED_IN]-> (movie_keanu:Movie) <-[:ACTED_IN]- (k_colleague:Person)
+WITH COLLECT (k_colleague.name) AS keanu_colleagues
+MATCH (actor:Person) -[:ACTED_IN]-> (:Movie)
+WHERE actor.name <>  "Keanu Reeves"
+   AND NONE (name IN actor.name WHERE name IN keanu_colleagues)
+RETURN DISTINCT actor.name
+ORDER BY actor.name
