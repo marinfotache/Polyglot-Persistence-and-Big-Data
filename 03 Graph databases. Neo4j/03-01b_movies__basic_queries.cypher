@@ -311,8 +311,7 @@ RETURN keanu.name, m.title, carrie.name
 // played in movies with Keanu Reeves
 
 // sol.1
-MATCH (keanu:Person) -[r1:ACTED_IN]-> (m:Movie) <-[r2:ACTED_IN]- (keanu_colleague:Person)
-  -[r3:ACTED_IN]-> (m2:Movie) <- [r4:ACTED_IN]- (colleague_of_keanu_colleagues:Person)
+MATCH (keanu:Person) -[r1:ACTED_IN]-> (m:Movie) <-[r2:ACTED_IN]- (keanu_colleague:Person) -[r3:ACTED_IN]-> (m2:Movie) <- [r4:ACTED_IN]- (colleague_of_keanu_colleagues:Person)
 WHERE keanu.name = 'Keanu Reeves' 
   AND keanu_colleague.name <> 'Keanu Reeves' 
   AND colleague_of_keanu_colleagues.name <> 'Keanu Reeves'
