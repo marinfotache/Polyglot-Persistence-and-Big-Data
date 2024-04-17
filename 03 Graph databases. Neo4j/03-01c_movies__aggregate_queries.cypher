@@ -28,6 +28,12 @@ MATCH (p:Person) -[r:ACTED_IN]-> (m:Movie)
 RETURN COUNT(DISTINCT p) AS n_of_people
 
 
+//# 	How many directors or producers are in the database (people who directed or produced at least one movie) ?
+MATCH (p:Person) -[r:DIRECTED|PRODUCED]-> (m:Movie)
+RETURN COUNT(DISTINCT p) AS n_of_people
+
+
+
 //# 	Display the birth year of the oldest people in the database?
 MATCH (p:Person)
 RETURN MIN(p.born)
@@ -142,15 +148,15 @@ RETURN p.name, COUNT(m) AS n_of_movies
 ORDER BY p.name
 
 // sol. 2 - this seem correct
-MATCH (p:Person) -[]-> (m:Movie)
+MATCH (p:Person) -[r:ACTED_IN|DIRECTED|PRODUCED|WROTE]-> (m:Movie)
 RETURN p.name, COUNT(DISTINCT m) AS n_of_movies
 ORDER BY p.name
 
 
 //# 	Display the number movies for each person and position (actor, director, ...)
 MATCH (p:Person) -[r]-> (m:Movie)
-RETURN p.name, type(r), COUNT(DISTINCT m) AS n_of_movies
-ORDER BY p.name, type(r)
+RETURN p.name, type(r) AS rel_type, COUNT(DISTINCT m) AS n_of_movies
+ORDER BY p.name, rel_type
 
 
 //# 	Display the people who directed at least two movies
@@ -218,7 +224,6 @@ MATCH (p:Person) -[r:DIRECTED]-> (m:Movie)
 RETURN 'directors' AS movie_positions, COUNT(p) AS n_of_people
 UNION
 MATCH (p:Person) -[r:PRODUCED|WROTE]-> (m:Movie)
-WHERE NOT type(r) IN ['ACTED_IN', 'DIRECTED']
 RETURN 'other positions' AS movie_positions, COUNT(p) AS n_of_people
 
 

@@ -1,12 +1,12 @@
 //###################################################################################
-//### 													     Movies
+//### 							   Movies
 //###                This is a Neo4j Desktop built-in dataset
 //###################################################################################
-//### last update: 2022-04-19
+//### last update: 2024-04-16
 
 
 //###################################################################################
-//###					 (Slightly) More advanced queries
+//###					(Slightly) More advanced queries
 //###################################################################################
 
 
@@ -120,7 +120,7 @@ RETURN p2.name, n_of_movies2, n_of_movies_keanu
 
 //# Display the actor(s) playing in at least one of "Carrie-Anne Moss" movies
 
-// solution proposed in script `04-01b`...
+// solution proposed in script `03-01b`...
 MATCH (p:Person) -[r1:ACTED_IN]-> (m:Movie) <-[r2:ACTED_IN]- (carrie:Person)
 WHERE carrie.name = 'Carrie-Anne Moss'
 RETURN p.name, m.title, carrie.name
@@ -146,7 +146,7 @@ RETURN name, movies_actor, movies_carrie
 
 
 
-//# Display the actor(s) playing in all of "Carrie-Anne Moss" movies
+//# Display the actor(s) playing in ALL of "Carrie-Anne Moss" movies
 
 // solution based on collections
 
