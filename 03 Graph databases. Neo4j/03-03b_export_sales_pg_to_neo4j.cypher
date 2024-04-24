@@ -7,6 +7,7 @@ CREATE (county_TM:County {code:"TM", name:"Timis"})  -[:CountyInRegion]->  (regi
 CREATE (county_VN:County {code:"VN", name:"Vrancea"})  -[:CountyInRegion]->  (region_Moldova)
 CREATE (county_VS:County {code:"VS", name:"Vaslui"})  -[:CountyInRegion]->  (region_Moldova)
 CREATE (postcode_700505:PostalCode {post_code:"700505", town:"Iasi"})  -[:PostalCodeInCounty]->  (county_IS)
+CREATE (postcode_700506:PostalCode {post_code:"700506", town:"Iasi"})  -[:PostalCodeInCounty]->  (county_IS)
 CREATE (postcode_701150:PostalCode {post_code:"701150", town:"Pascani"})  -[:PostalCodeInCounty]->  (county_IS)
 CREATE (postcode_701900:PostalCode {post_code:"701900", town:"Timisoara"})  -[:PostalCodeInCounty]->  (county_TM)
 CREATE (postcode_705300:PostalCode {post_code:"705300", town:"Focsani"})  -[:PostalCodeInCounty]->  (county_VN)

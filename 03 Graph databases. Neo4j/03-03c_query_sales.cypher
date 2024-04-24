@@ -3,7 +3,7 @@
 //###            Cypher Queries (many requirements were used for MongoDB,
 //###   so you can compare (in a certain extent) Cypher with Aggregation Framework)
 //###################################################################################
-// last update: 2022-05-10
+//### last update: 2024-04-24
 
 //###################################################################################
 //###  Notice: Each of the following queries will be executed individually
@@ -17,7 +17,13 @@
 // The results will be hard to read
 MATCH (n1)-[r]->(n2) RETURN n1, r, n2;
 
-// Display lines/products and receipts only for invoice 1111 (customer ('Client 1 SRL'))
+// Display the receipts for invoice 1111 (customer ('Client 1 SRL'))
+MATCH (c:Customer) -[]- (i:Invoice) -[]- (r:Receipt) 
+WHERE c.cust_name = 'Client 1 SRL' AND i.invoice_id = 1111  
+RETURN *
+
+
+// Display both the lines/products and the receipts, but only for invoice 1111 (customer ('Client 1 SRL'))
 MATCH (n1) -[]- (n2) -[]- (n3) 
 WHERE n1.cust_name = 'Client 1 SRL' AND n2.invoice_id = 1111  
 RETURN *
