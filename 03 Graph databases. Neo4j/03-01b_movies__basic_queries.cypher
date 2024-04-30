@@ -305,6 +305,12 @@ MATCH (keanu) -[r1:ACTED_IN]-> (m:Movie)
 MATCH (m:Movie) <-[r2:ACTED_IN]- (carrie)
 RETURN keanu.name, m.title, carrie.name
 
+// sol.6
+MATCH (keanu:Person {name:"Keanu Reeves"}) -[:ACTED_IN]-> (movie_keanu:Movie)
+MATCH (carrie:Person {name:"Carrie-Anne Moss"})-[:ACTED_IN]-> (movie_carrie:Movie)
+WHERE movie_keanu.title IN movie_carrie.title
+RETURN DISTINCT movie_keanu.title
+
 
 
 //## 	Display the actors who played in movies along with actors who, at their turn,
@@ -356,11 +362,33 @@ RETURN keanu.name, movie_keanu.title, carrie.name
 
 //## 	Display the movies in which Keanu Reeves did NOT play along with Carrie-Anne Moss
 // notice `NOT`
+
+// This solution DOES NOT work properly !!!
+MATCH (keanu:Person {name:"Keanu Reeves"}) -[:ACTED_IN]-> (movie_keanu:Movie)
+MATCH (carrie:Person {name:"Carrie-Anne Moss"})-[:ACTED_IN]-> (movie_carrie:Movie)
+WHERE NOT movie_keanu.title  IN movie_carrie.title
+RETURN DISTINCT movie_keanu.title
+
+// This solution DOES NOT work at all! 
+MATCH (keanu:Person {name:"Keanu Reeves"}) -[:ACTED_IN]-> (movie_keanu:Movie)
+MATCH (carrie:Person {name:"Carrie-Anne Moss"})-[:ACTED_IN]-> (movie_carrie:Movie)
+WHERE  movie_keanu.title NOT IN movie_carrie.title
+RETURN DISTINCT movie_keanu.title
+
+// sol. 1
 MATCH 
   (keanu:Person {name:"Keanu Reeves"})- [:ACTED_IN]-> (movie_keanu:Movie),
   (carrie:Person {name:"Carrie-Anne Moss"})
 WHERE NOT (movie_keanu)<-[:ACTED_IN]-(carrie)
-RETURN keanu.name, movie_keanu.title
+RETURN movie_keanu.title
+
+
+// sol. 2
+MATCH (carrie:Person {name:"Carrie-Anne Moss"})
+MATCH (keanu:Person {name:"Keanu Reeves"}) -[:ACTED_IN]-> (movie_keanu:Movie)
+WHERE NOT (movie_keanu)<-[:ACTED_IN]-(carrie)
+RETURN movie_keanu.title
+
 
 
 
