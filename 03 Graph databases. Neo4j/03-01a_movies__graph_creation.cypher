@@ -2,7 +2,7 @@
 //### 									Movies (part 1)
 //###                This is a Neo4j Desktop built-in dataset
 //###################################################################################
-//### last update: 2022-04-19
+//### last update: 2025-04-07
 
 //###################################################################################
 //#######################  		DB administration stuff		##################
@@ -15,8 +15,7 @@
 // 5. Start (make active) the database `movies`
 // 6. Open the Neo4j Browser
 // 7. (in Neo4j Browser window) launch `:play movie-graph` command
-// 8. Go to page 2 of the explanations and press `>` button which will automatically
-launch the following script:
+// 8. Go to page 2 of the explanations and press `>` button which will automatically launch the following script:
 
 /////////////    beginning of the script (the script ends at line 530)      //////////////
 CREATE (TheMatrix:Movie {title:'The Matrix', released:1999, tagline:'Welcome to the Real World'})
