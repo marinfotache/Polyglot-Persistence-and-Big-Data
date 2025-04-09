@@ -69,6 +69,11 @@ WHERE p2.born IN first_year
 RETURN p2
 
 
+// diplay the actors who were casted in movies along with the oldest person in the database
+// your turn!
+
+
+
 
 //# 	Display the oldest and the youngest people in the database?
 

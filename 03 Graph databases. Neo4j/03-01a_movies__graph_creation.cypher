@@ -9,10 +9,10 @@
 //###################################################################################
 
 // 1. Launch Neo4j Desktop
-// 2. Create a project called `SampleDBs`
+// 2. Create a project called `project_movies`
 // 3. Enter the project
-// 4. Create a database (Local Graph) called `movies` (pay attention to the password)
-// 5. Start (make active) the database `movies`
+// 4. Create a database (Local Graph) called `movies2025` (pay attention to the password)
+// 5. Start (make active) the database `movies2025`
 // 6. Open the Neo4j Browser
 // 7. (in Neo4j Browser window) launch `:play movie-graph` command
 // 8. Go to page 2 of the explanations and press `>` button which will automatically launch the following script:
