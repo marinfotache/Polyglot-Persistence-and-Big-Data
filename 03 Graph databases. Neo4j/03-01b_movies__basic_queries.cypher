@@ -239,6 +239,7 @@ RETURN DISTINCT p.name, m.title, keanu.name
 
 
 //## 	Display the actors who played in movies directed by Tom Hanks 
+
 // your turn !
 
 
@@ -331,6 +332,7 @@ WHERE keanu.name = 'Keanu Reeves'
 RETURN keanu.name, m.title, keanu_colleague.name, m2.title, colleague_of_keanu_colleagues.name
 ORDER BY keanu.name, m.title, keanu_colleague.name, m2.title, colleague_of_keanu_colleagues.name
 // 87 records
+
 
 // sol.2
 MATCH (k:Person) 

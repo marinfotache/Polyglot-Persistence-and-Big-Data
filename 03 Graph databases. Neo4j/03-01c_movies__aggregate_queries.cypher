@@ -69,7 +69,9 @@ WHERE p2.born IN first_year
 RETURN p2
 
 
-// diplay the actors who were casted in movies along with the oldest person in the database
+
+// Display the actors who were casted in movies along with the oldest person in the database
+
 // your turn!
 
 
@@ -114,6 +116,7 @@ WHERE p3.born <= second_year
 RETURN p3
 
 
+
 //# 	Display the people born in the first 10 years (of the years of
 //   birth for the people in the database)?
 MATCH (p1:Person)
@@ -139,10 +142,19 @@ WHERE m.released = 2003
 RETURN m.title, COUNT(p) AS n_of_actors
 ORDER BY m.title
 
+
 //# 	Display the number movies for each actor
 MATCH (p:Person) -[r:ACTED_IN]-> (m:Movie)
 RETURN p.name, COUNT(m) AS n_of_movies
 ORDER BY p.name
+
+
+
+//# 	Display the number of movies released in each year
+
+// your turn!
+
+
 
 
 //# 	Display the number movies for each person (actors, directors, writers, producers)
@@ -158,10 +170,17 @@ RETURN p.name, COUNT(DISTINCT m) AS n_of_movies
 ORDER BY p.name
 
 
+//# 	Display the number of movies directed by each director (extract only directors)
+
+// your turn!
+
+
+
 //# 	Display the number movies for each person and position (actor, director, ...)
 MATCH (p:Person) -[r]-> (m:Movie)
 RETURN p.name, type(r) AS rel_type, COUNT(DISTINCT m) AS n_of_movies
 ORDER BY p.name, rel_type
+
 
 
 //# 	Display the people who directed at least two movies
@@ -173,6 +192,12 @@ RETURN p.name, n_of_movies
 ORDER BY n_of_movies DESC
 
 
+//# 	Display the actors who were caster in least four movies
+
+// your turn!
+
+
+
 // Find the movies with the largest cast (largest number of actors)
 MATCH (p:Person) -[r:ACTED_IN]-> (m:Movie)
 WITH m.title AS title, m.released AS year, COUNT(p) AS cast_size
@@ -182,6 +207,17 @@ WITH max_cast_size, m2.title AS title, m2.released AS year, COUNT(p2) AS cast_si
 WHERE cast_size = max_cast_size
 RETURN *
 
+
+
+// For each director, display the number of actors who were casted in movies she/he directed
+
+// your turn!
+
+
+
+// For each actor, display the number of directors she/he worked with
+
+// your turn!
 
 
 //###################################################################################
@@ -205,6 +241,7 @@ OPTIONAL MATCH (p) -[r:DIRECTED]-> (m:Movie)
 RETURN p.name, COALESCE(type(r), 'no director') AS is_she_director,
   COUNT(m) AS n_of_directed_movies
 ORDER BY p.name
+
 
 
 //# 	Display numbers of people involved as actors, directors AND
@@ -232,15 +269,4 @@ MATCH (p:Person) -[r:PRODUCED|WROTE]-> (m:Movie)
 RETURN 'other positions' AS movie_positions, COUNT(p) AS n_of_people
 
 
-
-//###################################################################################
-//###				                          Your turn!
-//###################################################################################
-
-//# 	Display the number of movies released in each year
-//...
-
-
-//# 	Display the number of movies directed by each director (extract only directors)
-//...
 
