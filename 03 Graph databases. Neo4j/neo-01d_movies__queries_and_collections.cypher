@@ -22,6 +22,13 @@ WHERE th.name = 'Tom Hanks' AND pe.title = 'The Polar Express'
 RETURN SIZE(r.roles) AS n_of_roles
 
 
+
+//# 	Display the number of characters/roles in the 'The Polar Express' movie
+
+// your turn!
+
+
+
 //# 	Extract all actors and movies in which the actor played at least two roles
 MATCH (p:Person) -[r:ACTED_IN]-> (m:Movie)
 WHERE SIZE(r.roles) >= 2
@@ -47,6 +54,13 @@ RETURN m.title, p.name, r.roles
 ORDER BY m.title, p.name
 
 
+
+//# 	Display the movies with more than five number of characters/roles 
+
+// your turn!
+
+
+
 //#		Extract all the movies in which an actor played multiple roles (characters);
 //   but display only the first and the last of these roles/characters
 MATCH (p:Person) -[r:ACTED_IN]-> (m:Movie)
@@ -61,6 +75,8 @@ MATCH () -[r:ACTED_IN]-> (m:Movie)
 WITH r UNWIND r.roles AS movie_role
 RETURN DISTINCT movie_role
 ORDER BY movie_role
+
+
 
 
 //# 	Display all the roles (characters) of all of the movies;
